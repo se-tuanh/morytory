@@ -387,7 +387,7 @@
 
     <!-- Hero -->
     <div class="section" style="margin-top:40px;">
-      <div class="hero">
+      <div class="hero reveal">
         <div class="hero-text">
           <h1>Mô hình gỗ<br>khắc từ kỷ niệm<br>của bạn</h1>
           <p>Chúng tôi biến ảnh gia đình, lễ tốt nghiệp hay đám cưới thành mô hình gỗ thủ công độc đáo.</p>
@@ -403,7 +403,7 @@
         <div class="section-title">Chọn chủ đề</div>
         <div class="section-link">Xem tất cả</div>
       </div>
-      <div class="theme-grid">
+      <div class="theme-grid reveal">
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
           <div class="theme-thumb birthday"></div>
           <div class="theme-info">
@@ -437,7 +437,7 @@
         <div class="section-title">Bộ sưu tập Premium</div>
         <div class="section-link">Xem tất cả</div>
       </div>
-      <div class="premium-grid">
+      <div class="premium-grid reveal">
         <div class="premium-card" onclick="showProductPage('premium','Mô hình Gia Đình Cổ Điển','380.000','premium1.jpg','')">
           <div class="premium-thumb p1">
             <span class="premium-label">Làm sẵn</span>
@@ -487,7 +487,7 @@
       <div class="section-head">
         <div class="section-title">Về chúng tôi</div>
       </div>
-      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; padding: 40px; border-radius: 20px; border: 0.5px solid var(--gray-l); align-items: center;">
+      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; padding: 40px; border-radius: 20px; border: 0.5px solid var(--gray-l); align-items: center;">
         <div style="background: var(--blush); aspect-ratio: 4/3; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100%;">
           <span style="font-size: 14px; color: var(--brown-d); font-weight: 500;">MoryTory Chế Tác Gỗ Thủ Công</span>
         </div>
@@ -508,7 +508,7 @@
       <div class="section-head">
         <div class="section-title">Góc cảm hứng (Blog)</div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
         <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
           <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 1</span></div>
           <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
@@ -947,7 +947,11 @@
     }
 
     function openLookupModal() {
-      document.getElementById('lookup-modal-backdrop').style.display = 'flex';
+      const backdrop = document.getElementById('lookup-modal-backdrop');
+      backdrop.style.display = 'flex';
+      setTimeout(() => {
+        backdrop.classList.add('show');
+      }, 10);
       document.getElementById('lookup-phone').value = '';
       document.getElementById('lookup-order-id').value = '';
       document.getElementById('lookup-results-container').innerHTML = `
@@ -959,7 +963,11 @@
     }
 
     function closeLookupModal() {
-      document.getElementById('lookup-modal-backdrop').style.display = 'none';
+      const backdrop = document.getElementById('lookup-modal-backdrop');
+      backdrop.classList.remove('show');
+      setTimeout(() => {
+        backdrop.style.display = 'none';
+      }, 300);
     }
 
     async function searchCustomerOrders() {
@@ -1117,9 +1125,13 @@
       document.getElementById('modal-summary-qty').textContent = 'x' + premiumQty;
       document.getElementById('modal-summary-total').textContent = fmt(premiumPrice * premiumQty);
 
-      document.getElementById('checkout-modal-backdrop').style.display = 'flex';
+      const backdrop = document.getElementById('checkout-modal-backdrop');
+      backdrop.style.display = 'flex';
       document.querySelector('.checkout-modal').style.display = 'flex';
       document.getElementById('checkout-success-view').style.display = 'none';
+      setTimeout(() => {
+        backdrop.classList.add('show');
+      }, 10);
       
       document.getElementById('checkout-name').value = '';
       document.getElementById('checkout-phone').value = '';
@@ -1134,7 +1146,11 @@
     }
 
     function closeCheckoutModal() {
-      document.getElementById('checkout-modal-backdrop').style.display = 'none';
+      const backdrop = document.getElementById('checkout-modal-backdrop');
+      backdrop.classList.remove('show');
+      setTimeout(() => {
+        backdrop.style.display = 'none';
+      }, 300);
     }
 
     function selectPaymentMethod(method) {

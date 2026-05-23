@@ -572,6 +572,9 @@ async function handleMemberUpload(input, memberId) {
   loadingOverlay.style.display = 'flex';
   loadingText.textContent = `Đang xử lý khuôn mặt cho ${member.name}...`;
 
+  const mainImgInner = document.getElementById('img-main-inner');
+  if (mainImgInner) mainImgInner.classList.add('shimmer-loading');
+
   // Tạo FormData
   const formData = new FormData();
   formData.append('image', file);
@@ -620,6 +623,8 @@ async function handleMemberUpload(input, memberId) {
     slotCard.style.background = "#ffebee";
   } finally {
     loadingOverlay.style.display = 'none';
+    const mainImgInner = document.getElementById('img-main-inner');
+    if (mainImgInner) mainImgInner.classList.remove('shimmer-loading');
   }
 }
 
@@ -741,9 +746,13 @@ function openCheckoutModal() {
   document.getElementById('modal-summary-qty').textContent = 'x' + qty;
   document.getElementById('modal-summary-total').textContent = (price * qty).toLocaleString('vi-VN') + ' đ';
 
-  document.getElementById('checkout-modal-backdrop').style.display = 'flex';
+  const backdrop = document.getElementById('checkout-modal-backdrop');
+  backdrop.style.display = 'flex';
   document.querySelector('.checkout-modal').style.display = 'flex';
   document.getElementById('checkout-success-view').style.display = 'none';
+  setTimeout(() => {
+    backdrop.classList.add('show');
+  }, 10);
   
   document.getElementById('checkout-name').value = '';
   document.getElementById('checkout-phone').value = '';
@@ -758,7 +767,11 @@ function openCheckoutModal() {
 }
 
 function closeCheckoutModal() {
-  document.getElementById('checkout-modal-backdrop').style.display = 'none';
+  const backdrop = document.getElementById('checkout-modal-backdrop');
+  backdrop.classList.remove('show');
+  setTimeout(() => {
+    backdrop.style.display = 'none';
+  }, 300);
 }
 
 function selectPaymentMethod(method) {
@@ -969,6 +982,43 @@ window.onload = initPage;
         transform: scale(1.6);
         opacity: 0;
       }
+    }
+
+    /* CSS Ghi đè hỗ trợ Modal Transitions & Backdrop Blur */
+    .modal-backdrop {
+      display: none;
+      background-color: rgba(122, 74, 30, 0) !important;
+      backdrop-filter: blur(0px) !important;
+      -webkit-backdrop-filter: blur(0px) !important;
+      transition: background-color 0.25s ease, backdrop-filter 0.25s ease, -webkit-backdrop-filter 0.25s ease, opacity 0.25s ease !important;
+      opacity: 0;
+    }
+    .modal-backdrop.show {
+      background-color: rgba(122, 74, 30, 0.25) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      opacity: 1;
+    }
+    .checkout-modal {
+      transform: scale(0.95) translateY(20px) !important;
+      opacity: 0 !important;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+    }
+    .modal-backdrop.show .checkout-modal {
+      transform: scale(1) translateY(0) !important;
+      opacity: 1 !important;
+    }
+
+    /* Hiệu ứng Shimmer Loading khi chờ ghép ảnh AI */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer-loading {
+      background: linear-gradient(90deg, #f5ede6 25%, #fdf8f4 50%, #f5ede6 75%) !important;
+      background-size: 200% 100% !important;
+      animation: shimmer 1.5s infinite !important;
+      border-radius: 16px;
     }
   </style>
 </body>
