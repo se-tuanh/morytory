@@ -542,6 +542,13 @@
       }
     }
 
+    function getThemeFallbackImage(theme) {
+      if (theme === "Sinh nhật gia đình") return "./birthday_base.jpg";
+      if (theme === "Tốt nghiệp") return "./graduation_base.jpg";
+      if (theme === "Đám cưới") return "./wedding_base.jpg";
+      return "./logo.png";
+    }
+
     function renderOrders(orders) {
       const container = document.getElementById('orders-container');
       
@@ -565,6 +572,44 @@
 
         const payBadgeClass = order.paymentMethod === 'COD' ? 'badge-cod' : 'badge-bank';
         const payMethodLabel = order.paymentMethod === 'COD' ? 'Thanh toán COD' : 'VietQR Bank';
+
+        // Lấy danh sách sản phẩm (hỗ trợ tương thích ngược)
+        const items = order.items || [{
+          title: order.theme && order.theme.includes('Mô hình') ? order.theme : `Mô hình Gia Đình`,
+          theme: order.theme || "",
+          quantity: order.quantity || 1,
+          unitPrice: order.unitPrice || order.totalPrice,
+          compositePreview: order.compositePreview || ""
+        }];
+
+        let itemsHtml = "";
+        items.forEach(item => {
+          const displayTitle = item.title;
+          const displayTheme = item.theme ? `Chủ đề: ${item.theme}` : "";
+          const previewImg = item.compositePreview || (item.theme ? getThemeFallbackImage(item.theme) : "./logo.png");
+          
+          itemsHtml += `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 12px; border-bottom: 0.5px solid #f5ede6; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 12px; flex-grow: 1; min-width: 0;">
+                <div style="width: 50px; height: 50px; border-radius: 8px; border: 0.5px solid #e8ddd4; overflow: hidden; background: var(--cream); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                  <img src="${previewImg}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='./logo.png'" />
+                </div>
+                <div style="min-width: 0; text-align: left;">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--brown); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${displayTitle}">${displayTitle}</div>
+                  <div style="font-size: 11px; color: #888780;">${displayTheme ? displayTheme + ' | ' : ''}SL: ${item.quantity}</div>
+                </div>
+              </div>
+              <div style="text-align: right; flex-shrink: 0;">
+                <div style="font-size: 13px; font-weight: 500; color: var(--text);">${(item.unitPrice * item.quantity).toLocaleString('vi-VN')} đ</div>
+                ${item.compositePreview ? `
+                  <a href="${item.compositePreview}" download="MoryTory_${order.id}.png" target="_blank" style="font-size: 10px; color: var(--brown); text-decoration: underline; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px;">
+                    <i class="ti ti-download"></i> Tải ảnh AI
+                  </a>
+                ` : '<span style="font-size: 10px; color: #b4b2a9;">Làm sẵn</span>'}
+              </div>
+            </div>
+          `;
+        });
 
         const cardHtml = `
           <div class="order-card">
@@ -599,28 +644,16 @@
               </div>
             </div>
 
-            <!-- Cột giữa: Chi tiết sản phẩm & Giá trị -->
-            <div class="order-items-info">
-              <div class="item-theme">${order.theme}</div>
-              <div class="item-qty-price">Số lượng: <strong>${order.quantity}</strong> &nbsp;·&nbsp; Đơn giá: <strong>${order.unitPrice.toLocaleString('vi-VN')} đ</strong></div>
-              <div class="total-price-box">
-                <span style="font-size: 13px; font-weight: 400; color: #888780;">Tổng cộng:</span>
-                ${order.totalPrice.toLocaleString('vi-VN')} đ
+            <!-- Cột phải: Chi tiết sản phẩm & Giá trị -->
+            <div style="flex: 2.7; min-width: 320px; display: flex; flex-direction: column; gap: 14px;">
+              <div style="font-size: 12px; font-weight: 600; color: #888780; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 0.5px solid #e8ddd4; padding-bottom: 6px; text-align: left;">Sản phẩm trong đơn</div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                ${itemsHtml}
               </div>
-            </div>
-
-            <!-- Cột phải: Xem trước composite & Tải ảnh -->
-            <div class="order-preview-sec">
-              <div class="preview-box">
-                ${order.compositePreview ? `<img src="${order.compositePreview}" alt="Preview" />` : `<div class="preview-placeholder"><i class="ti ti-photo"></i></div>`}
+              <div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 0.5px dashed #e8ddd4; padding-top: 10px; margin-top: 4px;">
+                <span style="font-size: 13px; color: #888780;">Tổng tiền thanh toán:</span>
+                <strong style="font-size: 18px; color: var(--brown-d);">${order.totalPrice.toLocaleString('vi-VN')} đ</strong>
               </div>
-              ${order.compositePreview ? `
-                <a href="${order.compositePreview}" download="MoryTory_${order.id}.png" class="btn-download" target="_blank">
-                  <i class="ti ti-download"></i> Tải ảnh composite
-                </a>
-              ` : `
-                <span style="font-size: 11px; color: #b4b2a9;">Không có hình ảnh</span>
-              `}
             </div>
           </div>
         `;

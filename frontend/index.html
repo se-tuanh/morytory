@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="cart.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -690,7 +691,7 @@
           <span class="total-val" id="premium-total">380.000 đ</span>
         </div>
 
-        <button class="btn-order" onclick="openCheckoutModal()">Đặt hàng ngay</button>
+        <button class="btn-order" onclick="addPremiumToCartAndOpen()">Đặt hàng ngay</button>
         <button class="btn-zalo" onclick="window.open('https://zalo.me/0982892784', '_blank')">💬 Hỏi thêm qua Zalo</button>
 
         <div class="info-grid">
@@ -810,9 +811,8 @@
         <!-- Summary Box -->
         <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px;">
           <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
-          <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--brown); font-weight: 500; margin-bottom: 4px;">
-            <span id="modal-summary-theme">Mô hình Gia Đình Cổ Điển</span>
-            <span id="modal-summary-qty">x1</span>
+          <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; padding-right: 4px;">
+            <!-- Danh sách sản phẩm thanh toán render động -->
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed var(--gray-l); padding-top: 8px; margin-top: 8px;">
             <span>Tổng cộng</span>
@@ -1119,11 +1119,29 @@
     let showingOriginalQR = false;
 
     function openCheckoutModal() {
-      const themeTitle = document.getElementById('premium-prod-title').textContent;
-      
-      document.getElementById('modal-summary-theme').textContent = themeTitle;
-      document.getElementById('modal-summary-qty').textContent = 'x' + premiumQty;
-      document.getElementById('modal-summary-total').textContent = fmt(premiumPrice * premiumQty);
+      loadCartData();
+      if (morytoryCart.length === 0) {
+        alert("Giỏ hàng của bạn đang trống!");
+        return;
+      }
+
+      const listContainer = document.getElementById('checkout-items-list');
+      if (listContainer) {
+        listContainer.innerHTML = "";
+        morytoryCart.forEach(item => {
+          const itemHtml = `
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--brown); font-weight: 500;">
+              <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${item.title} ${item.theme ? `(${item.theme})` : ''}
+              </span>
+              <span>x${item.quantity} - ${fmt(item.unitPrice * item.quantity)}</span>
+            </div>
+          `;
+          listContainer.insertAdjacentHTML('beforeend', itemHtml);
+        });
+      }
+
+      document.getElementById('modal-summary-total').textContent = fmt(getCartTotal());
 
       const backdrop = document.getElementById('checkout-modal-backdrop');
       backdrop.style.display = 'flex';
@@ -1143,6 +1161,27 @@
       if (toggleBtn) toggleBtn.textContent = 'Xem mã QR gốc của Shop';
       const titleText = document.getElementById('qr-title-text');
       if (titleText) titleText.textContent = 'Quét mã VietQR để chuyển khoản nhanh';
+    }
+
+    function addPremiumToCartAndOpen() {
+      const title = document.getElementById('premium-prod-title').textContent;
+      const price = premiumPrice;
+      const qty = premiumQty;
+      
+      const mainImgDiv = document.getElementById('premium-main-img');
+      let compositePreview = "";
+      if (mainImgDiv && mainImgDiv.style.backgroundImage) {
+        const match = mainImgDiv.style.backgroundImage.match(/url\(['"]?([^'"]+)['"]?\)/);
+        if (match) compositePreview = match[1];
+      }
+      
+      addToCart({
+        title: title,
+        theme: "",
+        quantity: qty,
+        unitPrice: price,
+        compositePreview: compositePreview
+      });
     }
 
     function closeCheckoutModal() {
@@ -1193,7 +1232,7 @@
     function updateVietQR() {
       if (showingOriginalQR) return; // Don't overwrite original QR image
       const phone = document.getElementById('checkout-phone').value || "09XXXXXXX";
-      const amount = premiumPrice * premiumQty;
+      const amount = getCartTotal();
       const memo = encodeURIComponent(`MORYTORY ${phone}`);
       const accName = encodeURIComponent(BANK_ACCOUNT_NAME);
       
@@ -1224,19 +1263,25 @@
       btnSubmit.style.background = "#b4b2a9";
       btnSubmit.textContent = "Đang xử lý...";
 
-      const themeTitle = document.getElementById('premium-prod-title').textContent;
+      loadCartData();
+      const cartTotal = getCartTotal();
       const orderDetails = {
         customerName: name,
         customerPhone: phone,
         customerAddress: address,
         paymentMethod: currentPaymentMethod,
-        theme: themeTitle,
-        quantity: premiumQty,
-        unitPrice: premiumPrice,
-        totalPrice: premiumPrice * premiumQty,
-        compositePreview: "",
+        totalPrice: cartTotal,
+        items: morytoryCart,
         status: currentPaymentMethod === 'BANK' ? 'Awaiting Payment' : 'Pending'
       };
+
+      // Tương thích ngược cho các API hoặc Admin cũ
+      if (morytoryCart.length > 0) {
+        orderDetails.theme = morytoryCart.map(i => `${i.title} (${i.theme || 'Premium'}) x${i.quantity}`).join(', ');
+        orderDetails.quantity = morytoryCart.reduce((sum, i) => sum + i.quantity, 0);
+        orderDetails.unitPrice = morytoryCart[0].unitPrice;
+        orderDetails.compositePreview = morytoryCart[0].compositePreview || "";
+      }
 
       const orderApiUrl = "https://morytory-ai-worker.morytory.workers.dev/api/orders";
 
@@ -1258,6 +1303,8 @@
         if (!data || !data.success || !data.order) {
           throw new Error('Đặt hàng không thành công.');
         }
+
+        clearCart();
 
         document.querySelector('.checkout-modal').style.display = 'none';
         document.getElementById('checkout-success-view').style.display = 'flex';
@@ -1319,8 +1366,9 @@
         searchCustomerOrders();
       } else if (params.get('lookup') === 'true') {
         openLookupModal();
-      }
-    </script>
+    }
+  </script>
+  <script src="cart.js"></script>
 
   <!-- Nút Zalo nổi có hiệu ứng nhấp nháy -->
   <a href="https://zalo.me/0982892784" target="_blank" class="zalo-float-btn" title="Chat hỗ trợ qua Zalo">
