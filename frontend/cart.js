@@ -35,7 +35,7 @@ function toggleCart(isOpen) {
 }
 
 // Thêm sản phẩm vào giỏ hàng
-function addToCart(item) {
+function addToCart(item, openDrawer = true) {
   loadCartData();
   
   // Kiểm tra trùng lặp (trùng title, theme và danh sách ảnh face swap nếu có)
@@ -63,7 +63,9 @@ function addToCart(item) {
   }
 
   saveCartData();
-  toggleCart(true); // Tự động mở giỏ hàng khi thêm thành công
+  if (openDrawer) {
+    toggleCart(true); // Tự động mở giỏ hàng khi thêm thành công
+  }
 }
 
 // Xóa sản phẩm khỏi giỏ hàng
