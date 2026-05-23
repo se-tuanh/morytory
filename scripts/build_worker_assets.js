@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const destDir = 'C:/Users/AnhNT/.gemini/antigravity/scratch/MoryTory';
-const workerDir = path.join(destDir, 'worker');
+const destDir = path.join(__dirname, '../frontend');
+const workerDir = path.join(__dirname, '../worker');
 
 const filesToEncode = [
   'birthday_base.jpg',
@@ -35,7 +35,7 @@ function main() {
   // Load template URLs
   let urls = {};
   try {
-    const urlsPath = path.join(destDir, 'template_urls.json');
+    const urlsPath = path.join(__dirname, 'template_urls.json');
     if (fs.existsSync(urlsPath)) {
       urls = JSON.parse(fs.readFileSync(urlsPath, 'utf8'));
     }
