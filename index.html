@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="logo.png" type="image/png">
+  <title>MoryTory – Mô hình gỗ cá nhân hoá</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:   #fdf8f3;
+      --blush:   #f5e6d8;
+      --brown:   #7a4a1e;
+      --brown-d: #5c3510;
+      --brown-l: #c9a882;
+      --brown-ll:#f0deca;
+      --gray:    #888178;
+      --gray-l:  #e8ddd4;
+      --text:    #2a1a0e;
+      --serif:   'Playfair Display', Georgia, serif;
+      --sans:    'DM Sans', system-ui, sans-serif;
+    }
+
+    body { background: var(--cream); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.6; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: #fff; border-bottom: 0.5px solid var(--gray-l);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 60px;
+    }
+    .logo { font-family: var(--serif); font-size: 22px; color: var(--brown); cursor: pointer; letter-spacing: -.3px; }
+    .nav-links { display: flex; gap: 28px; font-size: 13px; color: var(--gray); }
+    .nav-links a { text-decoration: none; color: inherit; transition: color .2s; cursor: pointer; }
+    .nav-links a:hover { color: var(--brown); }
+    .cart-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--brown); cursor: pointer;
+      border: 0.5px solid var(--gray-l); border-radius: 20px;
+      padding: 6px 14px; transition: background .2s;
+    }
+    .cart-btn:hover { background: var(--blush); }
+
+    /* ─── PAGE SWITCH ─── */
+    .page { display: none; animation: fadeIn .3s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--blush); padding: 80px 40px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+      max-width: 1100px; margin: 40px auto; border-radius: 24px;
+    }
+    .hero-text h1 { font-family: var(--serif); font-size: 42px; line-height: 1.2; color: var(--brown-d); margin-bottom: 14px; }
+    .hero-text p { font-size: 15px; color: var(--gray); max-width: 380px; margin-bottom: 28px; }
+    .hero-img { width: 380px; height: 280px; background: var(--brown-ll); border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .hero-img span { font-size: 13px; color: var(--brown-l); }
+    .btn-primary {
+      display: inline-block; background: var(--brown); color: #fff;
+      font-size: 14px; font-weight: 500; padding: 12px 28px;
+      border-radius: 10px; border: none; cursor: pointer; transition: background .2s;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--brown-d); }
+
+    /* ─── SECTION ─── */
+    .section { max-width: 1100px; margin: 0 auto 60px; padding: 0 40px; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; }
+    .section-title { font-family: var(--serif); font-size: 26px; color: var(--brown-d); }
+    .section-link { font-size: 13px; color: var(--brown-l); cursor: pointer; text-decoration: underline; }
+
+    /* ─── THEME GRID ─── */
+    .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .theme-card {
+      border-radius: 16px; overflow: hidden; cursor: pointer;
+      border: 0.5px solid var(--gray-l); background: #fff;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .theme-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(122,74,30,.1); }
+    .theme-thumb { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; }
+    .theme-thumb.birthday { background-image: url('birthday_base.jpg'); }
+    .theme-thumb.graduate { background-image: url('graduation_base.jpg'); }
+    .theme-thumb.wedding  { background-image: url('wedding_base.jpg'); }
+    .theme-info { padding: 14px 16px; }
+    .theme-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .theme-sub  { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
+    .btn-theme {
+      width: 100%; padding: 9px; border-radius: 8px;
+      background: var(--brown); color: #fff;
+      border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .2s;
+    }
+    .btn-theme:hover { background: var(--brown-d); }
+
+    /* ─── PREMIUM GRID ─── */
+    .premium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .premium-card {
+      border-radius: 16px; overflow: hidden; cursor: pointer;
+      border: 0.5px solid var(--gray-l); background: #fff;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .premium-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(122,74,30,.1); }
+    .premium-thumb { width: 100%; aspect-ratio: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 12px; }
+    .premium-thumb.p1 { background: url('premium1.jpg') center/cover no-repeat; }
+    .premium-thumb.p2 { background: url('premium2.jpg') center/cover no-repeat; }
+    .premium-thumb.p3 { background: url('premium3.jpg') center/cover no-repeat; }
+    .premium-label { font-size: 10px; background: var(--brown-ll); color: var(--brown); padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .premium-info { padding: 14px 16px; }
+    .premium-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .premium-price { font-size: 14px; color: var(--brown); font-weight: 500; margin-bottom: 12px; }
+    .btn-premium {
+      width: 100%; padding: 9px; border-radius: 8px;
+      background: var(--cream); color: var(--brown);
+      border: 1.5px solid var(--brown); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s;
+    }
+    .btn-premium:hover { background: var(--brown); color: #fff; }
+
+    /* ─── CUSTOM BANNER ─── */
+    .custom-banner {
+      background: var(--brown); border-radius: 20px;
+      padding: 50px 60px; display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto 60px; padding-left: 60px; padding-right: 60px;
+    }
+    .custom-banner h2 { font-family: var(--serif); font-size: 30px; color: #fff; margin-bottom: 10px; }
+    .custom-banner p { font-size: 14px; color: rgba(255,255,255,.7); max-width: 400px; }
+    .btn-white {
+      background: #fff; color: var(--brown);
+      font-size: 14px; font-weight: 500; padding: 12px 28px;
+      border-radius: 10px; border: none; cursor: pointer; transition: opacity .2s; white-space: nowrap;
+    }
+    .btn-white:hover { opacity: .88; }
+
+    /* ═══════════════════════════════
+       PRODUCT PAGE
+    ═══════════════════════════════ */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--gray); cursor: pointer; margin: 24px 40px;
+      transition: color .2s;
+    }
+    .back-btn:hover { color: var(--brown); }
+
+    .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1100px; margin: 0 auto 60px; padding: 0 40px; }
+
+    /* left: images */
+    .prod-images {}
+    .prod-main-img {
+      width: 100%; aspect-ratio: 1; background: var(--blush);
+      border-radius: 20px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px; position: relative; overflow: hidden;
+    }
+    .prod-main-img span { font-size: 13px; color: var(--brown-l); }
+    .handmade-tag {
+      position: absolute; top: 14px; left: 14px;
+      background: #fff; border: 0.5px solid var(--gray-l);
+      font-size: 11px; color: var(--brown); padding: 4px 10px; border-radius: 20px; font-weight: 500;
+    }
+    .prod-thumbs { display: flex; gap: 10px; }
+    .prod-thumb {
+      width: 64px; height: 64px; border-radius: 10px;
+      background: var(--blush); border: 2px solid transparent;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--brown-l); transition: border-color .2s;
+    }
+    .prod-thumb.active { border-color: var(--brown); }
+
+    /* right: info */
+    .prod-info {}
+    .prod-badges { display: flex; gap: 8px; margin-bottom: 10px; }
+    .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .badge-new { background: #faeeda; color: #633806; }
+    .badge-custom { background: var(--brown-ll); color: var(--brown); }
+    .badge-premium { background: #f5e8df; color: var(--brown); }
+    .prod-title { font-family: var(--serif); font-size: 28px; color: var(--brown-d); margin-bottom: 8px; line-height: 1.25; }
+    .prod-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .prod-price { font-size: 24px; font-weight: 500; color: var(--brown); }
+    .prod-old-price { font-size: 14px; color: var(--brown-l); text-decoration: line-through; }
+    .prod-rating { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray); margin-bottom: 20px; }
+    .stars { color: #EF9F27; }
+
+    .divider { border: none; border-top: 0.5px solid var(--gray-l); margin: 16px 0; }
+    .field-label { font-size: 11px; font-weight: 500; color: var(--gray); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+
+    /* member selector */
+    .member-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+    .member-opt {
+      border: 1.5px solid var(--gray-l); border-radius: 10px;
+      padding: 10px 4px; text-align: center; cursor: pointer;
+      background: #fff; transition: all .15s;
+    }
+    .member-opt:hover { border-color: var(--brown-l); }
+    .member-opt.sel { border-color: var(--brown); background: #fdf0e6; }
+    .member-icon { font-size: 18px; margin-bottom: 4px; }
+    .member-label { font-size: 11px; color: var(--brown); font-weight: 500; }
+
+    /* upload */
+    .upload-zone {
+      border: 1.5px dashed var(--brown-l); border-radius: 12px;
+      padding: 22px; text-align: center; cursor: pointer;
+      background: #fffbf8; transition: background .15s; margin-bottom: 10px;
+    }
+    .upload-zone:hover { background: var(--blush); }
+    .upload-icon { font-size: 28px; margin-bottom: 8px; }
+    .upload-title { font-size: 14px; font-weight: 500; color: var(--brown); margin-bottom: 4px; }
+    .upload-hint { font-size: 12px; color: var(--brown-l); }
+    .upload-tips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .tip { font-size: 11px; color: var(--gray); background: #f5ede6; padding: 4px 10px; border-radius: 20px; }
+
+    /* qty */
+    .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .qty-btn {
+      width: 34px; height: 34px; border-radius: 8px;
+      border: 0.5px solid var(--gray-l); background: #fff;
+      font-size: 20px; color: var(--brown); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-weight: 400;
+      transition: background .15s;
+    }
+    .qty-btn:hover { background: var(--blush); }
+    .qty-val { font-size: 17px; font-weight: 500; color: var(--text); min-width: 28px; text-align: center; }
+    .stock-note { font-size: 12px; color: var(--brown-l); }
+
+    /* total */
+    .total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #fdf0e6; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px;
+    }
+    .total-label { font-size: 13px; color: var(--gray); }
+    .total-val { font-size: 20px; font-weight: 500; color: var(--brown); }
+
+    .btn-order {
+      width: 100%; padding: 14px; border-radius: 12px;
+      border: none; background: var(--brown); color: #fff;
+      font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 10px;
+      transition: background .2s;
+    }
+    .btn-order:hover { background: var(--brown-d); }
+    .btn-zalo {
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: 1.5px solid #0068ff; background: #fff; color: #0068ff;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .15s;
+    }
+    .btn-zalo:hover { background: #f0f5ff; }
+
+    /* info cards */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+    .info-card {
+      background: #fffbf8; border: 0.5px solid var(--gray-l);
+      border-radius: 10px; padding: 12px; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .info-card-icon { font-size: 18px; flex-shrink: 0; }
+    .info-card-title { font-size: 12px; font-weight: 500; color: var(--brown); margin-bottom: 2px; }
+    .info-card-desc { font-size: 11px; color: var(--brown-l); line-height: 1.4; }
+
+    /* process */
+    .process-bar {
+      background: #fff; border-top: 0.5px solid var(--gray-l);
+      padding: 32px 40px; max-width: 1100px; margin: 0 auto 60px;
+    }
+    .process-title { font-family: var(--serif); font-size: 20px; color: var(--brown-d); margin-bottom: 20px; }
+    .process-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .p-step { text-align: center; }
+    .p-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--blush); border: 1.5px solid var(--brown-l);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px; font-size: 18px;
+    }
+    .p-name { font-size: 13px; font-weight: 500; color: var(--brown); margin-bottom: 3px; }
+    .p-desc { font-size: 11px; color: var(--brown-l); line-height: 1.4; }
+
+    /* ─── PREMIUM PRODUCT PAGE ─── */
+    .premium-no-upload { font-size: 13px; color: var(--gray); background: var(--blush); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+    /* footer */
+    footer { background: var(--brown-d); color: rgba(255,255,255,.6); font-size: 12px; text-align: center; padding: 20px; }
+    footer strong { color: #fff; }
+
+    /* ─── MODAL STYLES ─── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .checkout-modal, .checkout-success-view {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .payment-opt {
+      border: 1.5px solid #e8ddd4;
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .payment-opt:hover {
+      border-color: var(--brown-l);
+      background: #fffbf8;
+    }
+    .payment-opt.selected {
+      border-color: var(--brown) !important;
+      background: #fdf0e6 !important;
+    }
+    .payment-opt.selected i {
+      color: var(--brown) !important;
+    }
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #e8ddd4;
+      border-top: 3px solid var(--brown);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { flex-direction: column; padding: 40px 20px; margin: 20px 15px; }
+      .hero-img { width: 100%; height: 220px; }
+      .hero-text h1 { font-size: 32px; }
+      .section { padding: 0 20px; }
+      .theme-grid, .premium-grid { grid-template-columns: 1fr; }
+      .custom-banner { flex-direction: column; padding: 30px 20px; text-align: center; gap: 20px; }
+      .custom-banner p { margin-bottom: 20px; }
+      .product-layout { grid-template-columns: 1fr; padding: 0 20px; gap: 24px; }
+      .process-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .process-bar { padding: 32px 20px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
+      #lookup-modal-backdrop > div { margin: 15px; }
+      footer { padding: 20px 10px; }
+      .member-grid { grid-template-columns: repeat(2, 1fr); }
+      #blog-section > div { grid-template-columns: 1fr !important; }
+      #about-section > div { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 8px;">
+      <img src="logo.png" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 50%;" onerror="this.style.display='none'">
+      <span>MoryTory</span>
+    </div>
+    <div class="nav-links">
+      <a onclick="showPage('home')">Trang chủ</a>
+      <a onclick="scrollToSection('about')">Về chúng tôi</a>
+      <a onclick="scrollToSection('blog')">Blog</a>
+      <a onclick="openLookupModal()" style="font-weight: 500; color: var(--brown); cursor: pointer;">Tra cứu đơn hàng</a>
+    </div>
+    <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
+  </nav>
+
+  <!-- ═══ HOME PAGE ═══ -->
+  <div id="page-home" class="page active">
+
+    <!-- Hero -->
+    <div class="section" style="margin-top:40px;">
+      <div class="hero">
+        <div class="hero-text">
+          <h1>Mô hình gỗ<br>khắc từ kỷ niệm<br>của bạn</h1>
+          <p>Chúng tôi biến ảnh gia đình, lễ tốt nghiệp hay đám cưới thành mô hình gỗ thủ công độc đáo.</p>
+          <button class="btn-primary" onclick="document.getElementById('theme-section').scrollIntoView({behavior:'smooth'})">Khám phá ngay</button>
+        </div>
+        <div class="hero-img"><span>Ảnh hero sản phẩm</span></div>
+      </div>
+    </div>
+
+    <!-- Chọn chủ đề -->
+    <div class="section" id="theme-section">
+      <div class="section-head">
+        <div class="section-title">Chọn chủ đề</div>
+        <div class="section-link">Xem tất cả</div>
+      </div>
+      <div class="theme-grid">
+        <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
+          <div class="theme-thumb birthday"></div>
+          <div class="theme-info">
+            <div class="theme-name">Sinh nhật gia đình</div>
+            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <button class="btn-theme">Chọn chủ đề này</button>
+          </div>
+        </div>
+        <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
+          <div class="theme-thumb graduate"></div>
+          <div class="theme-info">
+            <div class="theme-name">Tốt nghiệp</div>
+            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <button class="btn-theme">Chọn chủ đề này</button>
+          </div>
+        </div>
+        <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
+          <div class="theme-thumb wedding"></div>
+          <div class="theme-info">
+            <div class="theme-name">Đám cưới</div>
+            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <button class="btn-theme">Chọn chủ đề này</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bộ sưu tập Premium -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Bộ sưu tập Premium</div>
+        <div class="section-link">Xem tất cả</div>
+      </div>
+      <div class="premium-grid">
+        <div class="premium-card" onclick="showProductPage('premium','Mô hình Gia Đình Cổ Điển','380.000','premium1.jpg','')">
+          <div class="premium-thumb p1">
+            <span class="premium-label">Làm sẵn</span>
+          </div>
+          <div class="premium-info">
+            <div class="premium-name">Mô hình Gia Đình Cổ Điển</div>
+            <div class="premium-price">380.000 đ</div>
+            <button class="btn-premium">Mua ngay</button>
+          </div>
+        </div>
+        <div class="premium-card" onclick="showProductPage('premium','Mô hình Đôi Yêu','320.000','premium2.jpg','')">
+          <div class="premium-thumb p2">
+            <span class="premium-label">Làm sẵn</span>
+          </div>
+          <div class="premium-info">
+            <div class="premium-name">Mô hình Đôi Yêu</div>
+            <div class="premium-price">320.000 đ</div>
+            <button class="btn-premium">Mua ngay</button>
+          </div>
+        </div>
+        <div class="premium-card" onclick="showProductPage('premium','Mô hình Bé Yêu','290.000','premium3.jpg','')">
+          <div class="premium-thumb p3">
+            <span class="premium-label">Làm sẵn</span>
+          </div>
+          <div class="premium-info">
+            <div class="premium-name">Mô hình Bé Yêu</div>
+            <div class="premium-price">290.000 đ</div>
+            <button class="btn-premium">Mua ngay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner custom -->
+    <div style="padding:0 40px;">
+      <div class="custom-banner">
+        <div>
+          <h2>Có ý tưởng riêng?</h2>
+          <p>Chúng tôi nhận làm theo yêu cầu — từ mẫu mã, kích thước đến nội dung khắc. Liên hệ để được tư vấn miễn phí.</p>
+        </div>
+        <button class="btn-white" onclick="window.open('https://zalo.me/0982892784', '_blank')">Liên hệ tư vấn</button>
+      </div>
+    </div>
+
+    <!-- Về chúng tôi -->
+    <div class="section" id="about-section" style="scroll-margin-top: 80px; margin-top: 60px;">
+      <div class="section-head">
+        <div class="section-title">Về chúng tôi</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; padding: 40px; border-radius: 20px; border: 0.5px solid var(--gray-l); align-items: center;">
+        <div style="background: var(--blush); aspect-ratio: 4/3; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100%;">
+          <span style="font-size: 14px; color: var(--brown-d); font-weight: 500;">MoryTory Chế Tác Gỗ Thủ Công</span>
+        </div>
+        <div>
+          <h3 style="font-family: var(--serif); font-size: 22px; color: var(--brown-d); margin-bottom: 14px;">Chế tác từ cả trái tim và sự tận tâm</h3>
+          <p style="font-size: 14px; color: var(--gray); margin-bottom: 14px; line-height: 1.6;">
+            Tại MoryTory, chúng tôi tin rằng mỗi khoảnh khắc hạnh phúc trong cuộc sống đều xứng đáng được lưu giữ một cách trân trọng nhất. Bằng sự kết hợp giữa công nghệ khắc laser hiện đại và đôi bàn tay khéo léo của những người thợ thủ công, chúng tôi tạo nên những mô hình gỗ cá nhân hóa sống động và đầy ý nghĩa.
+          </p>
+          <p style="font-size: 14px; color: var(--gray); line-height: 1.6;">
+            Từng phôi gỗ được chọn lọc kỹ càng, gia công tỉ mỉ để đảm bảo độ bền đẹp theo thời gian. Đây không chỉ là món quà trang trí tinh tế mà còn là nơi lưu trữ kỷ niệm gia đình, tình yêu đôi lứa bền vững mãi mãi.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog Section -->
+    <div class="section" id="blog-section" style="scroll-margin-top: 80px;">
+      <div class="section-head">
+        <div class="section-title">Góc cảm hứng (Blog)</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 1</span></div>
+          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Ý tưởng quà tặng</div>
+            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Top 5 món quà kỷ niệm ngày cưới ý nghĩa nhất</h4>
+            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Gợi ý những món quà độc bản cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc.</p>
+          </div>
+        </div>
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 2</span></div>
+          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Phong cách sống</div>
+            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Cách trang trí mô hình gỗ handmade trong phòng khách</h4>
+            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Bí quyết sắp đặt nghệ thuật mang lại sự ấm cúng, sang trọng cho không gian nhà bạn.</p>
+          </div>
+        </div>
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 3</span></div>
+          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Hậu trường chế tác</div>
+            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Hành trình tạo nên mô hình gỗ từ công nghệ vẽ AI</h4>
+            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Khám phá chi tiết quy trình ghép khuôn mặt AI và điêu khắc thủ công gỗ tinh xảo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
+  </div>
+
+  <!-- ═══ PRODUCT PAGE (CUSTOM – có upload ảnh) ═══ -->
+  <div id="page-product-custom" class="page">
+    <div class="back-btn" onclick="showPage('home')">← Quay lại</div>
+
+    <div class="product-layout">
+      <!-- Ảnh trái -->
+      <div class="prod-images">
+        <div class="prod-main-img">
+          <span id="custom-img-label">Ảnh sản phẩm</span>
+          <div class="handmade-tag">Handmade</div>
+        </div>
+        <div class="prod-thumbs">
+          <div class="prod-thumb active">1</div>
+          <div class="prod-thumb">2</div>
+          <div class="prod-thumb">3</div>
+          <div class="prod-thumb" style="border-style:dashed;color:#b4b2a9;font-size:12px;">+2</div>
+        </div>
+      </div>
+
+      <!-- Info phải -->
+      <div class="prod-info">
+        <div class="prod-badges">
+          <span class="badge badge-new">Mới</span>
+          <span class="badge badge-custom">Cá nhân hoá</span>
+        </div>
+        <div class="prod-title" id="custom-prod-title">Mô hình Gia Đình Kỷ Niệm</div>
+        <div class="prod-price-row">
+          <span class="prod-price" id="custom-prod-price">450.000 đ</span>
+          <span class="prod-old-price" id="custom-prod-old">550.000 đ</span>
+        </div>
+        <div class="prod-rating"><span class="stars">★★★★★</span> 4.9 &nbsp;(38 đánh giá) &nbsp;·&nbsp; 126 đã bán</div>
+
+        <hr class="divider">
+
+        <div class="field-label">Thành viên trong ảnh</div>
+        <div class="member-grid">
+          <div class="member-opt" onclick="selMember(this)"><div class="member-icon">👤</div><div class="member-label">1 người</div></div>
+          <div class="member-opt sel" onclick="selMember(this)"><div class="member-icon">👥</div><div class="member-label">2 người</div></div>
+          <div class="member-opt" onclick="selMember(this)"><div class="member-icon">👨‍👩‍👧</div><div class="member-label">3 người</div></div>
+          <div class="member-opt" onclick="selMember(this)"><div class="member-icon">👨‍👩‍👧‍👦</div><div class="member-label">4+ người</div></div>
+        </div>
+
+        <div class="field-label">Tải ảnh của bạn</div>
+        <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+          <div class="upload-icon">☁️</div>
+          <div class="upload-title">Kéo thả hoặc bấm để chọn ảnh</div>
+          <div class="upload-hint">JPG, PNG · Tối đa 10MB · Nên chụp rõ mặt, đủ sáng</div>
+          <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this)">
+        </div>
+        <div class="upload-tips">
+          <span class="tip">✓ Mặt nhìn thẳng</span>
+          <span class="tip">✓ Ánh sáng tốt</span>
+          <span class="tip">✓ Không đeo kính râm</span>
+          <span class="tip">✓ Nền đơn giản</span>
+        </div>
+
+        <div class="field-label">Số lượng</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty('custom',-1)">−</button>
+          <span class="qty-val" id="custom-qty">1</span>
+          <button class="qty-btn" onclick="changeQty('custom',1)">+</button>
+          <span class="stock-note">Còn 15 sản phẩm</span>
+        </div>
+
+        <div class="total-row">
+          <span class="total-label">Tổng cộng</span>
+          <span class="total-val" id="custom-total">450.000 đ</span>
+        </div>
+
+        <button class="btn-order">Đặt hàng ngay</button>
+        <button class="btn-zalo" onclick="window.open('https://zalo.me/0982892784', '_blank')">💬 Tư vấn qua Zalo</button>
+
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-icon">🚚</div><div><div class="info-card-title">Giao toàn quốc</div><div class="info-card-desc">3–5 ngày làm việc</div></div></div>
+          <div class="info-card"><div class="info-card-icon">✏️</div><div><div class="info-card-title">Cá nhân hoá 100%</div><div class="info-card-desc">Khắc laser từ ảnh bạn</div></div></div>
+          <div class="info-card"><div class="info-card-icon">👁️</div><div><div class="info-card-title">Xem trước miễn phí</div><div class="info-card-desc">Preview trước khi sản xuất</div></div></div>
+          <div class="info-card"><div class="info-card-icon">🛡️</div><div><div class="info-card-title">Bảo hành 6 tháng</div><div class="info-card-desc">Đổi mới nếu lỗi sản xuất</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="process-bar">
+      <div class="process-title">Quy trình đặt hàng</div>
+      <div class="process-steps">
+        <div class="p-step"><div class="p-circle">☁️</div><div class="p-name">Tải ảnh lên</div><div class="p-desc">Chọn ảnh rõ nét, đủ sáng</div></div>
+        <div class="p-step"><div class="p-circle">👁️</div><div class="p-name">Xem trước</div><div class="p-desc">Nhận preview trong 2h</div></div>
+        <div class="p-step"><div class="p-circle">💳</div><div class="p-name">Xác nhận & TT</div><div class="p-desc">Duyệt rồi mới thanh toán</div></div>
+        <div class="p-step"><div class="p-circle">📦</div><div class="p-name">Nhận hàng</div><div class="p-desc">Đóng gói cẩn thận</div></div>
+      </div>
+    </div>
+
+    <footer><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
+  </div>
+
+  <!-- ═══ PRODUCT PAGE (PREMIUM – không upload ảnh) ═══ -->
+  <div id="page-product-premium" class="page">
+    <div class="back-btn" onclick="showPage('home')">← Quay lại</div>
+
+    <div class="product-layout">
+      <div class="prod-images">
+        <div id="premium-main-img" class="prod-main-img" style="background:#8B5A2B; background-size: cover; background-position: center;">
+          <span id="premium-img-placeholder" style="color:rgba(255,255,255,.5);font-size:13px;">Ảnh sản phẩm</span>
+          <div class="handmade-tag">Premium · Làm sẵn</div>
+        </div>
+        <div class="prod-thumbs">
+          <div class="prod-thumb active">1</div>
+          <div class="prod-thumb">2</div>
+          <div class="prod-thumb">3</div>
+        </div>
+      </div>
+
+      <div class="prod-info">
+        <div class="prod-badges">
+          <span class="badge badge-premium">Premium</span>
+          <span class="badge badge-new">Làm sẵn</span>
+        </div>
+        <div class="prod-title" id="premium-prod-title">Mô hình Gia Đình Cổ Điển</div>
+        <div class="prod-price-row">
+          <span class="prod-price" id="premium-prod-price">380.000 đ</span>
+        </div>
+        <div class="prod-rating"><span class="stars">★★★★★</span> 5.0 &nbsp;(12 đánh giá) &nbsp;·&nbsp; 48 đã bán</div>
+
+        <hr class="divider">
+
+        <div class="premium-no-upload">
+          ℹ️ Sản phẩm này đã được làm sẵn — <strong>không cần gửi ảnh</strong>. Bạn nhận đúng sản phẩm như hình.
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div class="field-label" style="margin-bottom:8px;">Thông số sản phẩm</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+            <div style="background:var(--blush);border-radius:8px;padding:10px 14px;"><span style="color:var(--gray);display:block;font-size:11px;margin-bottom:2px;">Chất liệu</span><span style="color:var(--text);font-weight:500;">Gỗ MDF cao cấp</span></div>
+            <div style="background:var(--blush);border-radius:8px;padding:10px 14px;"><span style="color:var(--gray);display:block;font-size:11px;margin-bottom:2px;">Kích thước</span><span style="color:var(--text);font-weight:500;">20 × 15 cm</span></div>
+            <div style="background:var(--blush);border-radius:8px;padding:10px 14px;"><span style="color:var(--gray);display:block;font-size:11px;margin-bottom:2px;">Hoàn thiện</span><span style="color:var(--text);font-weight:500;">Sơn mài thủ công</span></div>
+            <div style="background:var(--blush);border-radius:8px;padding:10px 14px;"><span style="color:var(--gray);display:block;font-size:11px;margin-bottom:2px;">Thời gian giao</span><span style="color:var(--text);font-weight:500;">2–3 ngày</span></div>
+          </div>
+        </div>
+
+        <div class="field-label">Số lượng</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty('premium',-1)">−</button>
+          <span class="qty-val" id="premium-qty">1</span>
+          <button class="qty-btn" onclick="changeQty('premium',1)">+</button>
+          <span class="stock-note">Còn 8 sản phẩm</span>
+        </div>
+
+        <div class="total-row">
+          <span class="total-label">Tổng cộng</span>
+          <span class="total-val" id="premium-total">380.000 đ</span>
+        </div>
+
+        <button class="btn-order" onclick="openCheckoutModal()">Đặt hàng ngay</button>
+        <button class="btn-zalo" onclick="window.open('https://zalo.me/0982892784', '_blank')">💬 Hỏi thêm qua Zalo</button>
+
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-icon">🚚</div><div><div class="info-card-title">Giao nhanh 2–3 ngày</div><div class="info-card-desc">Toàn quốc, đóng gói cẩn thận</div></div></div>
+          <div class="info-card"><div class="info-card-icon">📦</div><div><div class="info-card-title">Hàng có sẵn</div><div class="info-card-desc">Không cần đợi sản xuất</div></div></div>
+          <div class="info-card"><div class="info-card-icon">🔄</div><div><div class="info-card-title">Đổi trả 7 ngày</div><div class="info-card-desc">Nếu hàng lỗi từ nhà sản xuất</div></div></div>
+          <div class="info-card"><div class="info-card-icon">🛡️</div><div><div class="info-card-title">Bảo hành 6 tháng</div><div class="info-card-desc">Cam kết chất lượng</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <footer><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
+  </div>
+
+  <script>
+    let customQty = 1, customPrice = 450000;
+    let premiumQty = 1, premiumPrice = 380000;
+
+    function fmt(n) { return n.toLocaleString('vi-VN') + ' đ'; }
+
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showProductPage(type, title, price, oldPrice, theme) {
+      if (type === 'custom') {
+        const urlPrice = price.replace(/\./g,'');
+        const urlOldPrice = oldPrice ? oldPrice.replace(/\./g,'') : '';
+        window.location.href = `product_custom.html?title=${encodeURIComponent(title)}&price=${urlPrice}&oldPrice=${urlOldPrice}&theme=${encodeURIComponent(theme || '')}`;
+      } else {
+        premiumPrice = parseInt(price.replace(/\./g,''));
+        premiumQty = 1;
+        document.getElementById('premium-prod-title').textContent = title;
+        document.getElementById('premium-prod-price').textContent = fmt(premiumPrice);
+        document.getElementById('premium-qty').textContent = 1;
+        document.getElementById('premium-total').textContent = fmt(premiumPrice);
+
+        // Update product images
+        const mainImgDiv = document.getElementById('premium-main-img');
+        const imgUrl = oldPrice; // e.g. 'premium1.jpg'
+        if (mainImgDiv) {
+          if (imgUrl) {
+            mainImgDiv.style.backgroundImage = `url('${imgUrl}')`;
+            mainImgDiv.style.backgroundSize = 'cover';
+            mainImgDiv.style.backgroundPosition = 'center';
+            const placeholder = document.getElementById('premium-img-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+          } else {
+            mainImgDiv.style.backgroundImage = 'none';
+            mainImgDiv.style.backgroundColor = '#8B5A2B';
+            const placeholder = document.getElementById('premium-img-placeholder');
+            if (placeholder) placeholder.style.display = 'block';
+          }
+        }
+
+        // Update thumbnails
+        const thumbs = document.querySelectorAll('#page-product-premium .prod-thumb');
+        if (thumbs.length > 0) {
+          thumbs.forEach((thumb, idx) => {
+            if (idx === 0 && imgUrl) {
+              thumb.style.backgroundImage = `url('${imgUrl}')`;
+              thumb.style.backgroundSize = 'cover';
+              thumb.style.backgroundPosition = 'center';
+              thumb.textContent = '';
+              thumb.style.display = 'block';
+              thumb.classList.add('active');
+            } else {
+              thumb.style.display = 'none';
+            }
+          });
+        }
+
+        showPage('product-premium');
+      }
+    }
+
+    function changeQty(type, d) {
+      if (type === 'custom') {
+        customQty = Math.max(1, Math.min(99, customQty + d));
+        document.getElementById('custom-qty').textContent = customQty;
+        document.getElementById('custom-total').textContent = fmt(customPrice * customQty);
+      } else {
+        premiumQty = Math.max(1, Math.min(99, premiumQty + d));
+        document.getElementById('premium-qty').textContent = premiumQty;
+        document.getElementById('premium-total').textContent = fmt(premiumPrice * premiumQty);
+      }
+    }
+
+    function selMember(el) {
+      document.querySelectorAll('.member-opt').forEach(o => o.classList.remove('sel'));
+      el.classList.add('sel');
+    }
+
+    function handleFile(input) {
+      if (input.files && input.files[0]) {
+        const zone = input.closest('.upload-zone');
+        zone.querySelector('.upload-title').textContent = '✓ ' + input.files[0].name;
+        zone.style.borderColor = '#7a4a1e';
+        zone.style.background = '#f5ede6';
+      }
+    }
+  </script>
+
+  <!-- Checkout Modal Backdrop -->
+  <div class="modal-backdrop" id="checkout-modal-backdrop">
+    <div class="checkout-modal" style="background: #fff; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
+      <!-- Modal Header -->
+      <div style="padding: 20px 24px; border-bottom: 0.5px solid var(--gray-l); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 18px; color: #3a2010; font-weight: 600; font-family: var(--serif);">Thông tin đặt hàng</h3>
+        <button onclick="closeCheckoutModal()" style="background: none; border: none; font-size: 20px; color: var(--gray); cursor: pointer;"><i class="ti ti-x"></i></button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <!-- Summary Box -->
+        <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--brown); font-weight: 500; margin-bottom: 4px;">
+            <span id="modal-summary-theme">Mô hình Gia Đình Cổ Điển</span>
+            <span id="modal-summary-qty">x1</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed var(--gray-l); padding-top: 8px; margin-top: 8px;">
+            <span>Tổng cộng</span>
+            <span id="modal-summary-total">380.000 đ</span>
+          </div>
+        </div>
+
+        <!-- Shipping Form -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Họ và tên khách hàng</label>
+            <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Số điện thoại</label>
+            <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Địa chỉ giao hàng</label>
+            <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px; font-family: inherit; resize: none;" required></textarea>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div>
+          <label style="font-size: 12px; font-weight: 500; color: var(--brown); display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
+              <i class="ti ti-truck" style="font-size: 20px; color: var(--brown);"></i>
+              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Thanh toán COD</span>
+            </div>
+            <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
+              <i class="ti ti-qrcode" style="font-size: 20px; color: var(--brown-l);"></i>
+              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Chuyển khoản (VietQR)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VietQR Container (Hidden by default) -->
+        <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="font-size: 12px; font-weight: 500; color: var(--brown);" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
+          <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid var(--gray-l); border-radius: 8px; background: #fff; padding: 8px;" />
+          <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: var(--brown); font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
+            Xem mã QR gốc của Shop
+          </button>
+          <div style="font-size: 11px; color: var(--gray); line-height: 1.4;">
+            Nội dung CK: <strong id="qr-transfer-info" style="color: var(--brown);">MORYTORY 0982892784</strong><br>
+            Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
+            Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding: 16px 24px; border-top: 0.5px solid var(--gray-l); background: #fffbf8; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; gap: 12px;">
+        <button onclick="closeCheckoutModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid var(--gray-l); background: #fff; color: var(--gray); font-size: 14px; font-weight: 500; cursor: pointer;">Hủy bỏ</button>
+        <button id="btn-submit-order" onclick="submitOrder()" style="flex: 1.5; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer;">Xác nhận đặt hàng</button>
+      </div>
+    </div>
+    
+    <!-- Success Modal View -->
+    <div class="checkout-success-view" id="checkout-success-view" style="display: none; background: #fff; border-radius: 16px; max-width: 450px; width: 100%; padding: 32px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+      <div style="width: 60px; height: 60px; border-radius: 50%; background: #e8f5e9; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+        <i class="ti ti-circle-check" style="font-size: 36px; color: #2e7d32;"></i>
+      </div>
+      <div>
+        <h3 style="font-size: 20px; color: #2e7d32; font-weight: 600; margin-bottom: 6px;">Đặt hàng thành công!</h3>
+        <p id="success-message" style="font-size: 13px; color: #888780; line-height: 1.5;">Cảm ơn bạn đã lựa chọn MoryTory. Đơn hàng của bạn đã được ghi nhận vào hệ thống.</p>
+      </div>
+      
+      <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px; width: 100%; text-align: left; font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #888780;">Mã đơn hàng:</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <strong id="success-order-id" style="color: #7a4a1e;">ORD-12345</strong>
+            <button onclick="copyToClipboard(document.getElementById('success-order-id').textContent, 'Đã sao chép mã đơn hàng!')" style="background: none; border: none; color: #7a4a1e; cursor: pointer; padding: 2px 4px; font-size: 14px;" title="Sao chép mã"><i class="ti ti-copy"></i></button>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Khách hàng:</span><span id="success-customer-name" style="font-weight: 500;">Nguyễn Văn A</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Số điện thoại:</span><span id="success-customer-phone" style="font-weight: 500;">0912345678</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Tổng thanh toán:</span><strong id="success-order-total" style="color: #7a4a1e; font-size: 14px;">380.000 đ</strong></div>
+      </div>
+      
+      <div style="display: flex; gap: 10px; width: 100%;">
+        <button onclick="copyLookupLink()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid var(--gray-l); background: #fff; color: #7a4a1e; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"><i class="ti ti-link"></i> Link tra cứu</button>
+        <button onclick="finishOrderFlow()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer;">Quay lại trang chủ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lookup Modal Backdrop -->
+  <div class="modal-backdrop" id="lookup-modal-backdrop">
+    <div style="background: #fff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.15); animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+      <!-- Modal Header -->
+      <div style="padding: 20px 24px; border-bottom: 0.5px solid var(--gray-l); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-family: var(--serif); font-size: 20px; color: var(--brown-d); font-weight: 600;">Tra cứu đơn hàng</h3>
+        <button onclick="closeLookupModal()" style="background: none; border: none; font-size: 20px; color: var(--gray); cursor: pointer;"><i class="ti ti-x"></i></button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="tel" id="lookup-phone" placeholder="Số điện thoại mua hàng..." style="flex: 1; min-width: 180px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 14px;" />
+            <input type="text" id="lookup-order-id" placeholder="Mã đơn hàng (Ví dụ: ORD-...)" style="flex: 1.5; min-width: 220px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 14px;" onkeydown="if(event.key==='Enter') searchCustomerOrders()" />
+          </div>
+          <button onclick="searchCustomerOrders()" style="background: var(--brown); color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; width: 100%;">Tra cứu đơn hàng</button>
+        </div>
+        
+        <!-- Search Results Container -->
+        <div id="lookup-results-container" style="display: flex; flex-direction: column; gap: 16px; margin-top: 4px;">
+          <div style="text-align: center; padding: 30px 10px; color: var(--gray); font-size: 13px;">
+            Nhập số điện thoại và mã đơn hàng của bạn để tra cứu trạng thái đơn hàng.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPaymentMethod = 'COD';
+    const BANK_ID = "VietinBank";
+    const BANK_ACCOUNT_NO = "102875779490";
+    const BANK_ACCOUNT_NAME = "NGUYEN TUAN ANH";
+
+    function scrollToSection(secId) {
+      showPage('home');
+      const el = document.getElementById(secId + '-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function openLookupModal() {
+      document.getElementById('lookup-modal-backdrop').style.display = 'flex';
+      document.getElementById('lookup-phone').value = '';
+      document.getElementById('lookup-order-id').value = '';
+      document.getElementById('lookup-results-container').innerHTML = `
+        <div style="text-align: center; padding: 30px 10px; color: var(--gray); font-size: 13px;">
+          Nhập số điện thoại và mã đơn hàng của bạn để tra cứu trạng thái đơn hàng.
+        </div>
+      `;
+      document.getElementById('lookup-phone').focus();
+    }
+
+    function closeLookupModal() {
+      document.getElementById('lookup-modal-backdrop').style.display = 'none';
+    }
+
+    async function searchCustomerOrders() {
+      const phone = document.getElementById('lookup-phone').value.trim();
+      const orderId = document.getElementById('lookup-order-id').value.trim();
+      const container = document.getElementById('lookup-results-container');
+      if (!phone) {
+        alert("Vui lòng nhập số điện thoại.");
+        return;
+      }
+      if (!orderId) {
+        alert("Vui lòng nhập mã đơn hàng.");
+        return;
+      }
+
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px 0;">
+          <div class="spinner" style="margin: 0 auto 12px; width: 30px; height: 30px; border-width: 3px; border-top-color: var(--brown);"></div>
+          <div style="font-size: 13px; color: var(--brown);">Đang tìm kiếm đơn hàng...</div>
+        </div>
+      `;
+
+      const lookupUrl = `https://morytory-ai-worker.morytory.workers.dev/api/orders/lookup?phone=${encodeURIComponent(phone)}&orderId=${encodeURIComponent(orderId)}`;
+
+      try {
+        const res = await fetch(lookupUrl);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Không tìm thấy đơn hàng khớp với thông tin cung cấp.");
+        }
+        const data = await res.json();
+        
+        if (!data || !data.success || !data.orders || data.orders.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 30px 10px; border: 1px dashed var(--gray-l); border-radius: 12px; background: #fffbf8;">
+              <i class="ti ti-inbox-x" style="font-size: 32px; color: var(--brown-l); margin-bottom: 8px; display: block;"></i>
+              <div style="font-size: 14px; font-weight: 500; color: var(--brown-d); margin-bottom: 4px;">Không tìm thấy đơn hàng</div>
+              <div style="font-size: 12px; color: var(--gray);">Không tìm thấy đơn hàng nào liên kết với số điện thoại và mã đơn hàng này.</div>
+            </div>
+          `;
+          return;
+        }
+
+        renderLookupOrders(data.orders);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; border: 1px solid #e57373; border-radius: 12px; background: #ffebee; color: #d32f2f; font-size: 13px;">
+            Lỗi khi tải dữ liệu: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    function renderLookupOrders(orders) {
+      const container = document.getElementById('lookup-results-container');
+      container.innerHTML = "";
+
+      const statusMap = {
+        'Pending': { label: 'Đang chờ xử lý', step: 1, color: '#f57c00', icon: 'ti-hourglass-low' },
+        'Awaiting Payment': { label: 'Chờ thanh toán', step: 1, color: '#e65100', icon: 'ti-wallet' },
+        'Processing': { label: 'Đang chế tác', step: 2, color: '#1976d2', icon: 'ti-tools' },
+        'Shipping': { label: 'Đang giao hàng', step: 3, color: '#0288d1', icon: 'ti-truck' },
+        'Completed': { label: 'Đã hoàn thành', step: 4, color: '#388e3c', icon: 'ti-circle-check' },
+        'Cancelled': { label: 'Đã hủy', step: 0, color: '#d32f2f', icon: 'ti-circle-x' }
+      };
+
+      orders.forEach(order => {
+        const dateStr = new Date(order.createdAt).toLocaleDateString('vi-VN', {
+          day: '2-digit', month: '2-digit', year: 'numeric'
+        });
+        const currentStatus = statusMap[order.status] || { label: order.status, step: 1, color: '#7a4a1e', icon: 'ti-question' };
+        
+        let timelineHtml = '';
+        if (order.status !== 'Cancelled') {
+          const activeStep = currentStatus.step;
+          timelineHtml = `
+            <div style="display: flex; justify-content: space-between; position: relative; margin: 24px 0 12px;">
+              <div style="position: absolute; top: 10px; left: 24px; right: 24px; height: 3px; background: var(--gray-l); z-index: 1;"></div>
+              <div style="position: absolute; top: 10px; left: 24px; width: ${((activeStep - 1) / 3) * 100}%; height: 3px; background: var(--brown); z-index: 2; transition: width 0.3s ease;"></div>
+              
+              <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 60px;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: ${activeStep >= 1 ? 'var(--brown)' : '#fff'}; border: 2px solid ${activeStep >= 1 ? 'var(--brown)' : 'var(--gray-l)'}; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: bold;">
+                  ${activeStep >= 1 ? '✓' : '1'}
+                </div>
+                <div style="font-size: 11px; margin-top: 6px; font-weight: ${activeStep === 1 ? '600' : '400'}; color: ${activeStep === 1 ? 'var(--brown)' : 'var(--gray)'}; white-space: nowrap;">Đặt hàng</div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 60px;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: ${activeStep >= 2 ? 'var(--brown)' : '#fff'}; border: 2px solid ${activeStep >= 2 ? 'var(--brown)' : 'var(--gray-l)'}; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: bold;">
+                  ${activeStep >= 2 ? '✓' : '2'}
+                </div>
+                <div style="font-size: 11px; margin-top: 6px; font-weight: ${activeStep === 2 ? '600' : '400'}; color: ${activeStep === 2 ? 'var(--brown)' : 'var(--gray)'}; white-space: nowrap;">Chế tác</div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 60px;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: ${activeStep >= 3 ? 'var(--brown)' : '#fff'}; border: 2px solid ${activeStep >= 3 ? 'var(--brown)' : 'var(--gray-l)'}; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: bold;">
+                  ${activeStep >= 3 ? '✓' : '3'}
+                </div>
+                <div style="font-size: 11px; margin-top: 6px; font-weight: ${activeStep === 3 ? '600' : '400'}; color: ${activeStep === 3 ? 'var(--brown)' : 'var(--gray)'}; white-space: nowrap;">Giao hàng</div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 60px;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: ${activeStep >= 4 ? 'var(--brown)' : '#fff'}; border: 2px solid ${activeStep >= 4 ? 'var(--brown)' : 'var(--gray-l)'}; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: bold;">
+                  ${activeStep >= 4 ? '✓' : '4'}
+                </div>
+                <div style="font-size: 11px; margin-top: 6px; font-weight: ${activeStep === 4 ? '600' : '400'}; color: ${activeStep === 4 ? 'var(--brown)' : 'var(--gray)'}; white-space: nowrap;">Hoàn thành</div>
+              </div>
+            </div>
+          `;
+        } else {
+          timelineHtml = `
+            <div style="background: #ffebee; border-radius: 8px; padding: 12px; text-align: center; color: #c62828; font-size: 13px; font-weight: 500; margin-top: 8px;">
+              Đơn hàng này đã bị hủy bỏ.
+            </div>
+          `;
+        }
+
+        const orderHtml = `
+          <div style="background: #fff; border: 1px solid var(--gray-l); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 12px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid var(--gray-l); padding-bottom: 10px;">
+              <div>
+                <strong style="color: var(--brown-d); font-size: 14px;">${order.id}</strong>
+                <span style="font-size: 12px; color: var(--gray); margin-left: 8px;">Ngày: ${dateStr}</span>
+              </div>
+              <span style="font-size: 12px; font-weight: 600; color: ${currentStatus.color}; background: ${currentStatus.color}15; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="ti ${currentStatus.icon}"></i> ${currentStatus.label}
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: center;">
+              <div style="width: 80px; height: 80px; border-radius: 8px; background: var(--blush); border: 0.5px solid var(--gray-l); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                ${order.compositePreview ? `<img src="${order.compositePreview}" style="width:100%; height:100%; object-fit:cover;" />` : `<i class="ti ti-photo" style="font-size:24px; color:var(--brown-l);"></i>`}
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--brown);">${order.theme}</div>
+                <div style="font-size: 12px; color: var(--gray);">Số lượng: ${order.quantity} | Nhận bởi: ${order.customerName}</div>
+                <div style="font-size: 12px; color: var(--gray); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tổng tiền: <strong>${order.totalPrice.toLocaleString('vi-VN')} đ</strong></div>
+              </div>
+            </div>
+            ${timelineHtml}
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', orderHtml);
+      });
+    }
+
+    let showingOriginalQR = false;
+
+    function openCheckoutModal() {
+      const themeTitle = document.getElementById('premium-prod-title').textContent;
+      
+      document.getElementById('modal-summary-theme').textContent = themeTitle;
+      document.getElementById('modal-summary-qty').textContent = 'x' + premiumQty;
+      document.getElementById('modal-summary-total').textContent = fmt(premiumPrice * premiumQty);
+
+      document.getElementById('checkout-modal-backdrop').style.display = 'flex';
+      document.querySelector('.checkout-modal').style.display = 'flex';
+      document.getElementById('checkout-success-view').style.display = 'none';
+      
+      document.getElementById('checkout-name').value = '';
+      document.getElementById('checkout-phone').value = '';
+      document.getElementById('checkout-address').value = '';
+      selectPaymentMethod('COD');
+
+      showingOriginalQR = false;
+      const toggleBtn = document.getElementById('toggle-qr-btn');
+      if (toggleBtn) toggleBtn.textContent = 'Xem mã QR gốc của Shop';
+      const titleText = document.getElementById('qr-title-text');
+      if (titleText) titleText.textContent = 'Quét mã VietQR để chuyển khoản nhanh';
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkout-modal-backdrop').style.display = 'none';
+    }
+
+    function selectPaymentMethod(method) {
+      currentPaymentMethod = method;
+      
+      const optCod = document.getElementById('pay-opt-cod');
+      const optBank = document.getElementById('pay-opt-bank');
+      const qrContainer = document.getElementById('qr-container');
+
+      if (method === 'COD') {
+        optCod.classList.add('selected');
+        optBank.classList.remove('selected');
+        qrContainer.style.display = 'none';
+      } else {
+        optCod.classList.remove('selected');
+        optBank.classList.add('selected');
+        qrContainer.style.display = 'flex';
+        updateVietQR();
+      }
+    }
+
+    function toggleQRSource() {
+      const qrImg = document.getElementById('qr-code-img');
+      const toggleBtn = document.getElementById('toggle-qr-btn');
+      const titleText = document.getElementById('qr-title-text');
+      
+      showingOriginalQR = !showingOriginalQR;
+      
+      if (showingOriginalQR) {
+        qrImg.src = 'vietinbank_qr.png';
+        toggleBtn.textContent = 'Xem mã QR tự động điền số tiền';
+        titleText.textContent = 'Quét mã QR VietinBank gốc của Shop';
+      } else {
+        updateVietQR();
+        toggleBtn.textContent = 'Xem mã QR gốc của Shop';
+        titleText.textContent = 'Quét mã VietQR để chuyển khoản nhanh';
+      }
+    }
+
+    function updateVietQR() {
+      if (showingOriginalQR) return; // Don't overwrite original QR image
+      const phone = document.getElementById('checkout-phone').value || "09XXXXXXX";
+      const amount = premiumPrice * premiumQty;
+      const memo = encodeURIComponent(`MORYTORY ${phone}`);
+      const accName = encodeURIComponent(BANK_ACCOUNT_NAME);
+      
+      const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${BANK_ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=${memo}&accountName=${accName}`;
+      document.getElementById('qr-code-img').src = qrUrl;
+      document.getElementById('qr-transfer-info').textContent = `MORYTORY ${phone}`;
+    }
+
+    document.getElementById('checkout-phone').addEventListener('input', function() {
+      if (currentPaymentMethod === 'BANK') {
+        updateVietQR();
+      }
+    });
+
+    async function submitOrder() {
+      const name = document.getElementById('checkout-name').value.trim();
+      const phone = document.getElementById('checkout-phone').value.trim();
+      const address = document.getElementById('checkout-address').value.trim();
+
+      if (!name || !phone || !address) {
+        alert("Vui lòng điền đầy đủ thông tin giao hàng!");
+        return;
+      }
+
+      const btnSubmit = document.getElementById('btn-submit-order');
+      const originalText = btnSubmit.textContent;
+      btnSubmit.disabled = true;
+      btnSubmit.style.background = "#b4b2a9";
+      btnSubmit.textContent = "Đang xử lý...";
+
+      const themeTitle = document.getElementById('premium-prod-title').textContent;
+      const orderDetails = {
+        customerName: name,
+        customerPhone: phone,
+        customerAddress: address,
+        paymentMethod: currentPaymentMethod,
+        theme: themeTitle,
+        quantity: premiumQty,
+        unitPrice: premiumPrice,
+        totalPrice: premiumPrice * premiumQty,
+        compositePreview: "",
+        status: currentPaymentMethod === 'BANK' ? 'Awaiting Payment' : 'Pending'
+      };
+
+      const orderApiUrl = "https://morytory-ai-worker.morytory.workers.dev/api/orders";
+
+      try {
+        const response = await fetch(orderApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderDetails)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Lỗi khi gửi đơn hàng đến server.');
+        }
+
+        const data = await response.json();
+        if (!data || !data.success || !data.order) {
+          throw new Error('Đặt hàng không thành công.');
+        }
+
+        document.querySelector('.checkout-modal').style.display = 'none';
+        document.getElementById('checkout-success-view').style.display = 'flex';
+        
+        document.getElementById('success-order-id').textContent = data.order.id;
+        document.getElementById('success-customer-name').textContent = data.order.customerName;
+        document.getElementById('success-customer-phone').textContent = data.order.customerPhone;
+        document.getElementById('success-order-total').textContent = fmt(data.order.totalPrice);
+
+        const successMsgEl = document.getElementById('success-message');
+        if (successMsgEl) {
+          if (currentPaymentMethod === 'BANK') {
+            successMsgEl.innerHTML = `<span style="color: #e65100; font-weight: 600;"><i class="ti ti-wallet"></i> Đơn hàng đang Chờ thanh toán chuyển khoản.</span><br>Vui lòng chuyển khoản để chúng tôi bắt đầu chế tác sản phẩm.`;
+            successMsgEl.style.color = '#e65100';
+          } else {
+            successMsgEl.innerHTML = `Cảm ơn bạn đã lựa chọn MoryTory. Đơn hàng của bạn đã được ghi nhận vào hệ thống.`;
+            successMsgEl.style.color = '#888780';
+          }
+        }
+
+      } catch (error) {
+        console.error(error);
+        alert(`Không thể đặt hàng: ${error.message}`);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.style.background = "var(--brown)";
+        btnSubmit.textContent = originalText;
+      }
+    }
+
+    function copyToClipboard(text, successMsg) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(successMsg || "Đã sao chép vào bộ nhớ tạm!");
+      }).catch(err => {
+        console.error("Lỗi khi sao chép:", err);
+      });
+    }
+
+    function copyLookupLink() {
+      const orderId = document.getElementById('success-order-id').textContent;
+      const phone = document.getElementById('success-customer-phone').textContent;
+      const lookupUrl = `${window.location.origin}${window.location.pathname}?phone=${encodeURIComponent(phone)}&orderId=${encodeURIComponent(orderId)}`;
+      copyToClipboard(lookupUrl, "Đã sao chép liên kết tra cứu nhanh! Bạn có thể lưu lại liên kết này để theo dõi tiến độ đơn hàng.");
+    }
+
+    function finishOrderFlow() {
+      closeCheckoutModal();
+      showPage('home');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const phone = params.get('phone');
+      const orderId = params.get('orderId');
+      if (phone && orderId) {
+        openLookupModal();
+        document.getElementById('lookup-phone').value = phone;
+        document.getElementById('lookup-order-id').value = orderId;
+        searchCustomerOrders();
+      } else if (params.get('lookup') === 'true') {
+        openLookupModal();
+      }
+    });
+  </script>
+</body>
+</html>

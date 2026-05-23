@@ -1,0 +1,22 @@
+name = "morytory-ai-worker"
+main = "index.js"
+compatibility_date = "2024-03-01"
+
+# Định nghĩa các biến môi trường
+[vars]
+# Sử dụng model Face Swap để ghép mặt và giữ nguyên background
+REPLICATE_MODEL = "codeplugtech/face-swap"
+REPLICATE_MODEL_VERSION = "278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34"
+
+# Đường dẫn URL ảnh background mẫu (Cần có khuôn mặt mẫu để AI nhận diện và thay thế)
+TEMPLATE_BIRTHDAY = "https://pub-your-id.r2.dev/birthday_template.jpg"
+TEMPLATE_GRADUATION = "https://pub-your-id.r2.dev/graduation_template.jpg"
+TEMPLATE_WEDDING = "https://pub-your-id.r2.dev/wedding_template.jpg"
+
+# Điền R2 Public URL của bạn ở đây sau khi cấu hình
+R2_PUBLIC_URL = ""
+
+# Liên kết với R2 Bucket (Bỏ comment sau khi bạn tạo bucket trên Cloudflare)
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "morytory-images"

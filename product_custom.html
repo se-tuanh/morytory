@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="logo.png" type="image/png">
+  <title>MoryTory – Thiết kế sản phẩm</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .page { background: #fdf8f4; font-family: var(--font-sans); }
+  .navbar { background: #fff; border-bottom: 0.5px solid #e8ddd4; padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 18px; font-weight: 500; color: #7a4a1e; letter-spacing: -0.3px; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; color: #888780; }
+  .nav-links span { cursor: pointer; }
+  .nav-links span:hover { color: #7a4a1e; }
+  .cart-badge { background: #7a4a1e; color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+  .breadcrumb { padding: 14px 32px; font-size: 12px; color: #888780; display: flex; align-items: center; gap: 6px; }
+  .breadcrumb span { color: #7a4a1e; cursor: pointer; }
+  .main { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 0 32px 40px; }
+  .img-section { display: flex; flex-direction: column; gap: 10px; }
+  .img-main { background: #f5e8df; border-radius: 16px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .img-main-inner { text-align: center; }
+  .img-placeholder-icon { font-size: 48px; color: #c9a882; margin-bottom: 12px; }
+  .img-placeholder-text { font-size: 13px; color: #b89a7a; }
+  .img-thumbs { display: flex; gap: 8px; }
+  .thumb { width: 60px; height: 60px; border-radius: 10px; background: #f5e8df; border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #c9a882; flex-shrink: 0; }
+  .thumb.active { border-color: #7a4a1e; }
+  .badge-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .badge-new { background: #faeeda; color: #633806; }
+  .badge-custom { background: #f5e8df; color: #7a4a1e; }
+  .prod-title { font-size: 22px; font-weight: 500; color: #3a2010; line-height: 1.3; margin-bottom: 6px; }
+  .prod-price { font-size: 24px; font-weight: 500; color: #7a4a1e; margin-bottom: 4px; }
+  .prod-old-price { font-size: 13px; color: #b4b2a9; text-decoration: line-through; margin-left: 8px; font-weight: 400; }
+  .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 13px; color: #888780; }
+  .stars { color: #EF9F27; font-size: 14px; letter-spacing: 1px; }
+  .divider { border: none; border-top: 0.5px solid #e8ddd4; margin: 16px 0; }
+  .section-label { font-size: 12px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .upload-zone { border: 1.5px dashed #c9a882; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: #fffbf8; transition: background .15s; margin-bottom: 8px; }
+  .upload-zone:hover { background: #f5e8df; }
+  .upload-icon { font-size: 28px; color: #c9a882; margin-bottom: 8px; }
+  .upload-title { font-size: 14px; font-weight: 500; color: #7a4a1e; margin-bottom: 4px; }
+  .upload-hint { font-size: 12px; color: #b4b2a9; }
+  .upload-tips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tip { font-size: 11px; color: #888780; background: #f5ede6; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+  .member-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+  .member-opt { border: 1.5px solid #e8ddd4; border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; background: #fff; transition: all .15s; }
+  .member-opt.selected { border-color: #7a4a1e; background: #fdf0e6; }
+  .member-opt-icon { font-size: 20px; color: #c9a882; margin-bottom: 4px; }
+  .member-opt-label { font-size: 11px; color: #7a4a1e; font-weight: 500; }
+  .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .qty-btn { width: 34px; height: 34px; border-radius: 8px; border: 0.5px solid #e8ddd4; background: #fff; font-size: 18px; color: #7a4a1e; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+  .qty-val { font-size: 16px; font-weight: 500; color: #3a2010; min-width: 24px; text-align: center; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; background: #fdf0e6; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; }
+  .total-label { font-size: 13px; color: #888780; }
+  .total-val { font-size: 18px; font-weight: 500; color: #7a4a1e; }
+  .btn-order { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #7a4a1e; color: #fff; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 10px; transition: opacity .15s; }
+  .btn-order:hover { opacity: .88; }
+  .btn-zalo { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #0068ff; background: #fff; color: #0068ff; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
+  .btn-zalo:hover { background: #f0f5ff; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .info-card { background: #fffbf8; border: 0.5px solid #e8ddd4; border-radius: 10px; padding: 12px; display: flex; align-items: flex-start; gap: 10px; }
+  .info-icon { font-size: 18px; color: #c9a882; flex-shrink: 0; margin-top: 1px; }
+  .info-title { font-size: 12px; font-weight: 500; color: #7a4a1e; margin-bottom: 2px; }
+  .info-desc { font-size: 11px; color: #b4b2a9; line-height: 1.4; }
+  .process-section { padding: 24px 32px; border-top: 0.5px solid #e8ddd4; background: #fff; }
+  .process-title { font-size: 16px; font-weight: 500; color: #3a2010; margin-bottom: 16px; }
+  .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .process-step { text-align: center; }
+  .step-circle { width: 40px; height: 40px; border-radius: 50%; background: #fdf0e6; border: 1.5px solid #c9a882; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 18px; color: #7a4a1e; }
+  .step-name { font-size: 12px; font-weight: 500; color: #7a4a1e; margin-bottom: 3px; }
+  .step-desc { font-size: 11px; color: #b4b2a9; line-height: 1.4; }
+  .step-arrow { display: flex; align-items: center; justify-content: center; color: #c9a882; font-size: 18px; padding-top: 10px; }
+  
+  /* Loading Spinner */
+  .loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e8ddd4;
+    border-top: 4px solid #7a4a1e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .loading-text {
+    font-size: 13px;
+    color: #7a4a1e;
+    font-weight: 500;
+  }
+  
+  /* Checkout Modal Styles */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .checkout-modal, .checkout-success-view {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalSlideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .payment-opt {
+    border: 1.5px solid #e8ddd4;
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s;
+  }
+  .payment-opt:hover {
+    border-color: #c9a882;
+    background: #fffbf8;
+  }
+  .payment-opt.selected {
+    border-color: #7a4a1e !important;
+    background: #fdf0e6 !important;
+  }
+  .payment-opt.selected i {
+    color: #7a4a1e !important;
+  }
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .product-layout { grid-template-columns: 1fr; padding: 0 20px; gap: 24px; }
+    .member-grid { grid-template-columns: repeat(2, 1fr); }
+    .info-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .process-bar { padding: 32px 20px; }
+    .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
+    #lookup-modal-backdrop > div { margin: 15px; }
+    .editor-preview { min-height: 300px; }
+    footer { padding: 20px 10px; }
+  }
+</style>
+
+</head>
+<body>
+<div class="page">
+  <div class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'" style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 18px; font-weight: 500; color: #7a4a1e; letter-spacing: -0.3px;">
+      <img src="logo.png" alt="MoryTory Logo" style="height: 32px; width: auto; border-radius: 50%;" onerror="this.style.display='none'">
+      <span>MoryTory</span>
+    </div>
+    <div class="nav-links">
+      <span onclick="window.location.href='index.html'">Trang chủ</span>
+      <span onclick="window.location.href='index.html#about-section'">Về chúng tôi</span>
+      <span onclick="window.location.href='index.html#blog-section'">Blog</span>
+      <span onclick="window.location.href='index.html?lookup=true'" style="font-weight: 500; color: #7a4a1e;">Tra cứu đơn hàng</span>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <span onclick="window.location.href='index.html'">Trang chủ</span> / <span id="breadcrumb-category" onclick="window.location.href='index.html#theme-section'">Mô hình gia đình</span> / <span id="breadcrumb-title">Mô hình Gia Đình Kỷ Niệm</span>
+  </div>
+
+  <div class="main">
+    <div class="img-section">
+      <div class="img-main">
+        <div class="loading-overlay" id="loading-overlay">
+          <div class="spinner"></div>
+          <div class="loading-text" id="loading-text">AI đang ghép ảnh...</div>
+        </div>
+        <div class="img-main-inner" id="img-main-inner" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <div class="img-placeholder-icon"><i class="ti ti-photo" aria-hidden="true"></i></div>
+          <div class="img-placeholder-text">Ảnh sản phẩm thật</div>
+        </div>
+        <div style="position:absolute;top:12px;left:12px;background:#fff;border-radius:8px;padding:4px 10px;font-size:11px;color:#7a4a1e;font-weight:500;border:0.5px solid #e8ddd4;z-index: 11;">
+          Handmade
+        </div>
+      </div>
+      <div class="img-thumbs">
+        <div class="thumb active"><i class="ti ti-photo" aria-hidden="true"></i></div>
+        <div class="thumb"><i class="ti ti-photo" aria-hidden="true"></i></div>
+        <div class="thumb"><i class="ti ti-photo" aria-hidden="true"></i></div>
+        <div class="thumb" style="border-style:dashed;font-size:14px;color:#b4b2a9;">+2</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="badge-row">
+        <span class="badge badge-new">Mới</span>
+        <span class="badge badge-custom">Cá nhân hoá</span>
+      </div>
+      <div class="prod-title" id="prod-title">Mô hình Gia Đình Kỷ Niệm</div>
+      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:6px;">
+        <span class="prod-price" id="prod-price">450.000 đ</span>
+        <span class="prod-old-price" id="prod-old-price">550.000 đ</span>
+      </div>
+      <div class="rating-row">
+        <span class="stars">★★★★★</span>
+        <span>4.9 (38 đánh giá)</span>
+        <span style="color:#c9a882;">|</span>
+        <span>126 đã bán</span>
+      </div>
+
+      <hr class="divider">
+
+      <div class="section-label" id="member-count-label">Thành viên thiết kế</div>
+      <div id="upload-slots-container">
+        <!-- Tải ảnh các thành viên ở đây -->
+      </div>
+      <div class="upload-tips" style="margin-top: 10px;">
+        <span class="tip"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Mặt nhìn thẳng</span>
+        <span class="tip"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Ánh sáng tốt</span>
+        <span class="tip"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Không kính râm</span>
+      </div>
+
+      <div class="section-label">Số lượng</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-val" id="qty">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+        <span style="font-size:12px;color:#b4b2a9;">Còn 15 sản phẩm</span>
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Tổng cộng</span>
+        <span class="total-val" id="total">450.000 đ</span>
+      </div>
+
+      <button class="btn-order" onclick="openCheckoutModal()">Đặt hàng ngay</button>
+      <button class="btn-zalo" onclick="window.open('https://zalo.me/0982892784', '_blank')">
+        <i class="ti ti-brand-telegram" style="font-size:18px" aria-hidden="true"></i>
+        Tư vấn qua Zalo
+      </button>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon"><i class="ti ti-truck" aria-hidden="true"></i></div>
+          <div>
+            <div class="info-title">Giao hàng toàn quốc</div>
+            <div class="info-desc">3–5 ngày làm việc sau khi xác nhận</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon"><i class="ti ti-pencil" aria-hidden="true"></i></div>
+          <div>
+            <div class="info-title">Cá nhân hoá 100%</div>
+            <div class="info-desc">Khắc laser từ ảnh của bạn</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon"><i class="ti ti-refresh" aria-hidden="true"></i></div>
+          <div>
+            <div class="info-title">Xem trước miễn phí</div>
+            <div class="info-desc">Gửi preview trước khi sản xuất</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+          <div>
+            <div class="info-title">Bảo hành 6 tháng</div>
+            <div class="info-desc">Đổi mới nếu lỗi từ nhà sản xuất</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="process-section">
+    <div class="process-title">Quy trình đặt hàng</div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-circle"><i class="ti ti-cloud-upload" aria-hidden="true"></i></div>
+        <div class="step-name">Tải ảnh lên</div>
+        <div class="step-desc">Chọn ảnh rõ nét, đủ sáng</div>
+      </div>
+      <div class="process-step">
+        <div class="step-circle"><i class="ti ti-eye" aria-hidden="true"></i></div>
+        <div class="step-name">Xem trước</div>
+        <div class="step-desc">Nhận preview trong 2h</div>
+      </div>
+      <div class="process-step">
+        <div class="step-circle"><i class="ti ti-coin" aria-hidden="true"></i></div>
+        <div class="step-name">Xác nhận & TT</div>
+        <div class="step-desc">Duyệt rồi mới thanh toán</div>
+      </div>
+      <div class="process-step">
+        <div class="step-circle"><i class="ti ti-package" aria-hidden="true"></i></div>
+        <div class="step-name">Nhận hàng</div>
+        <div class="step-desc">Đóng gói cẩn thận, giao tận nơi</div>
+      </div>
+    </div>
+  </div>
+  <footer style="background: #5c3510; color: rgba(255,255,255,0.6); font-size: 12px; text-align: center; padding: 20px; margin-top: 40px;">
+    <strong style="color: #fff;">MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a>
+  </footer>
+</div>
+</div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modal-backdrop" id="checkout-modal-backdrop">
+  <div class="checkout-modal" style="background: #fff; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
+    <!-- Modal Header -->
+    <div style="padding: 20px 24px; border-bottom: 0.5px solid #e8ddd4; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 18px; color: #3a2010; font-weight: 600;">Thông tin đặt hàng</h3>
+      <button onclick="closeCheckoutModal()" style="background: none; border: none; font-size: 20px; color: #b4b2a9; cursor: pointer;"><i class="ti ti-x"></i></button>
+    </div>
+    
+    <!-- Modal Body -->
+    <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+      <!-- Summary Box -->
+      <div style="background: #fdf8f4; border: 0.5px solid #e8ddd4; border-radius: 12px; padding: 16px;">
+        <div style="font-size: 11px; font-weight: 600; color: #888780; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #7a4a1e; font-weight: 500; margin-bottom: 4px;">
+          <span id="modal-summary-theme">Sinh nhật gia đình</span>
+          <span id="modal-summary-qty">x1</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed #e8ddd4; padding-top: 8px; margin-top: 8px;">
+          <span>Tổng cộng</span>
+          <span id="modal-summary-total">450.000 đ</span>
+        </div>
+      </div>
+
+      <!-- Shipping Form -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Họ và tên khách hàng</label>
+          <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px;" required />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Số điện thoại</label>
+          <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px;" required />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Địa chỉ giao hàng</label>
+          <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px; font-family: inherit; resize: none;" required></textarea>
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div>
+        <label style="font-size: 12px; font-weight: 500; color: #7a4a1e; display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
+            <i class="ti ti-truck" style="font-size: 20px; color: #7a4a1e;"></i>
+            <span style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Thanh toán COD</span>
+          </div>
+          <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
+            <i class="ti ti-qrcode" style="font-size: 20px; color: #c9a882;"></i>
+            <span style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Chuyển khoản (VietQR)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VietQR Container (Hidden by default) -->
+      <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid #e8ddd4; border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="font-size: 12px; font-weight: 500; color: #7a4a1e;" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
+        <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid #e8ddd4; border-radius: 8px; background: #fff; padding: 8px;" />
+        <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: #7a4a1e; font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
+          Xem mã QR gốc của Shop
+        </button>
+        <div style="font-size: 11px; color: #888780; line-height: 1.4;">
+          Nội dung CK: <strong id="qr-transfer-info" style="color: #7a4a1e;">MORYTORY 0982892784</strong><br>
+          Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
+          Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="padding: 16px 24px; border-top: 0.5px solid #e8ddd4; background: #fffbf8; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; gap: 12px;">
+      <button onclick="closeCheckoutModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid #e8ddd4; background: #fff; color: #888780; font-size: 14px; font-weight: 500; cursor: pointer;">Hủy bỏ</button>
+      <button id="btn-submit-order" onclick="submitOrder()" style="flex: 1.5; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer;">Xác nhận đặt hàng</button>
+    </div>
+  </div>
+  
+  <!-- Success Modal View -->
+  <div class="checkout-success-view" id="checkout-success-view" style="display: none; background: #fff; border-radius: 16px; max-width: 450px; width: 100%; padding: 32px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #e8f5e9; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+      <i class="ti ti-circle-check" style="font-size: 36px; color: #2e7d32;"></i>
+    </div>
+    <div>
+      <h3 style="font-size: 20px; color: #2e7d32; font-weight: 600; margin-bottom: 6px;">Đặt hàng thành công!</h3>
+      <p id="success-message" style="font-size: 13px; color: #888780; line-height: 1.5;">Cảm ơn bạn đã lựa chọn MoryTory. Đơn hàng của bạn đã được ghi nhận vào hệ thống.</p>
+    </div>
+    
+    <div style="background: #fdf8f4; border: 0.5px solid #e8ddd4; border-radius: 12px; padding: 16px; width: 100%; text-align: left; font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #888780;">Mã đơn hàng:</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <strong id="success-order-id" style="color: #7a4a1e;">ORD-12345</strong>
+          <button onclick="copyToClipboard(document.getElementById('success-order-id').textContent, 'Đã sao chép mã đơn hàng!')" style="background: none; border: none; color: #7a4a1e; cursor: pointer; padding: 2px 4px; font-size: 14px;" title="Sao chép mã"><i class="ti ti-copy"></i></button>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Khách hàng:</span><span id="success-customer-name" style="font-weight: 500;">Nguyễn Văn A</span></div>
+      <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Số điện thoại:</span><span id="success-customer-phone" style="font-weight: 500;">0912345678</span></div>
+      <div style="display: flex; justify-content: space-between;"><span style="color: #888780;">Tổng thanh toán:</span><strong id="success-order-total" style="color: #7a4a1e; font-size: 14px;">450.000 đ</strong></div>
+    </div>
+    
+    <div style="display: flex; gap: 10px; width: 100%;">
+      <button onclick="copyLookupLink()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid #e8ddd4; background: #fff; color: #7a4a1e; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;"><i class="ti ti-link"></i> Link tra cứu</button>
+      <button onclick="finishOrderFlow()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer;">Quay lại trang chủ</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script>
+// Cấu hình URL Cloudflare Worker của bạn ở đây
+// Tự động sử dụng localhost khi phát triển hoặc địa chỉ Worker thực tế khi triển khai
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const WORKER_API_URL = isLocal 
+  ? "https://morytory-ai-worker.morytory.workers.dev/api/process-image"
+  : `${window.location.origin}/api/process-image`;
+
+
+let qty = 1;
+let price = 450000;
+let currentTheme = "Sinh nhật gia đình";
+let swappedFaces = {}; // Lưu trữ URL ảnh đã swap cho từng thành viên
+
+const THEME_CONFIGS = {
+  "Sinh nhật gia đình": {
+    baseImage: "birthday_base.jpg",
+    members: [
+      { id: "father", name: "Bố (Father)", key: "birthday_father", x: 345, y: 215, w: 90, h: 85 },
+      { id: "mother", name: "Mẹ (Mother)", key: "birthday_mother", x: 585, y: 235, w: 90, h: 85 },
+      { id: "child", name: "Con (Child)", key: "birthday_child", x: 725, y: 375, w: 65, h: 65 }
+    ]
+  },
+  "Tốt nghiệp": {
+    baseImage: "graduation_base.jpg",
+    members: [
+      { id: "boy", name: "Bạn Nam (Boy)", key: "graduation_boy", x: 340, y: 290, w: 70, h: 85 },
+      { id: "girl", name: "Bạn Nữ (Girl)", key: "graduation_girl", x: 595, y: 300, w: 75, h: 80 }
+    ]
+  },
+  "Đám cưới": {
+    baseImage: "wedding_base.jpg",
+    members: [
+      { id: "groom", name: "Chú rể (Groom)", key: "wedding_groom", x: 340, y: 245, w: 75, h: 85 },
+      { id: "bride", name: "Cô dâu (Bride)", key: "wedding_bride", x: 580, y: 250, w: 75, h: 85 }
+    ]
+  }
+};
+
+// Parse URL Parameters
+function initPage() {
+  const params = new URLSearchParams(window.location.search);
+  const title = params.get('title');
+  const priceVal = params.get('price');
+  const oldPriceVal = params.get('oldPrice');
+  const theme = params.get('theme');
+
+  if (title) {
+    document.getElementById('prod-title').textContent = title;
+    document.getElementById('breadcrumb-title').textContent = title;
+  }
+  if (priceVal) {
+    price = parseInt(priceVal);
+    document.getElementById('prod-price').textContent = price.toLocaleString('vi-VN') + ' đ';
+  }
+  if (oldPriceVal) {
+    document.getElementById('prod-old-price').textContent = parseInt(oldPriceVal).toLocaleString('vi-VN') + ' đ';
+  } else {
+    document.getElementById('prod-old-price').style.display = 'none';
+  }
+  if (theme) {
+    currentTheme = theme;
+    const categorySpan = document.getElementById('breadcrumb-category');
+    if (categorySpan) {
+      if (theme === 'Sinh nhật gia đình') {
+        categorySpan.textContent = 'Mô hình gia đình';
+      } else if (theme === 'Tốt nghiệp') {
+        categorySpan.textContent = 'Mô hình tốt nghiệp';
+      } else if (theme === 'Đám cưới') {
+        categorySpan.textContent = 'Mô hình đám cưới';
+      }
+    }
+  }
+
+  // Cập nhật nhãn số lượng thành viên
+  const config = THEME_CONFIGS[currentTheme];
+  if (config) {
+    document.getElementById('member-count-label').textContent = `Thành viên thiết kế (${config.members.length} người)`;
+    
+    // Hiển thị ảnh nền gốc lúc bắt đầu
+    const imgMainInner = document.getElementById('img-main-inner');
+    imgMainInner.innerHTML = `<img src="./${config.baseImage}" id="final-composite-preview" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" alt="Bản gốc">`;
+  }
+
+  // Tạo các slot upload tương ứng với các thành viên trong chủ đề
+  renderUploadSlots();
+  updateTotal();
+}
+
+function renderUploadSlots() {
+  const config = THEME_CONFIGS[currentTheme];
+  const container = document.getElementById('upload-slots-container');
+  if (!config || !container) return;
+
+  container.innerHTML = "";
+  config.members.forEach(member => {
+    const html = `
+      <div class="upload-slot-card" id="slot-card-${member.id}" style="background:#fff; border: 1.5px solid #e8ddd4; border-radius:12px; padding:12px; margin-bottom:12px; display:flex; align-items:center; gap:16px; transition: all 0.2s;">
+        <div class="slot-preview-circle" id="preview-circle-${member.id}" style="width:46px; height:46px; border-radius:50%; background:#fdf0e6; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 1.5px solid #c9a882; flex-shrink:0;">
+          <i class="ti ti-user" style="font-size:20px; color:#c9a882;"></i>
+        </div>
+        <div style="flex-grow:1;">
+          <div style="font-size:13px; font-weight:600; color:#7a4a1e; margin-bottom:2px;">${member.name}</div>
+          <div class="upload-slot-status" id="status-text-${member.id}" style="font-size:11px; color:#b4b2a9;">Chưa tải ảnh khuôn mặt</div>
+        </div>
+        <button class="btn-slot-upload" id="btn-upload-${member.id}" onclick="document.getElementById('file-input-${member.id}').click()" style="padding:6px 12px; border-radius:8px; border:none; background:#7a4a1e; color:#fff; font-size:11px; font-weight:500; cursor:pointer; transition: background 0.15s;">Tải ảnh</button>
+        <input type="file" id="file-input-${member.id}" accept="image/*" style="display:none" onchange="handleMemberUpload(this, '${member.id}')">
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+  });
+}
+
+async function handleMemberUpload(input, memberId) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+
+  const config = THEME_CONFIGS[currentTheme];
+  const member = config.members.find(m => m.id === memberId);
+  if (!member) return;
+
+  // Cập nhật giao diện của Slot sang trạng thái Loading
+  const statusText = document.getElementById(`status-text-${memberId}`);
+  const btnUpload = document.getElementById(`btn-upload-${memberId}`);
+  const slotCard = document.getElementById(`slot-card-${memberId}`);
+
+  statusText.textContent = "AI đang ghép mặt...";
+  statusText.style.color = "#7a4a1e";
+  btnUpload.disabled = true;
+  btnUpload.style.background = "#b4b2a9";
+  btnUpload.textContent = "Đang xử lý...";
+  slotCard.style.borderColor = "#c9a882";
+  slotCard.style.background = "#fffbf8";
+
+  // Hiển thị loading overlay trên hình sản phẩm chính
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
+  loadingOverlay.style.display = 'flex';
+  loadingText.textContent = `Đang xử lý khuôn mặt cho ${member.name}...`;
+
+  // Tạo FormData
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('templateKey', member.key);
+
+  try {
+    const response = await fetch(WORKER_API_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || 'Lỗi xử lý AI từ server.');
+    }
+
+    const data = await response.json();
+    if (!data || !data.imageUrl) {
+      throw new Error('Không nhận được ảnh kết quả từ server.');
+    }
+
+    // Lưu kết quả URL ảnh swap
+    swappedFaces[memberId] = data.imageUrl;
+
+    // Vẽ lại canvas để cập nhật ảnh sản phẩm chính
+    updateCanvas(memberId);
+
+    // Cập nhật UI Slot sang trạng thái thành công
+    statusText.textContent = "✓ Đã ghép thành công";
+    statusText.style.color = "#2e7d32";
+    btnUpload.disabled = false;
+    btnUpload.style.background = "#2e7d32";
+    btnUpload.textContent = "Đổi ảnh";
+    slotCard.style.borderColor = "#81c784";
+    slotCard.style.background = "#f1f8e9";
+
+  } catch (error) {
+    console.error(error);
+    alert(`Lỗi khi xử lý ảnh ${member.name}: ${error.message}`);
+    statusText.textContent = "⚠️ Xử lý lỗi. Thử lại!";
+    statusText.style.color = "#d32f2f";
+    btnUpload.disabled = false;
+    btnUpload.style.background = "#7a4a1e";
+    btnUpload.textContent = "Thử lại";
+    slotCard.style.borderColor = "#e57373";
+    slotCard.style.background = "#ffebee";
+  } finally {
+    loadingOverlay.style.display = 'none';
+  }
+}
+
+function updateCanvas(latestMemberId) {
+  const config = THEME_CONFIGS[currentTheme];
+  if (!config) return;
+
+  // Đối tượng canvas cục bộ để vẽ đè ảnh tránh xung đột tranh chấp (race conditions) khi tải lên song song
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const baseImg = new Image();
+  baseImg.crossOrigin = "anonymous";
+  baseImg.src = `./${config.baseImage}`;
+
+  baseImg.onload = function() {
+    canvas.width = baseImg.naturalWidth;
+    canvas.height = baseImg.naturalHeight;
+
+    // 1. Vẽ ảnh nền gốc trước (Đảm bảo background giữ nguyên 100% giống nhau)
+    ctx.drawImage(baseImg, 0, 0);
+
+    const membersWithSwaps = config.members.filter(m => swappedFaces[m.id]);
+    if (membersWithSwaps.length === 0) {
+      displayResult(canvas.toDataURL('image/jpeg', 0.95));
+      return;
+    }
+
+    // 2. Tải và vẽ đè phần khuôn mặt đã được swap lên vị trí tương ứng
+    let loadedCount = 0;
+    membersWithSwaps.forEach(member => {
+      const faceImg = new Image();
+      faceImg.crossOrigin = "anonymous";
+      faceImg.src = swappedFaces[member.id];
+
+      faceImg.onload = function() {
+        // Cắt vùng khuôn mặt từ ảnh AI và dán đè lên ảnh nền gốc
+        ctx.drawImage(
+          faceImg,
+          member.x, member.y, member.w, member.h, // Vị trí nguồn (AI output)
+          member.x, member.y, member.w, member.h  // Vị trí đích (Base background)
+        );
+
+        // Tạo ảnh avatar nhỏ cho vòng tròn preview trong Slot
+        if (member.id === latestMemberId) {
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCanvas.width = member.w;
+          tempCanvas.height = member.h;
+          
+          tempCtx.drawImage(
+            faceImg,
+            member.x, member.y, member.w, member.h,
+            0, 0, member.w, member.h
+          );
+          
+          const circle = document.getElementById(`preview-circle-${member.id}`);
+          if (circle) {
+            circle.innerHTML = `<img src="${tempCanvas.toDataURL('image/jpeg')}" style="width:100%; height:100%; object-fit:cover;" />`;
+          }
+        }
+
+        loadedCount++;
+        if (loadedCount === membersWithSwaps.length) {
+          // Hoàn thành vẽ tất cả các mặt, hiển thị ảnh composite cuối cùng
+          displayResult(canvas.toDataURL('image/jpeg', 0.95));
+        }
+      };
+
+      faceImg.onerror = function() {
+        console.error(`Không tải được ảnh swap cho ${member.name}`);
+        loadedCount++;
+        if (loadedCount === membersWithSwaps.length) {
+          displayResult(canvas.toDataURL('image/jpeg', 0.95));
+        }
+      };
+    });
+  };
+
+  baseImg.onerror = function() {
+    console.error("Không tải được ảnh nền mẫu.");
+  };
+}
+
+function displayResult(dataUrl) {
+  const imgMainInner = document.getElementById('img-main-inner');
+  imgMainInner.innerHTML = `<img src="${dataUrl}" id="final-composite-preview" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" alt="Kết quả AI">`;
+}
+
+function changeQty(d) {
+  qty = Math.max(1, Math.min(99, qty + d));
+  document.getElementById('qty').textContent = qty;
+  updateTotal();
+}
+
+function updateTotal() {
+  document.getElementById('total').textContent = (price * qty).toLocaleString('vi-VN') + ' đ';
+}
+
+// Checkout and VietQR functions
+let currentPaymentMethod = 'COD';
+const BANK_ID = "VietinBank"; 
+const BANK_ACCOUNT_NO = "102875779490"; 
+const BANK_ACCOUNT_NAME = "NGUYEN TUAN ANH"; 
+
+let showingOriginalQR = false;
+
+function openCheckoutModal() {
+  const config = THEME_CONFIGS[currentTheme];
+  if (!config) return;
+
+  const hasSwaps = config.members.some(m => swappedFaces[m.id]);
+  if (!hasSwaps) {
+    alert("Vui lòng tải lên ít nhất một ảnh khuôn mặt trước khi đặt hàng!");
+    return;
+  }
+
+  document.getElementById('modal-summary-theme').textContent = currentTheme;
+  document.getElementById('modal-summary-qty').textContent = 'x' + qty;
+  document.getElementById('modal-summary-total').textContent = (price * qty).toLocaleString('vi-VN') + ' đ';
+
+  document.getElementById('checkout-modal-backdrop').style.display = 'flex';
+  document.querySelector('.checkout-modal').style.display = 'flex';
+  document.getElementById('checkout-success-view').style.display = 'none';
+  
+  document.getElementById('checkout-name').value = '';
+  document.getElementById('checkout-phone').value = '';
+  document.getElementById('checkout-address').value = '';
+  selectPaymentMethod('COD');
+
+  showingOriginalQR = false;
+  const toggleBtn = document.getElementById('toggle-qr-btn');
+  if (toggleBtn) toggleBtn.textContent = 'Xem mã QR gốc của Shop';
+  const titleText = document.getElementById('qr-title-text');
+  if (titleText) titleText.textContent = 'Quét mã VietQR để chuyển khoản nhanh';
+}
+
+function closeCheckoutModal() {
+  document.getElementById('checkout-modal-backdrop').style.display = 'none';
+}
+
+function selectPaymentMethod(method) {
+  currentPaymentMethod = method;
+  
+  const optCod = document.getElementById('pay-opt-cod');
+  const optBank = document.getElementById('pay-opt-bank');
+  const qrContainer = document.getElementById('qr-container');
+
+  if (method === 'COD') {
+    optCod.classList.add('selected');
+    optBank.classList.remove('selected');
+    qrContainer.style.display = 'none';
+  } else {
+    optCod.classList.remove('selected');
+    optBank.classList.add('selected');
+    qrContainer.style.display = 'flex';
+    updateVietQR();
+  }
+}
+
+function toggleQRSource() {
+  const qrImg = document.getElementById('qr-code-img');
+  const toggleBtn = document.getElementById('toggle-qr-btn');
+  const titleText = document.getElementById('qr-title-text');
+  
+  showingOriginalQR = !showingOriginalQR;
+  
+  if (showingOriginalQR) {
+    qrImg.src = 'vietinbank_qr.png';
+    toggleBtn.textContent = 'Xem mã QR tự động điền số tiền';
+    titleText.textContent = 'Quét mã QR VietinBank gốc của Shop';
+  } else {
+    updateVietQR();
+    toggleBtn.textContent = 'Xem mã QR gốc của Shop';
+    titleText.textContent = 'Quét mã VietQR để chuyển khoản nhanh';
+  }
+}
+
+function updateVietQR() {
+  if (showingOriginalQR) return; // Don't overwrite original QR image
+  const phone = document.getElementById('checkout-phone').value || "09XXXXXXX";
+  const amount = price * qty;
+  const memo = encodeURIComponent(`MORYTORY ${phone}`);
+  const accName = encodeURIComponent(BANK_ACCOUNT_NAME);
+  
+  const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${BANK_ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=${memo}&accountName=${accName}`;
+  document.getElementById('qr-code-img').src = qrUrl;
+  document.getElementById('qr-transfer-info').textContent = `MORYTORY ${phone}`;
+}
+
+// Update VietQR dynamic info on phone input change
+document.getElementById('checkout-phone').addEventListener('input', function() {
+  if (currentPaymentMethod === 'BANK') {
+    updateVietQR();
+  }
+});
+
+async function submitOrder() {
+  const name = document.getElementById('checkout-name').value.trim();
+  const phone = document.getElementById('checkout-phone').value.trim();
+  const address = document.getElementById('checkout-address').value.trim();
+
+  if (!name || !phone || !address) {
+    alert("Vui lòng điền đầy đủ thông tin giao hàng!");
+    return;
+  }
+
+  const btnSubmit = document.getElementById('btn-submit-order');
+  btnSubmit.disabled = true;
+  btnSubmit.style.background = "#b4b2a9";
+  btnSubmit.textContent = "Đang xử lý...";
+
+  const config = THEME_CONFIGS[currentTheme];
+  const orderDetails = {
+    customerName: name,
+    customerPhone: phone,
+    customerAddress: address,
+    paymentMethod: currentPaymentMethod,
+    theme: currentTheme,
+    quantity: qty,
+    unitPrice: price,
+    totalPrice: price * qty,
+    swappedFaces: swappedFaces,
+    compositePreview: document.getElementById('final-composite-preview') ? document.getElementById('final-composite-preview').src : "",
+    status: currentPaymentMethod === 'BANK' ? 'Awaiting Payment' : 'Pending'
+  };
+
+  const orderApiUrl = WORKER_API_URL.replace("/process-image", "/orders");
+
+  try {
+    const response = await fetch(orderApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderDetails)
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || 'Lỗi khi gửi đơn hàng đến server.');
+    }
+
+    const data = await response.json();
+    if (!data || !data.success || !data.order) {
+      throw new Error('Đặt hàng không thành công.');
+    }
+
+    document.querySelector('.checkout-modal').style.display = 'none';
+    document.getElementById('checkout-success-view').style.display = 'flex';
+    
+    document.getElementById('success-order-id').textContent = data.order.id;
+    document.getElementById('success-customer-name').textContent = data.order.customerName;
+    document.getElementById('success-customer-phone').textContent = data.order.customerPhone;
+    document.getElementById('success-order-total').textContent = data.order.totalPrice.toLocaleString('vi-VN') + ' đ';
+
+    const successMsgEl = document.getElementById('success-message');
+    if (successMsgEl) {
+      if (currentPaymentMethod === 'BANK') {
+        successMsgEl.innerHTML = `<span style="color: #e65100; font-weight: 600;"><i class="ti ti-wallet"></i> Đơn hàng đang Chờ thanh toán chuyển khoản.</span><br>Vui lòng chuyển khoản để chúng tôi bắt đầu chế tác sản phẩm.`;
+        successMsgEl.style.color = '#e65100';
+      } else {
+        successMsgEl.innerHTML = `Cảm ơn bạn đã lựa chọn MoryTory. Đơn hàng của bạn đã được ghi nhận vào hệ thống.`;
+        successMsgEl.style.color = '#888780';
+      }
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert(`Không thể đặt hàng: ${error.message}`);
+    btnSubmit.disabled = false;
+    btnSubmit.style.background = "#7a4a1e";
+    btnSubmit.textContent = "Xác nhận đặt hàng";
+  }
+}
+
+function copyToClipboard(text, successMsg) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert(successMsg || "Đã sao chép vào bộ nhớ tạm!");
+  }).catch(err => {
+    console.error("Lỗi khi sao chép:", err);
+  });
+}
+
+function copyLookupLink() {
+  const orderId = document.getElementById('success-order-id').textContent;
+  const phone = document.getElementById('success-customer-phone').textContent;
+  const lookupUrl = `${window.location.origin}/index.html?phone=${encodeURIComponent(phone)}&orderId=${encodeURIComponent(orderId)}`;
+  copyToClipboard(lookupUrl, "Đã sao chép liên kết tra cứu nhanh! Bạn có thể lưu lại liên kết này để theo dõi tiến độ đơn hàng.");
+}
+
+function finishOrderFlow() {
+  closeCheckoutModal();
+  window.location.href = 'index.html';
+}
+
+window.onload = initPage;
+</script>
