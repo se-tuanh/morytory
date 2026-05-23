@@ -413,6 +413,152 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
     }
+
+    /* ─── BLOG ─── */
+    .blog-featured {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .blog-card {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--gray-l); background: #fff;
+      cursor: pointer;
+      transition: transform .3s cubic-bezier(0.16,1,0.3,1), box-shadow .3s cubic-bezier(0.16,1,0.3,1);
+      display: flex; flex-direction: column;
+    }
+    .blog-card:hover { transform: translateY(-5px); box-shadow: 0 14px 32px rgba(209,88,22,0.09); border-color: var(--brown-l); }
+    .blog-thumb {
+      width: 100%; object-fit: cover;
+      display: block; flex-shrink: 0;
+      transition: transform .35s ease;
+    }
+    .blog-card:hover .blog-thumb { transform: scale(1.04); }
+    .blog-thumb-wrap { overflow: hidden; flex-shrink: 0; }
+    .blog-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+    .blog-cat {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+      color: var(--brown); background: var(--brown-ll); padding: 3px 10px; border-radius: 20px;
+      width: fit-content;
+    }
+    .blog-title { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.4; }
+    .blog-title.lg { font-size: 22px; }
+    .blog-excerpt { font-size: 13px; color: var(--gray); line-height: 1.55; }
+    .blog-meta { font-size: 11px; color: var(--brown-l); margin-top: auto; padding-top: 8px; }
+    .blog-small-list { display: flex; flex-direction: column; gap: 16px; }
+    .blog-small {
+      display: grid; grid-template-columns: 90px 1fr; gap: 14px;
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--gray-l); background: #fff;
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .blog-small:hover { transform: translateX(4px); box-shadow: 0 4px 14px rgba(209,88,22,0.07); border-color: var(--brown-l); }
+    .blog-small-thumb { width: 90px; height: 90px; object-fit: cover; }
+    .blog-small-body { padding: 12px 14px 12px 0; display: flex; flex-direction: column; gap: 4px; }
+    .blog-small-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+    /* Blog Page */
+    .blog-search-bar {
+      display: flex; gap: 12px; align-items: center;
+      background: #fff; border: 1px solid var(--gray-l);
+      border-radius: 12px; padding: 10px 18px;
+      margin-bottom: 24px;
+    }
+    .blog-search-bar input {
+      flex: 1; border: none; outline: none;
+      font-size: 14px; color: var(--text); background: transparent;
+    }
+    .blog-search-bar i { font-size: 18px; color: var(--brown-l); }
+    .blog-filter-tabs {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .blog-tab {
+      font-size: 13px; font-weight: 500; padding: 7px 18px;
+      border-radius: 20px; border: 1.5px solid var(--gray-l);
+      cursor: pointer; background: #fff; color: var(--gray);
+      transition: all .2s;
+    }
+    .blog-tab:hover { border-color: var(--brown-l); color: var(--brown); }
+    .blog-tab.active { background: var(--brown); border-color: var(--brown); color: #fff; }
+    .blog-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .blog-card-v { display: flex; flex-direction: column; }
+    .blog-card-v .blog-thumb-wrap { aspect-ratio: 16/9; }
+    .blog-card-v .blog-thumb { height: 100%; width: 100%; }
+    .blog-empty {
+      grid-column: 1 / -1; text-align: center; padding: 60px 20px;
+      color: var(--gray); font-size: 15px;
+    }
+
+    /* Blog Article Modal */
+    #blog-modal-backdrop {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); z-index: 25000;
+      justify-content: center; align-items: flex-start;
+      padding: 40px 20px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      overflow-y: auto;
+    }
+    .blog-modal-inner {
+      background: #fff; border-radius: 20px;
+      max-width: 760px; width: 100%;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+      animation: modalSlideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+      overflow: hidden; margin: auto;
+    }
+    .blog-modal-hero-img {
+      width: 100%; height: 320px; object-fit: cover; display: block;
+    }
+    .blog-modal-body {
+      padding: 36px 40px 40px;
+    }
+    .blog-modal-cat {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .8px; color: var(--brown);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .blog-modal-title {
+      font-family: var(--serif); font-size: 30px; font-weight: 600;
+      color: var(--text); line-height: 1.3; margin-bottom: 12px;
+    }
+    .blog-modal-meta {
+      font-size: 12px; color: var(--brown-l);
+      margin-bottom: 24px; padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray-l);
+    }
+    .blog-modal-content {
+      font-size: 15px; color: var(--gray); line-height: 1.8;
+    }
+    .blog-modal-content h3 {
+      font-family: var(--serif); font-size: 20px; color: var(--text);
+      margin: 28px 0 10px; font-weight: 500;
+    }
+    .blog-modal-content p { margin-bottom: 14px; }
+    .blog-modal-content ul {
+      margin: 0 0 14px 22px;
+    }
+    .blog-modal-content li { margin-bottom: 6px; }
+    .blog-modal-content blockquote {
+      border-left: 3px solid var(--brown); padding-left: 18px;
+      margin: 20px 0; font-style: italic; color: var(--brown);
+      font-family: var(--serif); font-size: 16px;
+    }
+    .blog-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); border: 1px solid var(--gray-l);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 20px; color: var(--gray);
+      transition: all .2s; z-index: 2;
+    }
+    .blog-modal-close:hover { background: #fff; color: var(--brown); border-color: var(--brown); }
+    .blog-modal-wrap { position: relative; }
+
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
       .nav-links { display: none; }
@@ -433,6 +579,11 @@
       .member-grid { grid-template-columns: repeat(2, 1fr); }
       #blog-section > div { grid-template-columns: 1fr !important; }
       #about-section > div { grid-template-columns: 1fr !important; }
+      .blog-featured { grid-template-columns: 1fr; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .blog-modal-hero-img { height: 200px; }
+      .blog-modal-body { padding: 24px; }
+      .blog-modal-title { font-size: 22px; }
     }
   </style>
 </head>
@@ -447,7 +598,7 @@
     <div class="nav-links">
       <a onclick="showPage('home')">Trang chủ</a>
       <a onclick="scrollToSection('about')">Về chúng tôi</a>
-      <a onclick="scrollToSection('blog')">Blog</a>
+      <a onclick="showPage('blog')">Blog</a>
       <a onclick="openLookupModal()" style="font-weight: 500; color: var(--brown); cursor: pointer;">Tra cứu đơn hàng</a>
     </div>
     <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
@@ -600,46 +751,109 @@
       </div>
     </div>
 
-    <!-- Blog Section -->
+    <!-- Blog Section (Homepage Preview) -->
     <div class="section" id="blog-section" style="scroll-margin-top: 80px;">
       <div class="section-head">
-        <div class="section-title">Góc cảm hứng (Blog)</div>
+        <div class="section-title">Góc cảm hứng</div>
+        <a class="section-link" onclick="showPage('blog')">Xem tất cả bài viết →</a>
       </div>
-      <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
-            <div style="font-size: 32px;">🎁</div>
+      <div class="reveal blog-featured">
+        <!-- Featured large card -->
+        <div class="blog-card" onclick="openBlogArticle(0)">
+          <div class="blog-thumb-wrap" style="height: 220px;">
+            <img class="blog-thumb" src="blog_wedding_gift.jpg" alt="Quà cưới" style="height:220px;">
           </div>
-          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
-            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Ý tưởng quà tặng</div>
-            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Top 5 món quà kỷ niệm ngày cưới ý nghĩa nhất</h4>
-            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Gợi ý những món quà độc bản cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc.</p>
-          </div>
-        </div>
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
-            <div style="font-size: 32px;">🏡</div>
-          </div>
-          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
-            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Phong cách sống</div>
-            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Cách trang trí mô hình gỗ handmade trong phòng khách</h4>
-            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Bí quyết sắp đặt nghệ thuật mang lại sự ấm cúng, sang trọng cho không gian nhà bạn.</p>
+          <div class="blog-body">
+            <span class="blog-cat">Ý tưởng quà tặng</span>
+            <h3 class="blog-title lg">Top 5 món quà kỷ niệm ngày cưới ý nghĩa và độc đáo nhất 2024</h3>
+            <p class="blog-excerpt">Những món quà cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc — từ mô hình gỗ đôi uyên ương đến tranh kỷ niệm 3D khắc tên.</p>
+            <div class="blog-meta">📅 20/05/2024 &nbsp;·&nbsp; ⏱ 5 phút đọc</div>
           </div>
         </div>
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
-            <div style="font-size: 32px;">✨</div>
+        <!-- Small cards list -->
+        <div class="blog-small-list">
+          <div class="blog-small" onclick="openBlogArticle(2)">
+            <img class="blog-small-thumb" src="blog_craft_process.jpg" alt="Hậu trường">
+            <div class="blog-small-body">
+              <span class="blog-cat" style="font-size:9px;">Hậu trường</span>
+              <div class="blog-small-title">Hành trình tạo nên mô hình gỗ từ công nghệ AI đến đôi tay thợ thủ công</div>
+              <div class="blog-meta" style="font-size:10px;">📅 15/05/2024</div>
+            </div>
           </div>
-          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
-            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Hậu trường chế tác</div>
-            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Hành trình tạo nên mô hình gỗ từ công nghệ vẽ AI</h4>
-            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Khám phá chi tiết quy trình ghép khuôn mặt AI và điêu khắc thủ công gỗ tinh xảo.</p>
+          <div class="blog-small" onclick="openBlogArticle(1)">
+            <img class="blog-small-thumb" src="blog_home_decor.jpg" alt="Trang trí">
+            <div class="blog-small-body">
+              <span class="blog-cat" style="font-size:9px;">Phong cách sống</span>
+              <div class="blog-small-title">Cách trang trí mô hình gỗ handmade để tạo điểm nhấn cho ngôi nhà</div>
+              <div class="blog-meta" style="font-size:10px;">📅 10/05/2024</div>
+            </div>
+          </div>
+          <div class="blog-small" onclick="openBlogArticle(3)">
+            <img class="blog-small-thumb" src="blog_birthday_gift.jpg" alt="Sinh nhật">
+            <div class="blog-small-body">
+              <span class="blog-cat" style="font-size:9px;">Ý tưởng quà tặng</span>
+              <div class="blog-small-title">Gợi ý quà sinh nhật cá nhân hóa cho ba mẹ, người thân thật ấm lòng</div>
+              <div class="blog-meta" style="font-size:10px;">📅 05/05/2024</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <footer style="background: var(--brown-d); color: rgba(255,255,255,0.7); font-size: 13px; text-align: center; padding: 28px 20px;"><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
+  </div><!-- /page-home -->
+
+  <!-- ═══ BLOG PAGE ═══ -->
+  <div id="page-blog" class="page">
+    <div style="max-width:1100px; margin: 0 auto; padding: 40px 40px 80px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <span class="back-btn" onclick="showPage('home')" style="margin:0;">← Trang chủ</span>
+        <span style="color:var(--gray-l);">/</span>
+        <span style="font-size:13px; color:var(--gray);">Blog</span>
+      </div>
+      <h1 style="font-family:var(--serif); font-size:36px; font-weight:600; color:var(--text); margin-bottom:6px;">Góc cảm hứng MoryTory</h1>
+      <p style="font-size:15px; color:var(--gray); margin-bottom:32px;">Ý tưởng quà tặng, phong cách sống và hậu trường chế tác mô hình gỗ nghệ thuật.</p>
+
+      <!-- Search -->
+      <div class="blog-search-bar">
+        <i class="ti ti-search"></i>
+        <input type="text" id="blog-search-input" placeholder="Tìm kiếm bài viết..." oninput="filterBlog()">
+      </div>
+
+      <!-- Category filter -->
+      <div class="blog-filter-tabs">
+        <button class="blog-tab active" onclick="setBlogFilter('all', this)">Tất cả</button>
+        <button class="blog-tab" onclick="setBlogFilter('qua-tang', this)">🎁 Ý tưởng quà tặng</button>
+        <button class="blog-tab" onclick="setBlogFilter('phong-cach-song', this)">🏡 Phong cách sống</button>
+        <button class="blog-tab" onclick="setBlogFilter('hau-truong', this)">✨ Hậu trường chế tác</button>
+        <button class="blog-tab" onclick="setBlogFilter('cong-nghe', this)">🤖 Công nghệ AI</button>
+      </div>
+
+      <!-- Blog Grid -->
+      <div class="blog-grid" id="blog-grid"></div>
+    </div>
+  </div><!-- /page-blog -->
+
+  <!-- Blog Article Modal -->
+  <div id="blog-modal-backdrop" onclick="closeBlogModal(event)">
+    <div class="blog-modal-inner blog-modal-wrap" id="blog-modal-inner">
+      <button class="blog-modal-close" onclick="closeBlogModal(null, true)"><i class="ti ti-x"></i></button>
+      <img class="blog-modal-hero-img" id="blog-modal-img" src="" alt="">
+      <div class="blog-modal-body">
+        <div class="blog-modal-cat" id="blog-modal-cat"></div>
+        <h2 class="blog-modal-title" id="blog-modal-title"></h2>
+        <div class="blog-modal-meta" id="blog-modal-meta"></div>
+        <div class="blog-modal-content" id="blog-modal-content"></div>
+        <div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--gray-l); display:flex; align-items:center; gap:12px;">
+          <div style="width:44px; height:44px; background:var(--blush); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🪵</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:var(--text);">MoryTory Studio</div>
+            <div style="font-size:12px; color:var(--gray);">Mô hình gỗ thủ công · Cá nhân hoá theo yêu cầu</div>
+          </div>
+          <button onclick="closeBlogModal(null,true); showPage('home');" style="margin-left:auto; background:var(--brown); color:#fff; border:none; padding:10px 22px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='var(--brown-d)'" onmouseout="this.style.background='var(--brown)'">Đặt hàng ngay →</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══ PRODUCT PAGE (CUSTOM – có upload ảnh) ═══ -->
@@ -814,11 +1028,326 @@
 
     function fmt(n) { return n.toLocaleString('vi-VN') + ' đ'; }
 
+    /* ══════════════════════════════════════
+       BLOG DATA & FUNCTIONS
+    ══════════════════════════════════════ */
+    const BLOG_POSTS = [
+      {
+        id: 0,
+        slug: 'qua-tang-ngay-cuoi',
+        category: 'qua-tang',
+        catLabel: '🎁 Ý tưởng quà tặng',
+        thumb: 'blog_wedding_gift.jpg',
+        title: 'Top 5 món quà kỷ niệm ngày cưới ý nghĩa và độc đáo nhất 2024',
+        excerpt: 'Những món quà cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc — từ mô hình gỗ đôi uyên ương đến tranh kỷ niệm 3D khắc tên.',
+        date: '20/05/2024',
+        readTime: '5 phút đọc',
+        content: `
+          <p>Ngày cưới là một trong những dấu mốc quan trọng nhất trong cuộc đời. Một món quà kỷ niệm ngày cưới không chỉ đơn thuần là vật chất, mà còn là biểu tượng của tình yêu thương, sự trân trọng và kỷ niệm thiêng liêng.</p>
+          
+          <blockquote>"Món quà đẹp nhất không phải là đắt tiền nhất, mà là cái được trao đi bằng cả trái tim."</blockquote>
+
+          <h3>1. Mô hình gỗ đôi uyên ương cá nhân hóa</h3>
+          <p>Đây là lựa chọn hàng đầu cho những ai muốn tặng một món quà vừa độc đáo, vừa đong đầy ý nghĩa. Tại MoryTory, chúng tôi tạo ra những mô hình gỗ thu nhỏ mang hình dáng của cặp đôi — được chế tác từ ảnh thật của họ qua công nghệ AI và điêu khắc thủ công tinh xảo.</p>
+          <ul>
+            <li>Chân dung được tái hiện chính xác từ ảnh gốc</li>
+            <li>Chất liệu gỗ tự nhiên, bền đẹp theo thời gian</li>
+            <li>Khắc tên và ngày cưới theo yêu cầu</li>
+            <li>Hộp quà sang trọng, sẵn sàng để tặng</li>
+          </ul>
+
+          <h3>2. Tranh gỗ khắc laser kỷ niệm</h3>
+          <p>Tranh gỗ khắc laser là phong cách tối giản nhưng đầy nghệ thuật. Hình ảnh gia đình, phong cảnh đặc biệt hoặc câu chuyện tình yêu có thể được chuyển thể thành tác phẩm nghệ thuật trường tồn trên tấm gỗ tự nhiên.</p>
+
+          <h3>3. Set quà tặng kỷ niệm cao cấp</h3>
+          <p>Kết hợp nhiều món quà ý nghĩa như mô hình gỗ, nến thơm, hoa tươi khô và thiệp viết tay trong một hộp quà sang trọng. Đây là lựa chọn hoàn hảo nếu bạn muốn tặng một "trải nghiệm" chứ không chỉ một vật phẩm đơn lẻ.</p>
+
+          <h3>4. Khung ảnh gỗ khắc tên</h3>
+          <p>Một chiếc khung ảnh gỗ được khắc tên và ngày tháng đặc biệt là món quà vừa thực tế vừa cảm xúc. Mỗi lần nhìn vào bức ảnh trong khung, cặp đôi sẽ nhớ lại khoảnh khắc thiêng liêng của ngày hôm đó.</p>
+
+          <h3>5. Mô hình nhà mini cá nhân hóa</h3>
+          <p>Với những cặp đôi vừa mua nhà, một mô hình thu nhỏ ngôi nhà của họ sẽ là món quà cực kỳ ý nghĩa. Chúng tôi có thể tái hiện ngôi nhà từ hình ảnh hoặc thiết kế riêng theo yêu cầu của bạn.</p>
+
+          <p>Dù bạn chọn món quà nào, điều quan trọng nhất là sự chân thành và tâm huyết bạn đặt vào đó. Hãy liên hệ MoryTory để được tư vấn miễn phí về món quà phù hợp nhất cho ngày trọng đại này.</p>
+        `
+      },
+      {
+        id: 1,
+        slug: 'trang-tri-mo-hinh-go',
+        category: 'phong-cach-song',
+        catLabel: '🏡 Phong cách sống',
+        thumb: 'blog_home_decor.jpg',
+        title: 'Cách trang trí mô hình gỗ handmade để tạo điểm nhấn cho ngôi nhà',
+        excerpt: 'Bí quyết sắp đặt nghệ thuật mang lại sự ấm cúng, sang trọng cho không gian nhà bạn với những mô hình gỗ thủ công độc đáo.',
+        date: '10/05/2024',
+        readTime: '4 phút đọc',
+        content: `
+          <p>Mô hình gỗ handmade không chỉ là món quà kỷ niệm — chúng còn là những tác phẩm nghệ thuật trang trí tuyệt đẹp cho không gian sống. Với màu sắc ấm áp tự nhiên của gỗ và đường nét thủ công tinh xảo, chúng có thể biến bất kỳ góc nhà nào thành một điểm nhấn đặc sắc.</p>
+
+          <blockquote>"Một ngôi nhà không cần phải hoàn hảo để là nơi đẹp nhất — chỉ cần nó kể được câu chuyện của bạn."</blockquote>
+
+          <h3>Kệ trưng bày theo chủ đề gia đình</h3>
+          <p>Tạo một góc trưng bày riêng với mô hình gỗ hình gia đình — bố, mẹ, các con và thú cưng. Đặt chúng trên một chiếc kệ gỗ thô, xung quanh là những cây xanh nhỏ, nến thơm và ảnh gia đình. Đây sẽ trở thành góc ý nghĩa nhất trong nhà bạn.</p>
+
+          <h3>Góc làm việc sáng tạo</h3>
+          <p>Trên bàn làm việc, đặt một mô hình gỗ nhỏ của người thân hoặc thú cưng. Sự hiện diện này không chỉ trang trí không gian mà còn là nguồn động lực tinh thần mỗi khi bạn cảm thấy mệt mỏi với công việc.</p>
+
+          <h3>Kệ phòng khách theo gradient màu</h3>
+          <p>Nếu bạn có nhiều mô hình gỗ với màu sắc khác nhau, hãy sắp xếp chúng theo gradient từ màu sáng đến tối, hoặc theo kích thước từ nhỏ đến lớn. Cách trưng bày này tạo ra vẻ đẹp thống nhất và chuyên nghiệp cho không gian.</p>
+
+          <h3>Kết hợp với cây xanh</h3>
+          <p>Gỗ và cây xanh luôn là bộ đôi hoàn hảo. Xếp mô hình gỗ bên cạnh một chậu cây nhỏ như xương rồng, sen đá hay cây bạc hà. Sự kết hợp này mang lại cảm giác tươi mát, gần gũi với thiên nhiên.</p>
+
+          <h3>Lưu ý khi bảo quản</h3>
+          <ul>
+            <li>Tránh đặt mô hình gỗ ở nơi có ánh nắng trực tiếp</li>
+            <li>Lau bụi thường xuyên bằng khăn mềm, không dùng nước</li>
+            <li>Tránh độ ẩm cao — không đặt gần chậu nước hay nhà vệ sinh</li>
+            <li>Có thể dùng sáp gỗ để giữ độ bóng theo thời gian</li>
+          </ul>
+
+          <p>Mô hình gỗ đẹp nhất không phải là cái đắt tiền nhất, mà là cái kể được câu chuyện riêng của gia đình bạn. Hãy để MoryTory giúp bạn tạo nên những tác phẩm ấy.</p>
+        `
+      },
+      {
+        id: 2,
+        slug: 'hanh-trinh-che-tac-mo-hinh',
+        category: 'hau-truong',
+        catLabel: '✨ Hậu trường chế tác',
+        thumb: 'blog_craft_process.jpg',
+        title: 'Hành trình tạo nên mô hình gỗ từ công nghệ AI đến đôi tay thợ thủ công',
+        excerpt: 'Khám phá quy trình chế tác độc đáo của MoryTory — kết hợp AI nhận diện khuôn mặt và kỹ thuật điêu khắc gỗ truyền thống.',
+        date: '15/05/2024',
+        readTime: '6 phút đọc',
+        content: `
+          <p>Mỗi mô hình gỗ MoryTory là kết quả của một hành trình dài — từ tấm ảnh bạn cung cấp đến sản phẩm hoàn chỉnh trên tay bạn. Đây là câu chuyện phía sau mỗi sản phẩm chúng tôi tạo ra.</p>
+
+          <h3>Bước 1: Nhận ảnh và phân tích AI</h3>
+          <p>Ngay khi nhận được ảnh từ khách hàng, hệ thống AI của chúng tôi bắt đầu phân tích. Công nghệ nhận diện khuôn mặt 3D trích xuất các đặc điểm nổi bật: hình dạng mặt, mắt, mũi, miệng, tóc và phụ kiện đặc trưng của từng người.</p>
+          <ul>
+            <li>Phân tích hơn 68 điểm mốc khuôn mặt</li>
+            <li>Xác định tỷ lệ và đặc trưng cá nhân</li>
+            <li>Tạo bản thiết kế 3D vector sơ bộ</li>
+          </ul>
+
+          <h3>Bước 2: Thiết kế và tinh chỉnh thủ công</h3>
+          <p>Bản thiết kế AI chỉ là điểm khởi đầu. Các nghệ nhân của chúng tôi xem xét kỹ lưỡng từng chi tiết và tinh chỉnh thủ công để đảm bảo mô hình thực sự giống người thật — cùng phong cách quần áo, kiểu tóc và biểu cảm đặc trưng.</p>
+
+          <blockquote>"AI cung cấp độ chính xác. Bàn tay con người mang đến linh hồn cho tác phẩm."</blockquote>
+
+          <h3>Bước 3: Chọn và xử lý gỗ</h3>
+          <p>Chúng tôi sử dụng gỗ thông Nga và gỗ alder — hai loại gỗ được ưa chuộng trong điêu khắc vì độ mịn và khả năng chịu đựng tốt. Gỗ được phơi khô tự nhiên ít nhất 3 tháng trước khi đưa vào sản xuất để tránh nứt vỡ.</p>
+
+          <h3>Bước 4: Khắc CNC và điêu khắc thủ công</h3>
+          <p>Máy CNC tạo ra hình dáng cơ bản với độ chính xác đến 0.1mm. Sau đó, các thợ thủ công lành nghề dùng bộ đục nhỏ để tạo ra những đường nét mịn màng, tự nhiên mà máy móc không thể làm được — đặc biệt là khuôn mặt và bàn tay.</p>
+
+          <h3>Bước 5: Tô màu và hoàn thiện</h3>
+          <p>Đây là bước đòi hỏi nghệ thuật nhất. Màu sắc được pha tay và tô theo từng lớp, để khô tự nhiên giữa các lớp. Sau cùng, toàn bộ sản phẩm được phủ một lớp sơn bóng bảo vệ, an toàn với da người và không phai màu theo thời gian.</p>
+
+          <h3>Bước 6: Kiểm tra chất lượng và đóng gói</h3>
+          <p>Mỗi sản phẩm đều trải qua quy trình kiểm tra nghiêm ngặt trước khi xuất xưởng. Chúng tôi so sánh sản phẩm với ảnh gốc, kiểm tra độ hoàn thiện bề mặt và đảm bảo không có khiếm khuyết. Sản phẩm được đóng gói trong hộp quà cao cấp với lớp lót chống sốc.</p>
+
+          <p>Toàn bộ quy trình thường mất từ 7-14 ngày làm việc. Đây là thời gian chúng tôi cần để tạo ra một tác phẩm thực sự xứng đáng với kỷ niệm của bạn.</p>
+        `
+      },
+      {
+        id: 3,
+        slug: 'qua-sinh-nhat-ca-nhan-hoa',
+        category: 'qua-tang',
+        catLabel: '🎁 Ý tưởng quà tặng',
+        thumb: 'blog_birthday_gift.jpg',
+        title: 'Gợi ý quà sinh nhật cá nhân hóa cho ba mẹ, người thân thật ấm lòng',
+        excerpt: 'Quà sinh nhật có nên chỉ là bánh kem và hoa? Hãy khám phá những ý tưởng độc đáo hơn để ghi dấu ấn trong ngày đặc biệt của người bạn yêu thương.',
+        date: '05/05/2024',
+        readTime: '4 phút đọc',
+        content: `
+          <p>Sinh nhật ba mẹ, hay người thân yêu — đây là dịp để bày tỏ tình cảm chân thành nhất. Thay vì những món quà quen thuộc mà ai cũng tặng, hãy thử một điều gì đó khiến họ thực sự xúc động và nhớ mãi.</p>
+
+          <blockquote>"Món quà tốt nhất cho ba mẹ không phải thứ đắt tiền, mà là thứ cho thấy bạn thực sự hiểu và yêu họ."</blockquote>
+
+          <h3>Mô hình gia đình đầy đủ thành viên</h3>
+          <p>Tặng ba mẹ một mô hình gỗ thu nhỏ toàn bộ gia đình — bao gồm tất cả các con, cháu và thậm chí cả thú cưng nếu có. Đây là món quà sẽ luôn được trưng bày trang trọng ở phòng khách, nhắc nhở về tình yêu thương gia đình mỗi ngày.</p>
+
+          <h3>Mô hình cá nhân theo nghề nghiệp</h3>
+          <p>Nếu ba bạn là giáo viên, người mẫu có thể mặc áo dài và cầm phấn. Mẹ bạn là bác sĩ, mô hình có thể mặc áo blouse trắng và đeo ống nghe. Sự cá nhân hóa theo nghề nghiệp tạo ra một tác phẩm vừa giống họ về ngoại hình, vừa thể hiện niềm tự hào về công việc.</p>
+
+          <h3>Set quà kỷ niệm theo thập kỷ</h3>
+          <p>Với những dịp sinh nhật tròn tuổi quan trọng (50, 60, 70 tuổi), hãy cân nhắc tặng một bộ sưu tập nhỏ: mô hình gỗ kết hợp với album ảnh được in lại theo phong cách cổ điển, và một chiếc đồng hồ khắc tên.</p>
+
+          <h3>Cách chuẩn bị ảnh để được kết quả tốt nhất</h3>
+          <ul>
+            <li>Chọn ảnh rõ nét, ánh sáng tốt, không bị mờ</li>
+            <li>Ảnh nhìn thẳng hoặc 3/4 là lý tưởng nhất</li>
+            <li>Đảm bảo thấy đầy đủ khuôn mặt, không bị che khuất</li>
+            <li>Nếu có nhiều ảnh, hãy gửi nhiều góc khác nhau để chúng tôi chọn góc đẹp nhất</li>
+          </ul>
+
+          <h3>Thời gian đặt hàng</h3>
+          <p>Để kịp sinh nhật, bạn nên đặt hàng trước ít nhất 10-14 ngày. Chúng tôi có dịch vụ giao nhanh trong 5-7 ngày với phụ phí nếu bạn cần gấp.</p>
+
+          <p>Hãy liên hệ với chúng tôi qua Zalo để được tư vấn miễn phí về món quà phù hợp nhất cho người thân của bạn. Chúng tôi luôn sẵn sàng giúp bạn tạo nên khoảnh khắc không thể nào quên.</p>
+        `
+      },
+      {
+        id: 4,
+        slug: 'ai-va-nghe-thuat-thu-cong',
+        category: 'cong-nghe',
+        catLabel: '🤖 Công nghệ AI',
+        thumb: 'blog_ai_design.jpg',
+        title: 'Khi AI gặp nghệ thuật thủ công: Tương lai của quà tặng cá nhân hóa',
+        excerpt: 'Trí tuệ nhân tạo đang thay đổi cách chúng ta tạo ra quà tặng — nhưng đôi bàn tay con người vẫn là linh hồn không thể thay thế.',
+        date: '28/04/2024',
+        readTime: '7 phút đọc',
+        content: `
+          <p>Trong vài năm gần đây, AI đã bắt đầu len lỏi vào mọi ngành công nghiệp. Nhưng ít ai nghĩ rằng nó lại có thể kết hợp hài hòa với nghề thủ công truyền thống để tạo ra những sản phẩm quà tặng cá nhân hóa đẹp đến vậy.</p>
+
+          <h3>AI làm được gì trong chế tác mô hình gỗ?</h3>
+          <p>Công nghệ nhận diện khuôn mặt và tái hiện 3D của AI có thể phân tích một bức ảnh và trích xuất hàng trăm điểm dữ liệu về đặc điểm ngoại hình: tỷ lệ khuôn mặt, vị trí các đường nét, đặc điểm riêng biệt. Dữ liệu này được chuyển thành bản thiết kế vector 3D chính xác.</p>
+
+          <blockquote>"AI không thay thế nghệ nhân. AI giúp nghệ nhân làm điều không tưởng — tái hiện chính xác một khuôn mặt con người trên gỗ."</blockquote>
+
+          <h3>Nhưng AI không làm được mọi thứ</h3>
+          <p>Dù công nghệ tiên tiến đến đâu, có những yếu tố AI không thể nào tái hiện được:</p>
+          <ul>
+            <li>Cảm xúc và "linh hồn" của tác phẩm</li>
+            <li>Sự uyển chuyển trong từng đường nét thủ công</li>
+            <li>Quyết định nghệ thuật dựa trên kinh nghiệm và trực giác</li>
+            <li>Khả năng xử lý những tình huống bất ngờ trong chất liệu gỗ tự nhiên</li>
+          </ul>
+
+          <h3>Mô hình kết hợp tối ưu tại MoryTory</h3>
+          <p>Chúng tôi đã tìm ra điểm cân bằng hoàn hảo: AI xử lý phần kỹ thuật cần độ chính xác cao (tỷ lệ khuôn mặt, đặc điểm cơ bản), còn nghệ nhân đảm nhận phần cần sự sáng tạo và cảm nhận (tô màu, hoàn thiện bề mặt, thêm chi tiết nghệ thuật).</p>
+
+          <h3>Xu hướng tương lai</h3>
+          <p>Chúng tôi tin rằng tương lai của quà tặng cá nhân hóa sẽ là sự kết hợp ngày càng sâu sắc giữa công nghệ và thủ công. AI sẽ xử lý những phần lặp đi lặp lại, còn con người sẽ tập trung vào những phần cần sự sáng tạo và tình cảm nhất.</p>
+
+          <p>Đây không phải là sự cạnh tranh giữa con người và máy móc — mà là sự hợp tác để tạo ra những sản phẩm tốt hơn, nhanh hơn, và vẫn giữ được cái hồn thủ công truyền thống.</p>
+        `
+      },
+      {
+        id: 5,
+        slug: 'qua-tot-nghiep-y-nghia',
+        category: 'qua-tang',
+        catLabel: '🎁 Ý tưởng quà tặng',
+        thumb: 'blog_graduation.jpg',
+        title: 'Quà tốt nghiệp: Lưu giữ khoảnh khắc trưởng thành bằng mô hình gỗ cá nhân',
+        excerpt: 'Lễ tốt nghiệp là cột mốc đáng nhớ nhất trong hành trình học vấn. Hãy tặng một món quà xứng tầm với những nỗ lực và cống hiến của người thân.',
+        date: '01/05/2024',
+        readTime: '4 phút đọc',
+        content: `
+          <p>Lễ tốt nghiệp là ngày mà mọi học sinh, sinh viên đều mong chờ. Sau những năm học tập miệt mài, khoảnh khắc nhận bằng tốt nghiệp là phần thưởng xứng đáng. Và một món quà đặc biệt sẽ làm cho ngày này trở nên mãi mãi đáng nhớ.</p>
+
+          <h3>Mô hình gỗ mặc áo tốt nghiệp</h3>
+          <p>Tại MoryTory, chúng tôi tạo ra mô hình gỗ thu nhỏ với hình ảnh tân sinh viên trong bộ áo tốt nghiệp — đội mũ cánh chuồn, cầm tấm bằng. Mô hình được làm từ ảnh thật, nên nhân vật trên gỗ sẽ có khuôn mặt giống y hệt người thật.</p>
+
+          <h3>Khắc thông điệp truyền cảm hứng</h3>
+          <p>Phần đế của mô hình có thể được khắc một câu trích dẫn ý nghĩa, tên trường, chuyên ngành và năm tốt nghiệp. Đây sẽ trở thành kỷ vật bền vững theo thời gian, nhắc nhớ về một chương quan trọng trong cuộc đời.</p>
+
+          <blockquote>"Không phải kết thúc, mà là khởi đầu của một chương mới trong cuộc đời bạn."</blockquote>
+
+          <h3>Quà cho cả nhóm bạn cùng tốt nghiệp</h3>
+          <p>Nếu bạn muốn tặng quà chung cho cả nhóm, hãy cân nhắc đặt một bộ mô hình gỗ nhiều nhân vật — tái hiện cả nhóm bạn trong bộ áo tốt nghiệp. Đây là món quà vừa cá nhân vừa tập thể, và mỗi người trong nhóm sẽ trân trọng nó vô cùng.</p>
+
+          <h3>Lưu ý khi đặt hàng mùa tốt nghiệp</h3>
+          <ul>
+            <li>Mùa tốt nghiệp (tháng 5-7) là mùa cao điểm, nên đặt sớm ít nhất 2-3 tuần</li>
+            <li>Cung cấp ảnh chất lượng cao và nhiều góc khác nhau</li>
+            <li>Nên thêm ảnh mặc áo tốt nghiệp nếu đã có để tham khảo</li>
+            <li>Có thể kết hợp với hộp quà và thiệp chúc mừng</li>
+          </ul>
+
+          <p>Hãy để MoryTory đồng hành cùng bạn trong ngày trọng đại này. Chúng tôi cam kết tạo ra một sản phẩm vừa đẹp vừa ý nghĩa, xứng đáng với thành tựu của người bạn yêu thương.</p>
+        `
+      }
+    ];
+
+    let currentBlogFilter = 'all';
+
+    function renderBlogGrid(posts) {
+      const grid = document.getElementById('blog-grid');
+      if (!grid) return;
+      if (posts.length === 0) {
+        grid.innerHTML = '<div class="blog-empty">😔 Không tìm thấy bài viết phù hợp.</div>';
+        return;
+      }
+      grid.innerHTML = posts.map(post => `
+        <div class="blog-card blog-card-v" onclick="openBlogArticle(${post.id})">
+          <div class="blog-thumb-wrap">
+            <img class="blog-thumb" src="${post.thumb}" alt="${post.title}" loading="lazy" onerror="this.style.background='var(--blush)';this.style.height='180px'">
+          </div>
+          <div class="blog-body">
+            <span class="blog-cat">${post.catLabel}</span>
+            <h3 class="blog-title">${post.title}</h3>
+            <p class="blog-excerpt">${post.excerpt}</p>
+            <div class="blog-meta">📅 ${post.date} &nbsp;·&nbsp; ⏱ ${post.readTime}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function setBlogFilter(cat, btn) {
+      currentBlogFilter = cat;
+      document.querySelectorAll('.blog-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      filterBlog();
+    }
+
+    function filterBlog() {
+      const query = (document.getElementById('blog-search-input')?.value || '').toLowerCase().trim();
+      let filtered = BLOG_POSTS;
+      if (currentBlogFilter !== 'all') {
+        filtered = filtered.filter(p => p.category === currentBlogFilter);
+      }
+      if (query) {
+        filtered = filtered.filter(p =>
+          p.title.toLowerCase().includes(query) ||
+          p.excerpt.toLowerCase().includes(query) ||
+          p.catLabel.toLowerCase().includes(query)
+        );
+      }
+      renderBlogGrid(filtered);
+    }
+
+    function openBlogArticle(id) {
+      const post = BLOG_POSTS.find(p => p.id === id);
+      if (!post) return;
+      document.getElementById('blog-modal-img').src = post.thumb;
+      document.getElementById('blog-modal-img').alt = post.title;
+      document.getElementById('blog-modal-cat').innerHTML = `<span class="blog-cat">${post.catLabel}</span>`;
+      document.getElementById('blog-modal-title').textContent = post.title;
+      document.getElementById('blog-modal-meta').innerHTML = `📅 ${post.date} &nbsp;·&nbsp; ⏱ ${post.readTime}`;
+      document.getElementById('blog-modal-content').innerHTML = post.content;
+      const backdrop = document.getElementById('blog-modal-backdrop');
+      backdrop.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      backdrop.scrollTop = 0;
+    }
+
+    function closeBlogModal(event, force) {
+      if (!force && event && event.target !== document.getElementById('blog-modal-backdrop')) return;
+      document.getElementById('blog-modal-backdrop').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // Initialize blog grid when page is shown
+    const _origShowPage = typeof showPage !== 'undefined' ? null : null;
+
     function showPage(name) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + name).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (name === 'blog') {
+        // Reset filter and render
+        currentBlogFilter = 'all';
+        const searchInput = document.getElementById('blog-search-input');
+        if (searchInput) searchInput.value = '';
+        document.querySelectorAll('.blog-tab').forEach((t, i) => {
+          if (i === 0) t.classList.add('active'); else t.classList.remove('active');
+        });
+        renderBlogGrid(BLOG_POSTS);
+      }
     }
+
 
     function showProductPage(type, title, price, oldPrice, theme) {
       if (type === 'custom') {
