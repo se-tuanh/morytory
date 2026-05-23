@@ -6,24 +6,24 @@
   <link rel="icon" href="logo.png" type="image/png">
   <title>MoryTory – Mô hình gỗ cá nhân hoá</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="cart.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream:   #fdf8f3;
-      --blush:   #f5e6d8;
-      --brown:   #7a4a1e;
-      --brown-d: #5c3510;
-      --brown-l: #c9a882;
-      --brown-ll:#f0deca;
-      --gray:    #888178;
-      --gray-l:  #e8ddd4;
-      --text:    #2a1a0e;
+      --cream:   #fdfbf9; /* Etsy warm off-white background */
+      --blush:   #f7f0ea; /* Soft accent background */
+      --brown:   #d15816; /* Etsy orange-terracotta accent */
+      --brown-d: #a63f0b; /* Darker terracotta for hover/CTAs */
+      --brown-l: #c29f80; /* Muted brown for secondary elements */
+      --brown-ll:#f7ede4; /* Extremely light warm card bg */
+      --gray:    #595959; /* Slate gray for secondary text */
+      --gray-l:  #ebdcd0; /* Elegant thin borders */
+      --text:    #222222; /* Soft black primary text */
       --serif:   'Playfair Display', Georgia, serif;
-      --sans:    'DM Sans', system-ui, sans-serif;
+      --sans:    'Outfit', system-ui, sans-serif;
     }
 
     body { background: var(--cream); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.6; }
@@ -31,21 +31,50 @@
     /* ─── NAV ─── */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: #fff; border-bottom: 0.5px solid var(--gray-l);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 0.5px solid var(--gray-l);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; height: 60px;
+      padding: 0 40px; height: 68px;
     }
-    .logo { font-family: var(--serif); font-size: 22px; color: var(--brown); cursor: pointer; letter-spacing: -.3px; }
-    .nav-links { display: flex; gap: 28px; font-size: 13px; color: var(--gray); }
-    .nav-links a { text-decoration: none; color: inherit; transition: color .2s; cursor: pointer; }
-    .nav-links a:hover { color: var(--brown); }
+    .logo {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--brown);
+      cursor: pointer;
+      letter-spacing: -.5px;
+      transition: opacity 0.2s;
+    }
+    .logo:hover { opacity: 0.85; }
+    .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; color: var(--gray); }
+    .nav-links a { text-decoration: none; color: inherit; transition: color .2s; cursor: pointer; position: relative; }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: var(--brown);
+      transition: width 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
     .cart-btn {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px; color: var(--brown); cursor: pointer;
-      border: 0.5px solid var(--gray-l); border-radius: 20px;
-      padding: 6px 14px; transition: background .2s;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--brown); cursor: pointer;
+      border: 1.5px solid var(--brown); border-radius: 24px;
+      padding: 8px 18px; background: transparent;
+      transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .cart-btn:hover { background: var(--blush); }
+    .cart-btn:hover {
+      background: var(--brown);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(209, 88, 22, 0.15);
+    }
 
     /* ─── PAGE SWITCH ─── */
     .page { display: none; animation: fadeIn .3s ease; }
@@ -54,87 +83,128 @@
 
     /* ─── HERO ─── */
     .hero {
-      background: var(--blush); padding: 80px 40px;
+      background: var(--blush); padding: 80px 60px;
       display: flex; align-items: center; justify-content: space-between; gap: 40px;
       max-width: 1100px; margin: 40px auto; border-radius: 24px;
+      border: 0.5px solid var(--gray-l);
     }
-    .hero-text h1 { font-family: var(--serif); font-size: 42px; line-height: 1.2; color: var(--brown-d); margin-bottom: 14px; }
-    .hero-text p { font-size: 15px; color: var(--gray); max-width: 380px; margin-bottom: 28px; }
-    .hero-img { width: 380px; height: 280px; background: var(--brown-ll); border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .hero-img span { font-size: 13px; color: var(--brown-l); }
+    .hero-text h1 { font-family: var(--serif); font-size: 46px; line-height: 1.25; color: var(--text); margin-bottom: 16px; }
+    .hero-text p { font-size: 16px; color: var(--gray); max-width: 420px; margin-bottom: 32px; font-family: var(--sans); }
+    .hero-img {
+      width: 440px; height: 320px;
+      background: url('birthday_base.jpg') center/cover no-repeat;
+      border-radius: 18px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; box-shadow: 0 12px 28px rgba(122,74,30,0.08);
+      position: relative;
+    }
+    .hero-img::before {
+      content: '✨ Chế tác thủ công';
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brown);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .hero-img span { display: none; }
     .btn-primary {
       display: inline-block; background: var(--brown); color: #fff;
-      font-size: 14px; font-weight: 500; padding: 12px 28px;
-      border-radius: 10px; border: none; cursor: pointer; transition: background .2s;
+      font-size: 15px; font-weight: 600; padding: 14px 32px;
+      border-radius: 24px; border: none; cursor: pointer;
+      transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
+      box-shadow: 0 4px 14px rgba(209, 88, 22, 0.2);
     }
-    .btn-primary:hover { background: var(--brown-d); }
+    .btn-primary:hover {
+      background: var(--brown-d);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(209, 88, 22, 0.3);
+    }
 
     /* ─── SECTION ─── */
     .section { max-width: 1100px; margin: 0 auto 60px; padding: 0 40px; }
-    .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; }
-    .section-title { font-family: var(--serif); font-size: 26px; color: var(--brown-d); }
-    .section-link { font-size: 13px; color: var(--brown-l); cursor: pointer; text-decoration: underline; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; border-bottom: 1px solid var(--gray-l); padding-bottom: 12px; }
+    .section-title { font-family: var(--serif); font-size: 28px; font-weight: 500; color: var(--text); }
+    .section-link { font-size: 14px; font-weight: 600; color: var(--brown); cursor: pointer; text-decoration: none; transition: color .2s; }
+    .section-link:hover { color: var(--brown-d); text-decoration: underline; }
 
     /* ─── THEME GRID ─── */
-    .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .theme-card {
       border-radius: 16px; overflow: hidden; cursor: pointer;
-      border: 0.5px solid var(--gray-l); background: #fff;
-      transition: transform .2s, box-shadow .2s;
+      border: 1px solid var(--gray-l); background: var(--card-bg, #fff);
+      transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
-    .theme-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(122,74,30,.1); }
-    .theme-thumb { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; }
+    .theme-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(209, 88, 22, 0.08); border-color: var(--brown-l); }
+    .theme-thumb { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform .3s ease; }
+    .theme-card:hover .theme-thumb { transform: scale(1.03); }
     .theme-thumb.birthday { background-image: url('birthday_base.jpg'); }
     .theme-thumb.graduate { background-image: url('graduation_base.jpg'); }
     .theme-thumb.wedding  { background-image: url('wedding_base.jpg'); }
-    .theme-info { padding: 14px 16px; }
-    .theme-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-    .theme-sub  { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
+    .theme-info { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
+    .theme-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text); }
+    .theme-sub  { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
     .btn-theme {
-      width: 100%; padding: 9px; border-radius: 8px;
+      width: 100%; padding: 11px; border-radius: 20px;
       background: var(--brown); color: #fff;
-      border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .2s;
+      border: none; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 2px 6px rgba(209, 88, 22, 0.1);
     }
-    .btn-theme:hover { background: var(--brown-d); }
+    .btn-theme:hover { background: var(--brown-d); box-shadow: 0 4px 12px rgba(209, 88, 22, 0.2); }
 
     /* ─── PREMIUM GRID ─── */
-    .premium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .premium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .premium-card {
       border-radius: 16px; overflow: hidden; cursor: pointer;
-      border: 0.5px solid var(--gray-l); background: #fff;
-      transition: transform .2s, box-shadow .2s;
+      border: 1px solid var(--gray-l); background: var(--card-bg, #fff);
+      transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
-    .premium-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(122,74,30,.1); }
-    .premium-thumb { width: 100%; aspect-ratio: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 12px; }
+    .premium-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(209, 88, 22, 0.08); border-color: var(--brown-l); }
+    .premium-thumb { width: 100%; aspect-ratio: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 16px; transition: transform .3s ease; }
+    .premium-card:hover .premium-thumb { transform: scale(1.03); }
     .premium-thumb.p1 { background: url('premium1.jpg') center/cover no-repeat; }
     .premium-thumb.p2 { background: url('premium2.jpg') center/cover no-repeat; }
     .premium-thumb.p3 { background: url('premium3.jpg') center/cover no-repeat; }
-    .premium-label { font-size: 10px; background: var(--brown-ll); color: var(--brown); padding: 3px 10px; border-radius: 20px; font-weight: 500; }
-    .premium-info { padding: 14px 16px; }
-    .premium-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-    .premium-price { font-size: 14px; color: var(--brown); font-weight: 500; margin-bottom: 12px; }
+    .premium-label { font-size: 11px; background: rgba(255, 255, 255, 0.95); color: var(--brown); padding: 5px 12px; border-radius: 20px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .premium-info { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
+    .premium-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text); }
+    .premium-price { font-size: 15px; color: var(--brown); font-weight: 600; margin-bottom: 8px; }
     .btn-premium {
-      width: 100%; padding: 9px; border-radius: 8px;
-      background: var(--cream); color: var(--brown);
-      border: 1.5px solid var(--brown); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s;
+      width: 100%; padding: 11px; border-radius: 20px;
+      background: transparent; color: var(--brown);
+      border: 1.5px solid var(--brown); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
     }
-    .btn-premium:hover { background: var(--brown); color: #fff; }
+    .btn-premium:hover { background: var(--brown); color: #fff; box-shadow: 0 4px 12px rgba(209, 88, 22, 0.15); }
 
     /* ─── CUSTOM BANNER ─── */
     .custom-banner {
-      background: var(--brown); border-radius: 20px;
-      padding: 50px 60px; display: flex; align-items: center; justify-content: space-between;
-      max-width: 1100px; margin: 0 auto 60px; padding-left: 60px; padding-right: 60px;
+      background: var(--brown); border-radius: 24px;
+      padding: 60px 80px; display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto 60px; padding-left: 80px; padding-right: 80px;
+      box-shadow: 0 12px 32px rgba(209, 88, 22, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .custom-banner h2 { font-family: var(--serif); font-size: 30px; color: #fff; margin-bottom: 10px; }
-    .custom-banner p { font-size: 14px; color: rgba(255,255,255,.7); max-width: 400px; }
+    .custom-banner h2 { font-family: var(--serif); font-size: 32px; color: #fff; margin-bottom: 12px; font-weight: 500; }
+    .custom-banner p { font-size: 15px; color: rgba(255,255,255,.8); max-width: 440px; line-height: 1.6; }
     .btn-white {
       background: #fff; color: var(--brown);
-      font-size: 14px; font-weight: 500; padding: 12px 28px;
-      border-radius: 10px; border: none; cursor: pointer; transition: opacity .2s; white-space: nowrap;
+      font-size: 14px; font-weight: 600; padding: 14px 32px;
+      border-radius: 24px; border: none; cursor: pointer; transition: all .2s; white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    .btn-white:hover { opacity: .88; }
+    .btn-white:hover {
+      background: var(--blush);
+      color: var(--brown-d);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
 
     /* ═══════════════════════════════
        PRODUCT PAGE
@@ -401,31 +471,46 @@
     <!-- Chọn chủ đề -->
     <div class="section" id="theme-section">
       <div class="section-head">
-        <div class="section-title">Chọn chủ đề</div>
+        <div class="section-title">Chọn chủ đề thiết kế</div>
         <div class="section-link">Xem tất cả</div>
       </div>
       <div class="theme-grid reveal">
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
-          <div class="theme-thumb birthday"></div>
+          <div class="theme-thumb birthday" style="position: relative;">
+            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #d15816; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">✨ Bán chạy nhất</span>
+          </div>
           <div class="theme-info">
             <div class="theme-name">Sinh nhật gia đình</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(48 đánh giá)</span>
+            </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
-          <div class="theme-thumb graduate"></div>
+          <div class="theme-thumb graduate" style="position: relative;">
+            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #2e7d32; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">✓ Giao nhanh 24h</span>
+          </div>
           <div class="theme-info">
             <div class="theme-name">Tốt nghiệp</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(32 đánh giá)</span>
+            </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
-          <div class="theme-thumb wedding"></div>
+          <div class="theme-thumb wedding" style="position: relative;">
+            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #7b1fa2; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">💖 Chế tác tỉ mỉ</span>
+          </div>
           <div class="theme-info">
             <div class="theme-name">Đám cưới</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(56 đánh giá)</span>
+            </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
         </div>
@@ -445,6 +530,9 @@
           </div>
           <div class="premium-info">
             <div class="premium-name">Mô hình Gia Đình Cổ Điển</div>
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(24)</span>
+            </div>
             <div class="premium-price">380.000 đ</div>
             <button class="btn-premium">Mua ngay</button>
           </div>
@@ -455,6 +543,9 @@
           </div>
           <div class="premium-info">
             <div class="premium-name">Mô hình Đôi Yêu</div>
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(18)</span>
+            </div>
             <div class="premium-price">320.000 đ</div>
             <button class="btn-premium">Mua ngay</button>
           </div>
@@ -465,6 +556,9 @@
           </div>
           <div class="premium-info">
             <div class="premium-name">Mô hình Bé Yêu</div>
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(15)</span>
+            </div>
             <div class="premium-price">290.000 đ</div>
             <button class="btn-premium">Mua ngay</button>
           </div>
@@ -488,16 +582,18 @@
       <div class="section-head">
         <div class="section-title">Về chúng tôi</div>
       </div>
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; padding: 40px; border-radius: 20px; border: 0.5px solid var(--gray-l); align-items: center;">
-        <div style="background: var(--blush); aspect-ratio: 4/3; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100%;">
-          <span style="font-size: 14px; color: var(--brown-d); font-weight: 500;">MoryTory Chế Tác Gỗ Thủ Công</span>
+      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; padding: 48px; border-radius: 24px; border: 1px solid var(--gray-l); align-items: center; box-shadow: 0 8px 24px rgba(122,74,30,0.02);">
+        <div style="background: var(--blush); aspect-ratio: 4/3; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; height: 100%; border: 1px solid var(--gray-l); padding: 20px; text-align: center; gap: 12px;">
+          <div style="font-size: 40px;">🪵</div>
+          <span style="font-family: var(--serif); font-size: 18px; color: var(--brown); font-weight: 600;">MoryTory Chế Tác</span>
+          <span style="font-size: 13px; color: var(--gray);">Kỷ niệm gỗ khắc tay tinh xảo</span>
         </div>
         <div>
-          <h3 style="font-family: var(--serif); font-size: 22px; color: var(--brown-d); margin-bottom: 14px;">Chế tác từ cả trái tim và sự tận tâm</h3>
-          <p style="font-size: 14px; color: var(--gray); margin-bottom: 14px; line-height: 1.6;">
+          <h3 style="font-family: var(--serif); font-size: 26px; color: var(--text); margin-bottom: 16px; font-weight: 500;">Chế tác từ cả trái tim và sự tận tâm</h3>
+          <p style="font-size: 15px; color: var(--gray); margin-bottom: 16px; line-height: 1.6;">
             Tại MoryTory, chúng tôi tin rằng mỗi khoảnh khắc hạnh phúc trong cuộc sống đều xứng đáng được lưu giữ một cách trân trọng nhất. Bằng sự kết hợp giữa công nghệ khắc laser hiện đại và đôi bàn tay khéo léo của những người thợ thủ công, chúng tôi tạo nên những mô hình gỗ cá nhân hóa sống động và đầy ý nghĩa.
           </p>
-          <p style="font-size: 14px; color: var(--gray); line-height: 1.6;">
+          <p style="font-size: 15px; color: var(--gray); line-height: 1.6;">
             Từng phôi gỗ được chọn lọc kỹ càng, gia công tỉ mỉ để đảm bảo độ bền đẹp theo thời gian. Đây không chỉ là món quà trang trí tinh tế mà còn là nơi lưu trữ kỷ niệm gia đình, tình yêu đôi lứa bền vững mãi mãi.
           </p>
         </div>
@@ -509,35 +605,41 @@
       <div class="section-head">
         <div class="section-title">Góc cảm hứng (Blog)</div>
       </div>
-      <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 1</span></div>
-          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
-            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Ý tưởng quà tặng</div>
-            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Top 5 món quà kỷ niệm ngày cưới ý nghĩa nhất</h4>
-            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Gợi ý những món quà độc bản cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc.</p>
+      <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
+            <div style="font-size: 32px;">🎁</div>
+          </div>
+          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Ý tưởng quà tặng</div>
+            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Top 5 món quà kỷ niệm ngày cưới ý nghĩa nhất</h4>
+            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Gợi ý những món quà độc bản cá nhân hóa giúp lưu giữ khoảnh khắc trăm năm hạnh phúc.</p>
           </div>
         </div>
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 2</span></div>
-          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
-            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Phong cách sống</div>
-            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Cách trang trí mô hình gỗ handmade trong phòng khách</h4>
-            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Bí quyết sắp đặt nghệ thuật mang lại sự ấm cúng, sang trọng cho không gian nhà bạn.</p>
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
+            <div style="font-size: 32px;">🏡</div>
+          </div>
+          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Phong cách sống</div>
+            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Cách trang trí mô hình gỗ handmade trong phòng khách</h4>
+            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Bí quyết sắp đặt nghệ thuật mang lại sự ấm cúng, sang trọng cho không gian nhà bạn.</p>
           </div>
         </div>
-        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--gray-l); display: flex; flex-direction: column;">
-          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; height: 150px;"><span style="font-size: 12px; color: var(--brown);">Ảnh Blog 3</span></div>
-          <div style="padding: 16px; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
-            <div style="font-size: 11px; color: var(--brown-l); font-weight: 600; text-transform: uppercase;">Hậu trường chế tác</div>
-            <h4 style="font-size: 15px; font-weight: 600; color: var(--text);">Hành trình tạo nên mô hình gỗ từ công nghệ vẽ AI</h4>
-            <p style="font-size: 12px; color: var(--gray); line-height: 1.5;">Khám phá chi tiết quy trình ghép khuôn mặt AI và điêu khắc thủ công gỗ tinh xảo.</p>
+        <div style="background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-l); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" class="premium-card">
+          <div style="background: var(--blush); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; gap: 8px; border-bottom: 1px solid var(--gray-l);">
+            <div style="font-size: 32px;">✨</div>
+          </div>
+          <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 11px; color: var(--brown); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Hậu trường chế tác</div>
+            <h4 style="font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.4;">Hành trình tạo nên mô hình gỗ từ công nghệ vẽ AI</h4>
+            <p style="font-size: 13px; color: var(--gray); line-height: 1.5;">Khám phá chi tiết quy trình ghép khuôn mặt AI và điêu khắc thủ công gỗ tinh xảo.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <footer><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
+    <footer style="background: var(--brown-d); color: rgba(255,255,255,0.7); font-size: 13px; text-align: center; padding: 28px 20px;"><strong>MoryTory</strong> — Mô hình gỗ thủ công, kỷ niệm mãi mãi &nbsp;|&nbsp; Zalo: <a href="https://zalo.me/0982892784" target="_blank" style="color: #fff; text-decoration: underline;">0982 892 784</a></footer>
   </div>
 
   <!-- ═══ PRODUCT PAGE (CUSTOM – có upload ảnh) ═══ -->
