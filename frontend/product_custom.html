@@ -435,10 +435,7 @@
 <script>
 // Cấu hình URL Cloudflare Worker của bạn ở đây
 // Tự động sử dụng localhost khi phát triển hoặc địa chỉ Worker thực tế khi triển khai
-const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-const WORKER_API_URL = isLocal 
-  ? "https://morytory-ai-worker.morytory.workers.dev/api/process-image"
-  : `${window.location.origin}/api/process-image`;
+const WORKER_API_URL = "https://morytory-ai-worker.morytory.workers.dev/api/process-image";
 
 
 let qty = 1;
