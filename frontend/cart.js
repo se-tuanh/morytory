@@ -63,8 +63,14 @@ function addToCart(item, openDrawer = true) {
   }
 
   saveCartData();
+  
+  // Show toast notification instead of opening drawer directly
+  if (typeof showToast === 'function') {
+    showToast(`Đã thêm <b>${item.title}</b> vào giỏ hàng!`, 'success');
+  }
+  
   if (openDrawer) {
-    toggleCart(true); // Tự động mở giỏ hàng khi thêm thành công
+    toggleCart(true); // Mở giỏ hàng khi yêu cầu
   }
 }
 
