@@ -25,7 +25,18 @@
     --sans:    'Outfit', system-ui, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  .page { background: var(--cream); font-family: var(--sans); color: var(--text); }
+  .page { 
+    background: var(--cream); 
+    font-family: var(--sans); 
+    color: var(--text); 
+    letter-spacing: -0.010em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  button, input, select, textarea {
+    font-family: inherit;
+  }
   .navbar {
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
@@ -88,7 +99,7 @@
   .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
   .badge-new { background: #faeeda; color: #633806; }
   .badge-custom { background: var(--brown-ll); color: var(--brown); }
-  .prod-title { font-family: var(--serif); font-size: 32px; font-weight: 500; color: var(--text); line-height: 1.25; margin-bottom: 8px; }
+  .prod-title { font-family: var(--serif); font-size: 32px; font-weight: 500; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.015em; }
   .prod-price { font-size: 26px; font-weight: 600; color: var(--brown); margin-bottom: 4px; }
   .prod-old-price { font-size: 15px; color: var(--brown-l); text-decoration: line-through; margin-left: 8px; font-weight: 400; }
   .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 13px; color: var(--gray); }
