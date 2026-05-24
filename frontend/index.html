@@ -2463,6 +2463,39 @@
 
 
 
+      // Keep hero video playing & loop fix
+      (function() {
+        const heroVideo = document.querySelector('.hero-video');
+        if (heroVideo) {
+          heroVideo.play().catch(() => {});
+          
+          // Re-play manually when video ends (failsafe for native loop attribute)
+          heroVideo.addEventListener('ended', () => {
+            heroVideo.play().catch(() => {});
+          });
+
+          // Resume play when window/tab is focused
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+              heroVideo.play().catch(() => {});
+            }
+          });
+
+          // Force play on first scroll, click, or touch (bypasses browser autoplay/battery saving restrictions)
+          const forcePlayVideo = () => {
+            if (heroVideo.paused) {
+              heroVideo.play().catch(() => {});
+            }
+            window.removeEventListener('click', forcePlayVideo);
+            window.removeEventListener('touchstart', forcePlayVideo);
+            window.removeEventListener('scroll', forcePlayVideo);
+          };
+          window.addEventListener('click', forcePlayVideo);
+          window.addEventListener('touchstart', forcePlayVideo);
+          window.addEventListener('scroll', forcePlayVideo);
+        }
+      })();
+
       // Auto-restore dark mode preference
       (function() {
         if (localStorage.getItem('morytory-dark-mode') === 'on') {
