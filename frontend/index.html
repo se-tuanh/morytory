@@ -585,6 +585,74 @@
       .blog-modal-body { padding: 24px; }
       .blog-modal-title { font-size: 22px; }
     }
+
+    /* ─── SCROLL REVEAL ANIMATIONS (AOS Style) ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger delay for grid child items */
+    .theme-grid.active .theme-card:nth-child(1),
+    .premium-grid.active .premium-card:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+    .theme-grid.active .theme-card:nth-child(2),
+    .premium-grid.active .premium-card:nth-child(2) {
+      transition-delay: 0.25s;
+    }
+    .theme-grid.active .theme-card:nth-child(3),
+    .premium-grid.active .premium-card:nth-child(3) {
+      transition-delay: 0.4s;
+    }
+
+    /* Individual items can also be revealed */
+    .theme-card, .premium-card, .blog-card {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    }
+
+    /* Ripple Effect for Buttons */
+    .btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(0);
+      animation: ripple-anim 0.65s ease-out;
+      pointer-events: none;
+    }
+    .btn-white .ripple-effect {
+      background: rgba(209, 88, 22, 0.15);
+    }
+    .btn-zalo .ripple-effect {
+      background: rgba(0, 104, 255, 0.15);
+    }
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Typewriter Cursor */
+    .typewriter-cursor {
+      border-right: 3px solid var(--brown);
+      padding-right: 4px;
+      animation: typewriter-blink 0.75s step-end infinite;
+    }
+    @keyframes typewriter-blink {
+      from, to { border-color: transparent }
+      50% { border-color: var(--brown); }
+    }
   </style>
 </head>
 <body>
@@ -611,7 +679,7 @@
     <div class="section" style="margin-top:40px;">
       <div class="hero reveal">
         <div class="hero-text">
-          <h1>Mô hình gỗ<br>khắc từ kỷ niệm<br>của bạn</h1>
+          <h1 style="min-height: 125px;">Mô hình gỗ<br>khắc từ <span id="typewriter-text" class="typewriter-cursor" style="color: var(--brown);">kỷ niệm</span></h1>
           <p>Chúng tôi biến ảnh gia đình, lễ tốt nghiệp hay đám cưới thành mô hình gỗ thủ công độc đáo.</p>
           <button class="btn-primary" onclick="document.getElementById('theme-section').scrollIntoView({behavior:'smooth'})">Khám phá ngay</button>
         </div>
@@ -1986,7 +2054,105 @@
       showPage('home');
     }
 
+    // Typewriter effect for Hero
+    function initTypewriter() {
+      const el = document.getElementById('typewriter-text');
+      if (!el) return;
+      
+      const words = ["kỷ niệm của bạn", "ảnh gia đình", "lễ tốt nghiệp", "ngày đám cưới", "khoảnh khắc đẹp"];
+      let wordIdx = 0;
+      let charIdx = 0;
+      let isDeleting = false;
+      let typingSpeed = 100;
+      
+      function type() {
+        const currentWord = words[wordIdx];
+        if (isDeleting) {
+          el.textContent = currentWord.substring(0, charIdx - 1);
+          charIdx--;
+          typingSpeed = 50;
+        } else {
+          el.textContent = currentWord.substring(0, charIdx + 1);
+          charIdx++;
+          typingSpeed = 100;
+        }
+        
+        if (!isDeleting && charIdx === currentWord.length) {
+          isDeleting = true;
+          typingSpeed = 1500; // Pause at full word
+        } else if (isDeleting && charIdx === 0) {
+          isDeleting = false;
+          wordIdx = (wordIdx + 1) % words.length;
+          typingSpeed = 500; // Pause before typing next word
+        }
+        
+        setTimeout(type, typingSpeed);
+      }
+      
+      type();
+    }
+
+    // Scroll reveal animation
+    function initScrollReveal() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.05,
+        rootMargin: "0px 0px -20px 0px"
+      });
+      
+      reveals.forEach(el => observer.observe(el));
+    }
+
+    // Ripple effect on click
+    function initRippleEffect() {
+      document.body.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn');
+        if (!btn) return;
+        
+        // Ensure relative position for ripple bounding
+        const computedStyle = window.getComputedStyle(btn);
+        if (computedStyle.position === 'static') {
+          btn.style.position = 'relative';
+        }
+        if (computedStyle.overflow !== 'hidden') {
+          btn.style.overflow = 'hidden';
+        }
+        
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple-effect');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
+        const size = Math.max(rect.width, rect.height) * 2;
+        ripple.style.width = `${size}px`;
+        ripple.style.height = `${size}px`;
+        ripple.style.marginLeft = `${-size/2}px`;
+        ripple.style.marginTop = `${-size/2}px`;
+        
+        btn.appendChild(ripple);
+        
+        ripple.addEventListener('animationend', function() {
+          ripple.remove();
+        });
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      initTypewriter();
+      initScrollReveal();
+      initRippleEffect();
+      
       const params = new URLSearchParams(window.location.search);
       const phone = params.get('phone');
       const orderId = params.get('orderId');

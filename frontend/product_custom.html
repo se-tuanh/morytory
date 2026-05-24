@@ -220,9 +220,32 @@
     .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
     #lookup-modal-backdrop > div { margin: 15px; }
     .editor-preview { min-height: 300px; }
-    footer { padding: 20px 10px; }
-  }
-</style>
+    /* Ripple Effect for Buttons */
+    .btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(0);
+      animation: ripple-anim 0.65s ease-out;
+      pointer-events: none;
+    }
+    .btn-white .ripple-effect {
+      background: rgba(209, 88, 22, 0.15);
+    }
+    .btn-zalo .ripple-effect {
+      background: rgba(0, 104, 255, 0.15);
+    }
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  </style>
 
 </head>
 <body>
@@ -1029,7 +1052,47 @@ function finishOrderFlow() {
   window.location.href = 'index.html';
 }
 
-window.onload = initPage;
+function initRippleEffect() {
+  document.body.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn');
+    if (!btn) return;
+    
+    // Ensure relative position for ripple bounding
+    const computedStyle = window.getComputedStyle(btn);
+    if (computedStyle.position === 'static') {
+      btn.style.position = 'relative';
+    }
+    if (computedStyle.overflow !== 'hidden') {
+      btn.style.overflow = 'hidden';
+    }
+    
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple-effect');
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    
+    const size = Math.max(rect.width, rect.height) * 2;
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.marginLeft = `${-size/2}px`;
+    ripple.style.marginTop = `${-size/2}px`;
+    
+    btn.appendChild(ripple);
+    
+    ripple.addEventListener('animationend', function() {
+      ripple.remove();
+    });
+  });
+}
+
+window.onload = () => {
+  initPage();
+  initRippleEffect();
+};
 </script>
 <script src="cart.js"></script>
 
