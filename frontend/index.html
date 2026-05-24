@@ -815,35 +815,7 @@
       box-shadow: 0 6px 20px rgba(209, 88, 22, 0.35);
     }
 
-    /* ─── ANIMATED COUNTERS ─── */
-    .stats-section {
-      max-width: 1100px; margin: 60px auto;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
-      padding: 0 40px;
-    }
-    .stat-card {
-      background: #fff; border: 1px solid var(--gray-l);
-      border-radius: 20px; padding: 32px 20px; text-align: center;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-    }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(209, 88, 22, 0.06);
-    }
-    .stat-icon { font-size: 32px; margin-bottom: 12px; }
-    .stat-number {
-      font-family: var(--serif); font-size: 36px; font-weight: 600;
-      color: var(--brown); margin-bottom: 4px;
-    }
-    .stat-label {
-      font-size: 13px; color: var(--gray); font-weight: 500;
-    }
-    body.dark-mode .stat-card {
-      background: var(--card-bg);
-    }
-    @media (max-width: 768px) {
-      .stats-section { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
-    }
+
 
     /* ─── TOAST NOTIFICATIONS ─── */
     #toast-container {
@@ -1043,29 +1015,7 @@
       </div>
     </div>
 
-    <!-- Thống kê ấn tượng -->
-    <div class="stats-section reveal">
-      <div class="stat-card">
-        <div class="stat-icon">🎨</div>
-        <div class="stat-number" data-target="1200" data-suffix="+">0+</div>
-        <div class="stat-label">Sản phẩm đã giao</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">😊</div>
-        <div class="stat-number" data-target="980" data-suffix="+">0+</div>
-        <div class="stat-label">Khách hàng hài lòng</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">⭐</div>
-        <div class="stat-number" data-target="4" data-suffix=".9">0.0</div>
-        <div class="stat-label">Đánh giá trung bình</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-number" data-target="3" data-suffix=" năm">0 năm</div>
-        <div class="stat-label">Kinh nghiệm chế tác</div>
-      </div>
-    </div>
+
 
     <!-- Về chúng tôi -->
     <div class="section" id="about-section" style="scroll-margin-top: 80px; margin-top: 60px;">
@@ -2462,50 +2412,7 @@
       }, duration);
     }
 
-    // Animated Counter
-    function initAnimatedCounters() {
-      const counters = document.querySelectorAll('.stat-number[data-target]');
-      if (!counters.length) return;
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !entry.target.dataset.animated) {
-            entry.target.dataset.animated = 'true';
-            animateCounter(entry.target);
-          }
-        });
-      }, { threshold: 0.5 });
-
-      counters.forEach(c => observer.observe(c));
-    }
-
-    function animateCounter(el) {
-      const target = parseInt(el.dataset.target);
-      const suffix = el.dataset.suffix || '';
-      const duration = 2000;
-      const start = performance.now();
-
-      function update(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(target * eased);
-
-        if (suffix === '.9') {
-          // Special case for rating: show decimal
-          const val = (target * eased).toFixed(1);
-          el.textContent = val;
-        } else {
-          el.textContent = current + suffix;
-        }
-
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        }
-      }
-      requestAnimationFrame(update);
-    }
 
     window.addEventListener('DOMContentLoaded', () => {
       initWordRotator();
@@ -2536,8 +2443,7 @@
         }
       });
 
-      // Init animated counters
-      initAnimatedCounters();
+
 
       // Auto-restore dark mode preference
       (function() {
