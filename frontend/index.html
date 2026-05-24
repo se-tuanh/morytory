@@ -28,6 +28,7 @@
 
     body { 
       background: var(--cream); 
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.022'/%3E%3C/svg%3E");
       color: var(--text); 
       font-family: var(--sans); 
       font-size: 15px; 
@@ -707,12 +708,47 @@
       filter: blur(8px);
       transform: translateY(-80%) scale(0.95);
     }
+
+    /* Glossy Shine Effect on Cards */
+    .theme-card, .premium-card, .blog-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-card::after, .premium-card::after, .blog-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-25deg);
+      transition: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .theme-card:hover::after, .premium-card:hover::after, .blog-card:hover::after {
+      left: 150%;
+      transition: left 0.8s ease-in-out;
+    }
+
+    /* Soft Warm Dividers */
+    .divider, .section-head {
+      border-bottom: 1px solid rgba(122, 74, 30, 0.09) !important;
+    }
   </style>
 </head>
 <body>
 
   <!-- NAV -->
   <nav>
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress-bar" style="position: absolute; bottom: 0; left: 0; height: 2.5px; width: 0%; background: var(--brown); z-index: 101; transition: width 0.05s ease;"></div>
     <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 8px;">
       <img src="logo.png" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 50%;" onerror="this.style.display='none'">
       <span>MoryTory</span>
@@ -2203,10 +2239,23 @@
       });
     }
 
+    // Scroll progress bar indicator
+    function initScrollProgress() {
+      const bar = document.getElementById('scroll-progress-bar');
+      if (!bar) return;
+      window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+        bar.style.width = scrolled + "%";
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initWordRotator();
       initScrollReveal();
       initRippleEffect();
+      initScrollProgress();
       
       const params = new URLSearchParams(window.location.search);
       const phone = params.get('phone');

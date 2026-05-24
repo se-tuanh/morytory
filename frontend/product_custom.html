@@ -27,6 +27,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   .page { 
     background: var(--cream); 
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.022'/%3E%3C/svg%3E");
     font-family: var(--sans); 
     color: var(--text); 
     letter-spacing: -0.010em;
@@ -104,7 +105,7 @@
   .prod-old-price { font-size: 15px; color: var(--brown-l); text-decoration: line-through; margin-left: 8px; font-weight: 400; }
   .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 13px; color: var(--gray); }
   .stars { color: #EF9F27; font-size: 14px; letter-spacing: 1px; }
-  .divider { border: none; border-top: 1px solid var(--gray-l); margin: 20px 0; }
+  .divider { border: none; border-top: 1px solid rgba(122, 74, 30, 0.09); margin: 20px 0; }
   .section-label { font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
   .upload-zone { border: 1.5px dashed var(--brown-l); border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; background: #fffbf8; transition: background .15s; margin-bottom: 10px; }
   .upload-zone:hover { background: var(--blush); }
@@ -264,6 +265,8 @@
 <body>
 <div class="page">
   <div class="navbar">
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress-bar" style="position: absolute; bottom: 0; left: 0; height: 2.5px; width: 0%; background: var(--brown); z-index: 101; transition: width 0.05s ease;"></div>
     <div class="logo" onclick="window.location.href='index.html'" style="display: flex; align-items: center; gap: 8px;">
       <img src="logo.png" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 50%;" onerror="this.style.display='none'">
       <span>MoryTory</span>
@@ -1105,9 +1108,22 @@ function initRippleEffect() {
   });
 }
 
+// Scroll progress bar indicator
+function initScrollProgress() {
+  const bar = document.getElementById('scroll-progress-bar');
+  if (!bar) return;
+  window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    bar.style.width = scrolled + "%";
+  });
+}
+
 window.onload = () => {
   initPage();
   initRippleEffect();
+  initScrollProgress();
 };
 </script>
 <script src="cart.js"></script>
