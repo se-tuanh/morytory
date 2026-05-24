@@ -643,15 +643,40 @@
       }
     }
 
-    /* Typewriter Cursor */
-    .typewriter-cursor {
-      border-right: 3px solid var(--brown);
-      padding-right: 4px;
-      animation: typewriter-blink 0.75s step-end infinite;
+    /* ─── WORD ROTATOR ANIMATION (Apple/Stripe Style) ─── */
+    .word-rotator-wrapper {
+      display: inline-block;
+      vertical-align: bottom;
+      position: relative;
+      overflow: hidden;
+      height: 1.25em;
+      width: 100%;
     }
-    @keyframes typewriter-blink {
-      from, to { border-color: transparent }
-      50% { border-color: var(--brown); }
+    .word-rotator-item {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(80%) scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  filter 0.6s ease;
+      white-space: nowrap;
+      color: var(--brown);
+      font-weight: 600;
+    }
+    .word-rotator-item.active {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+      position: relative;
+    }
+    .word-rotator-item.exit {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(-80%) scale(0.95);
     }
   </style>
 </head>
@@ -679,7 +704,17 @@
     <div class="section" style="margin-top:40px;">
       <div class="hero reveal">
         <div class="hero-text">
-          <h1 style="min-height: 125px;">Mô hình gỗ<br>khắc từ <span id="typewriter-text" class="typewriter-cursor" style="color: var(--brown);">kỷ niệm</span></h1>
+          <h1 style="min-height: 165px; line-height: 1.3;">
+            Mô hình gỗ<br>
+            khắc từ<br>
+            <span id="rotator-text-wrapper" class="word-rotator-wrapper">
+              <span class="word-rotator-item">kỷ niệm của bạn</span>
+              <span class="word-rotator-item">ảnh gia đình</span>
+              <span class="word-rotator-item">lễ tốt nghiệp</span>
+              <span class="word-rotator-item">ngày đám cưới</span>
+              <span class="word-rotator-item">khoảnh khắc đẹp</span>
+            </span>
+          </h1>
           <p>Chúng tôi biến ảnh gia đình, lễ tốt nghiệp hay đám cưới thành mô hình gỗ thủ công độc đáo.</p>
           <button class="btn-primary" onclick="document.getElementById('theme-section').scrollIntoView({behavior:'smooth'})">Khám phá ngay</button>
         </div>
@@ -2054,42 +2089,33 @@
       showPage('home');
     }
 
-    // Typewriter effect for Hero
-    function initTypewriter() {
-      const el = document.getElementById('typewriter-text');
-      if (!el) return;
+    // Vertical word rotator with slide-up and blur effect
+    function initWordRotator() {
+      const wrapper = document.getElementById('rotator-text-wrapper');
+      if (!wrapper) return;
       
-      const words = ["kỷ niệm của bạn", "ảnh gia đình", "lễ tốt nghiệp", "ngày đám cưới", "khoảnh khắc đẹp"];
-      let wordIdx = 0;
-      let charIdx = 0;
-      let isDeleting = false;
-      let typingSpeed = 100;
+      const items = wrapper.querySelectorAll('.word-rotator-item');
+      if (items.length === 0) return;
       
-      function type() {
-        const currentWord = words[wordIdx];
-        if (isDeleting) {
-          el.textContent = currentWord.substring(0, charIdx - 1);
-          charIdx--;
-          typingSpeed = 50;
-        } else {
-          el.textContent = currentWord.substring(0, charIdx + 1);
-          charIdx++;
-          typingSpeed = 100;
-        }
+      let currentIdx = 0;
+      
+      // Show first item
+      items[0].classList.add('active');
+      
+      setInterval(() => {
+        const currentItem = items[currentIdx];
+        currentItem.classList.remove('active');
+        currentItem.classList.add('exit');
         
-        if (!isDeleting && charIdx === currentWord.length) {
-          isDeleting = true;
-          typingSpeed = 1500; // Pause at full word
-        } else if (isDeleting && charIdx === 0) {
-          isDeleting = false;
-          wordIdx = (wordIdx + 1) % words.length;
-          typingSpeed = 500; // Pause before typing next word
-        }
+        // Clean up classes after transition ends
+        setTimeout(() => {
+          currentItem.classList.remove('exit');
+        }, 600);
         
-        setTimeout(type, typingSpeed);
-      }
-      
-      type();
+        currentIdx = (currentIdx + 1) % items.length;
+        const nextItem = items[currentIdx];
+        nextItem.classList.add('active');
+      }, 3000);
     }
 
     // Scroll reveal animation
@@ -2149,7 +2175,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      initTypewriter();
+      initWordRotator();
       initScrollReveal();
       initRippleEffect();
       
