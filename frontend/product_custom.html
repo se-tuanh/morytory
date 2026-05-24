@@ -220,31 +220,33 @@
     .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
     #lookup-modal-backdrop > div { margin: 15px; }
     .editor-preview { min-height: 300px; }
-    /* Ripple Effect for Buttons */
-    .btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn {
-      position: relative;
-      overflow: hidden;
+  }
+
+  /* Ripple Effect for Buttons */
+  .btn-primary, .btn-theme, .btn-premium, .btn-order, .btn-white, .btn-zalo, .cart-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(0);
+    animation: ripple-anim 0.65s ease-out;
+    pointer-events: none;
+  }
+  .btn-white .ripple-effect {
+    background: rgba(209, 88, 22, 0.15);
+  }
+  .btn-zalo .ripple-effect {
+    background: rgba(0, 104, 255, 0.15);
+  }
+  @keyframes ripple-anim {
+    to {
+      transform: scale(4);
+      opacity: 0;
     }
-    .ripple-effect {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.35);
-      transform: scale(0);
-      animation: ripple-anim 0.65s ease-out;
-      pointer-events: none;
-    }
-    .btn-white .ripple-effect {
-      background: rgba(209, 88, 22, 0.15);
-    }
-    .btn-zalo .ripple-effect {
-      background: rgba(0, 104, 255, 0.15);
-    }
-    @keyframes ripple-anim {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
+  }
   </style>
 
 </head>
@@ -626,6 +628,9 @@ function renderUploadSlots() {
 async function handleMemberUpload(input, memberId) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
+  
+  // Reset input value to allow uploading the same file again if error occurs
+  input.value = "";
 
   const config = THEME_CONFIGS[currentTheme];
   const member = config.members.find(m => m.id === memberId);
