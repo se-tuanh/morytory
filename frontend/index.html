@@ -122,7 +122,7 @@
     }
     .hero-img {
       width: 440px; height: 320px;
-      background: url('birthday_base.jpg') center/cover no-repeat;
+      background: url('herobanner.png') center/cover no-repeat;
       border-radius: 18px; display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; box-shadow: 0 12px 28px rgba(122,74,30,0.08);
       position: relative;
@@ -138,7 +138,6 @@
       top: 0;
       left: 0;
       z-index: 1;
-      transform: scale(1.28); /* Zoom nhẹ để cắt bỏ viền đen có sẵn trong file video */
     }
     .btn-primary {
       display: inline-block; background: var(--brown); color: #fff;
@@ -902,10 +901,7 @@
           <button class="btn-primary" onclick="document.getElementById('theme-section').scrollIntoView({behavior:'smooth'})">Khám phá ngay</button>
         </div>
         <div class="hero-img">
-          <video autoplay loop muted playsinline class="hero-video" poster="birthday_base.jpg">
-            <source src="hero-video.mp4" type="video/mp4">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-craftsman-carving-wood-42266-large.mp4" type="video/mp4">
-          </video>
+          <img src="herobanner.png" class="hero-video" alt="MoryTory Hero Banner">
           <span>Ảnh hero sản phẩm</span>
         </div>
       </div>
@@ -967,12 +963,12 @@
         <div class="section-link">Xem tất cả</div>
       </div>
       <div class="premium-grid reveal">
-        <div class="premium-card" onclick="showProductPage('premium','Mô hình Gia Đình Cổ Điển','380.000','premium1.jpg','')">
+        <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
           <div class="premium-thumb p1">
             <span class="premium-label">Làm sẵn</span>
           </div>
           <div class="premium-info">
-            <div class="premium-name">Mô hình Gia Đình Cổ Điển</div>
+            <div class="premium-name">Góc cà phê</div>
             <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(24)</span>
             </div>
@@ -980,12 +976,12 @@
             <button class="btn-premium">Mua ngay</button>
           </div>
         </div>
-        <div class="premium-card" onclick="showProductPage('premium','Mô hình Đôi Yêu','320.000','premium2.jpg','')">
+        <div class="premium-card" onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')">
           <div class="premium-thumb p2">
             <span class="premium-label">Làm sẵn</span>
           </div>
           <div class="premium-info">
-            <div class="premium-name">Mô hình Đôi Yêu</div>
+            <div class="premium-name">Mộc hoa viên</div>
             <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(18)</span>
             </div>
@@ -993,12 +989,12 @@
             <button class="btn-premium">Mua ngay</button>
           </div>
         </div>
-        <div class="premium-card" onclick="showProductPage('premium','Mô hình Bé Yêu','290.000','premium3.jpg','')">
+        <div class="premium-card" onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')">
           <div class="premium-thumb p3">
             <span class="premium-label">Làm sẵn</span>
           </div>
           <div class="premium-info">
-            <div class="premium-name">Mô hình Bé Yêu</div>
+            <div class="premium-name">Quán burger</div>
             <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(15)</span>
             </div>
@@ -1266,7 +1262,7 @@
           <span class="badge badge-premium">Premium</span>
           <span class="badge badge-new">Làm sẵn</span>
         </div>
-        <div class="prod-title" id="premium-prod-title">Mô hình Gia Đình Cổ Điển</div>
+        <div class="prod-title" id="premium-prod-title">Góc cà phê</div>
         <div class="prod-price-row">
           <span class="prod-price" id="premium-prod-price">380.000 đ</span>
         </div>
