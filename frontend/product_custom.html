@@ -94,8 +94,9 @@
   .img-placeholder-icon { font-size: 48px; color: var(--brown-l); margin-bottom: 12px; }
   .img-placeholder-text { font-size: 13px; color: var(--brown-l); }
   .img-thumbs { display: flex; gap: 10px; }
-  .thumb { width: 64px; height: 64px; border-radius: 12px; background: var(--blush); border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--brown-l); flex-shrink: 0; transition: border-color 0.2s; }
+  .thumb { width: 64px; height: 64px; border-radius: 12px; background: var(--blush); border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--brown-l); flex-shrink: 0; transition: border-color 0.2s; overflow: hidden; }
   .thumb.active { border-color: var(--brown); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
   .badge-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
   .badge-new { background: #faeeda; color: #633806; }
@@ -126,6 +127,7 @@
   .total-row { display: flex; justify-content: space-between; align-items: center; background: var(--accent-bg, #f7f0ea); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; border: 1px solid var(--gray-l); }
   .total-label { font-size: 13px; color: var(--gray); }
   .total-val { font-size: 20px; font-weight: 600; color: var(--brown); }
+  .cta-actions-wrapper { margin-bottom: 10px; }
   .btn-order { width: 100%; padding: 14px; border-radius: 24px; border: none; background: var(--brown); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; box-shadow: 0 4px 14px rgba(209, 88, 22, 0.2); }
   .btn-order:hover { background: var(--brown-d); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(209, 88, 22, 0.25); }
   .btn-zalo { width: 100%; padding: 12px; border-radius: 24px; border: 1.5px solid #0068ff; background: #fff; color: #0068ff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
@@ -232,6 +234,35 @@
     .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
     #lookup-modal-backdrop > div { margin: 15px; }
     .editor-preview { min-height: 300px; }
+    .cta-actions-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      padding: 12px 20px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 0;
+      border-top: 1.5px solid var(--gray-l);
+    }
+    body.dark-mode .cta-actions-wrapper {
+      background: #1a1a2e;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.25);
+      border-top: 1px solid #3a3a50;
+    }
+    .btn-order {
+      margin-bottom: 0 !important;
+      flex: 1.2;
+    }
+    .btn-zalo {
+      flex: 0.8;
+    }
+    body .page {
+      padding-bottom: 80px;
+    }
   }
 
   /* Ripple Effect for Buttons */
@@ -437,15 +468,15 @@
         <span class="badge badge-custom">Cá nhân hoá</span>
       </div>
       <div class="prod-title" id="prod-title">Mô hình Gia Đình Kỷ Niệm</div>
-      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:6px;">
-        <span class="prod-price" id="prod-price">450.000 đ</span>
-        <span class="prod-old-price" id="prod-old-price">550.000 đ</span>
-      </div>
-      <div class="rating-row">
+      <div class="rating-row" style="margin-bottom:12px;">
         <span class="stars">★★★★★</span>
         <span>4.9 (38 đánh giá)</span>
         <span style="color:#c9a882;">|</span>
         <span>126 đã bán</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:12px;">
+        <span class="prod-price" id="prod-price">450.000 đ</span>
+        <span class="prod-old-price" id="prod-old-price">550.000 đ</span>
       </div>
 
       <hr class="divider">
@@ -461,11 +492,14 @@
       </div>
 
       <div class="section-label">Số lượng</div>
-      <div class="qty-row">
+      <div class="qty-row" style="margin-bottom:12px;">
         <button class="qty-btn" onclick="changeQty(-1)">−</button>
         <span class="qty-val" id="qty">1</span>
         <button class="qty-btn" onclick="changeQty(1)">+</button>
         <span style="font-size:12px;color:#b4b2a9;">Còn 15 sản phẩm</span>
+      </div>
+      <div style="font-size:12px;color:#2e7d32;margin-bottom:20px;font-weight:500;display:flex;align-items:center;gap:6px;">
+        <i class="ti ti-truck"></i> Dự kiến giao: 2 - 3 ngày làm việc (Có hỗ trợ ship hỏa tốc)
       </div>
 
       <div class="total-row">
@@ -473,11 +507,13 @@
         <span class="total-val" id="total">450.000 đ</span>
       </div>
 
-      <button class="btn-order" onclick="addCustomToCartAndOpen()">Đặt hàng ngay</button>
-      <button class="btn-zalo" onclick="window.open('https://zalo.me/0378820905', '_blank')">
-        <i class="ti ti-brand-telegram" style="font-size:18px" aria-hidden="true"></i>
-        Tư vấn qua Zalo
-      </button>
+      <div class="cta-actions-wrapper">
+        <button class="btn-order" onclick="addCustomToCartAndOpen()">Đặt hàng ngay</button>
+        <button class="btn-zalo" onclick="window.open('https://zalo.me/0378820905', '_blank')">
+          <i class="ti ti-brand-telegram" style="font-size:18px" aria-hidden="true"></i>
+          Tư vấn qua Zalo
+        </button>
+      </div>
 
       <div class="info-grid">
         <div class="info-card">
@@ -689,6 +725,27 @@ const THEME_CONFIGS = {
   }
 };
 
+const THEME_THUMBS = {
+  "Sinh nhật gia đình": [
+    "birthday_base.jpg",
+    "blog_birthday_gift.jpg",
+    "blog_craft_process.jpg",
+    "birthday_coords_test.png"
+  ],
+  "Tốt nghiệp": [
+    "graduation_base.jpg",
+    "blog_graduation.jpg",
+    "blog_craft_process.jpg",
+    "graduation_coords_test.png"
+  ],
+  "Đám cưới": [
+    "wedding_base.jpg",
+    "blog_wedding_gift.jpg",
+    "blog_craft_process.jpg",
+    "wedding_coords_test.png"
+  ]
+};
+
 // Parse URL Parameters
 function initPage() {
   const params = new URLSearchParams(window.location.search);
@@ -736,7 +793,38 @@ function initPage() {
 
   // Tạo các slot upload tương ứng với các thành viên trong chủ đề
   renderUploadSlots();
+  renderThumbnails();
   updateTotal();
+}
+
+function renderThumbnails() {
+  const thumbsContainer = document.querySelector('.img-thumbs');
+  if (!thumbsContainer) return;
+
+  const images = THEME_THUMBS[currentTheme] || [];
+  thumbsContainer.innerHTML = "";
+
+  images.forEach((imgSrc, index) => {
+    const thumbDiv = document.createElement('div');
+    thumbDiv.className = `thumb${index === 0 ? ' active' : ''}`;
+    thumbDiv.innerHTML = `<img src="./${imgSrc}" alt="Ảnh góc ${index + 1}">`;
+    
+    thumbDiv.addEventListener('click', () => {
+      document.querySelectorAll('.img-thumbs .thumb').forEach(t => t.classList.remove('active'));
+      thumbDiv.classList.add('active');
+
+      const imgMainInner = document.getElementById('img-main-inner');
+      if (imgMainInner) {
+        if (index === 0 && Object.keys(swappedFaces).length > 0) {
+          updateCanvas(); 
+        } else {
+          imgMainInner.innerHTML = `<img src="./${imgSrc}" id="final-composite-preview" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" alt="Hình ảnh sản phẩm">`;
+        }
+      }
+    });
+
+    thumbsContainer.appendChild(thumbDiv);
+  });
 }
 
 function renderUploadSlots() {
@@ -849,7 +937,7 @@ async function handleMemberUpload(input, memberId) {
   }
 }
 
-function updateCanvas(latestMemberId) {
+function updateCanvas(latestMemberId = null) {
   const config = THEME_CONFIGS[currentTheme];
   if (!config) return;
 
@@ -933,6 +1021,12 @@ function updateCanvas(latestMemberId) {
 function displayResult(dataUrl) {
   const imgMainInner = document.getElementById('img-main-inner');
   imgMainInner.innerHTML = `<img src="${dataUrl}" id="final-composite-preview" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" alt="Kết quả AI">`;
+  
+  const firstThumb = document.querySelector('.img-thumbs .thumb:first-child');
+  if (firstThumb) {
+    document.querySelectorAll('.img-thumbs .thumb').forEach(t => t.classList.remove('active'));
+    firstThumb.classList.add('active');
+  }
 }
 
 function changeQty(d) {
@@ -1005,6 +1099,10 @@ function addCustomToCartAndOpen() {
   const hasSwaps = config.members.some(m => swappedFaces[m.id]);
   if (!hasSwaps) {
     alert("Vui lòng tải lên ít nhất một ảnh khuôn mặt trước khi đặt hàng!");
+    const uploadSection = document.getElementById('upload-slots-container');
+    if (uploadSection) {
+      uploadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     return;
   }
 
