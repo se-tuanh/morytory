@@ -749,7 +749,7 @@ let currentCroppingMemberId = null;
 let currentUploadMode = {}; // Lưu chế độ tải lên cho từng thành viên ('ai' hoặc 'manual')
 let faceSourceTypes = {};   // Lưu nguồn gốc của khuôn mặt ('ai' hoặc 'manual')
 let woodEngravingMode = true; // Chế độ khắc gỗ
-const MOCK_AI_MODE = true;    // 🔧 DEBUG: dùng ảnh mẫu gốc thay vì gọi Replicate API (set false khi có credit)
+const MOCK_AI_MODE = false;   // 🔧 DEBUG: dùng ảnh mẫu gốc thay vì gọi Replicate API (set false khi có credit)
 
 // ===== WOOD ENGRAVING EFFECT ENGINE =====
 // Thuật toán: ảnh màu → grayscale → Color Dodge sketch → wood burn color palette
