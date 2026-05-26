@@ -746,6 +746,8 @@ let currentTheme = "Sinh nhật gia đình";
 let swappedFaces = {}; // Lưu trữ URL ảnh đã swap cho từng thành viên
 let cropper = null;
 let currentCroppingMemberId = null;
+let currentUploadMode = {}; // Lưu chế độ tải lên cho từng thành viên ('ai' hoặc 'manual')
+let faceSourceTypes = {};   // Lưu nguồn gốc của khuôn mặt ('ai' hoặc 'manual')
 
 const THEME_CONFIGS = {
   "Sinh nhật gia đình": {
@@ -889,7 +891,10 @@ function renderUploadSlots() {
           <div style="font-size:13px; font-weight:600; color:#7a4a1e; margin-bottom:2px;">${member.name}</div>
           <div class="upload-slot-status" id="status-text-${member.id}" style="font-size:11px; color:#b4b2a9;">Chưa tải ảnh khuôn mặt</div>
         </div>
-        <button class="btn-slot-upload" id="btn-upload-${member.id}" onclick="document.getElementById('file-input-${member.id}').click()" style="padding:6px 12px; border-radius:8px; border:none; background:#7a4a1e; color:#fff; font-size:11px; font-weight:500; cursor:pointer; transition: background 0.15s;">Tải ảnh</button>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+          <button class="btn-slot-upload" id="btn-upload-ai-${member.id}" onclick="triggerUpload('${member.id}', 'ai')" style="padding:6px 10px; border-radius:8px; border:none; background:#d15816; color:#fff; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; transition: background 0.15s;"><i class="ti ti-sparkles" style="font-size:12px;"></i> Ghép AI</button>
+          <button class="btn-slot-upload" id="btn-upload-manual-${member.id}" onclick="triggerUpload('${member.id}', 'manual')" style="padding:6px 10px; border-radius:8px; border:1px solid #c9a882; background:#fff; color:#7a4a1e; font-size:11px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; transition: all 0.15s;"><i class="ti ti-crop" style="font-size:12px;"></i> Tự cắt</button>
+        </div>
         <input type="file" id="file-input-${member.id}" accept="image/*" style="display:none" onchange="handleMemberUpload(this, '${member.id}')">
       </div>
     `;
@@ -897,17 +902,117 @@ function renderUploadSlots() {
   });
 }
 
+function triggerUpload(memberId, mode) {
+  currentUploadMode[memberId] = mode;
+  document.getElementById(`file-input-${memberId}`).click();
+}
+
 function handleMemberUpload(input, memberId) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
+  const mode = currentUploadMode[memberId] || 'ai';
   
   // Reset input value to allow uploading the same file again
   input.value = "";
 
+  if (mode === 'ai') {
+    handleAIUpload(file, memberId);
+  } else {
+    handleManualUpload(file, memberId);
+  }
+}
+
+async function handleAIUpload(file, memberId) {
   const config = THEME_CONFIGS[currentTheme];
   const member = config.members.find(m => m.id === memberId);
   if (!member) return;
 
+  // Cập nhật giao diện của Slot sang trạng thái Loading
+  const statusText = document.getElementById(`status-text-${memberId}`);
+  const btnUploadAi = document.getElementById(`btn-upload-ai-${memberId}`);
+  const btnUploadManual = document.getElementById(`btn-upload-manual-${memberId}`);
+  const slotCard = document.getElementById(`slot-card-${memberId}`);
+
+  if (statusText) {
+    statusText.textContent = "AI đang ghép mặt...";
+    statusText.style.color = "#d15816";
+  }
+  if (btnUploadAi) btnUploadAi.disabled = true;
+  if (btnUploadManual) btnUploadManual.disabled = true;
+  if (slotCard) {
+    slotCard.style.borderColor = "#c9a882";
+    slotCard.style.background = "#fffbf8";
+  }
+
+  // Hiển thị loading overlay trên hình sản phẩm chính
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
+  if (loadingOverlay) {
+    loadingOverlay.style.display = 'flex';
+    loadingText.textContent = `AI đang tự động ghép mặt cho ${member.name}...`;
+  }
+
+  const mainImgInner = document.getElementById('img-main-inner');
+  if (mainImgInner) mainImgInner.classList.add('shimmer-loading');
+
+  // Tạo FormData
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('templateKey', member.key);
+
+  try {
+    const response = await fetch(WORKER_API_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || 'Lỗi xử lý AI từ server.');
+    }
+
+    const data = await response.json();
+    if (!data || !data.imageUrl) {
+      throw new Error('Không nhận được ảnh kết quả từ server.');
+    }
+
+    // Lưu kết quả URL ảnh swap
+    swappedFaces[memberId] = data.imageUrl;
+    faceSourceTypes[memberId] = 'ai';
+
+    // Vẽ lại canvas để cập nhật ảnh sản phẩm chính
+    updateCanvas(memberId);
+
+    // Cập nhật UI Slot sang trạng thái thành công
+    if (statusText) {
+      statusText.textContent = "✓ Đã ghép AI thành công";
+      statusText.style.color = "#2e7d32";
+    }
+    if (slotCard) {
+      slotCard.style.borderColor = "#81c784";
+      slotCard.style.background = "#f1f8e9";
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert(`Lỗi khi ghép mặt AI cho ${member.name}: ${error.message}`);
+    if (statusText) {
+      statusText.textContent = "⚠️ Lỗi AI. Thử tự cắt!";
+      statusText.style.color = "#d32f2f";
+    }
+    if (slotCard) {
+      slotCard.style.borderColor = "#e57373";
+      slotCard.style.background = "#ffebee";
+    }
+  } finally {
+    if (btnUploadAi) btnUploadAi.disabled = false;
+    if (btnUploadManual) btnUploadManual.disabled = false;
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    if (mainImgInner) mainImgInner.classList.remove('shimmer-loading');
+  }
+}
+
+function handleManualUpload(file, memberId) {
   currentCroppingMemberId = memberId;
 
   // Hiển thị loading overlay ngắn trong lúc đọc file
@@ -1016,23 +1121,18 @@ function confirmCrop() {
 
   // Lưu kết quả dataURL ảnh crop mặt oval vào swappedFaces
   swappedFaces[currentCroppingMemberId] = finalDataUrl;
+  faceSourceTypes[currentCroppingMemberId] = 'manual';
 
   // Vẽ lại canvas tổng hợp để cập nhật ảnh sản phẩm chính
   updateCanvas(currentCroppingMemberId);
 
   // Cập nhật trạng thái slot
   const statusText = document.getElementById(`status-text-${currentCroppingMemberId}`);
-  const btnUpload = document.getElementById(`btn-upload-${currentCroppingMemberId}`);
   const slotCard = document.getElementById(`slot-card-${currentCroppingMemberId}`);
 
   if (statusText) {
-    statusText.textContent = "✓ Đã thiết lập";
+    statusText.textContent = "✓ Đã tự cắt xong";
     statusText.style.color = "#2e7d32";
-  }
-  if (btnUpload) {
-    btnUpload.disabled = false;
-    btnUpload.style.background = "#2e7d32";
-    btnUpload.textContent = "Đổi ảnh";
   }
   if (slotCard) {
     slotCard.style.borderColor = "#81c784";
@@ -1069,40 +1169,63 @@ function updateCanvas(latestMemberId = null) {
       return;
     }
 
-    // 2. Vẽ đè phần khuôn mặt đã được crop oval dạng PNG lên tọa độ tương ứng
+    // 2. Vẽ đè phần khuôn mặt đã được crop/swap lên tọa độ tương ứng
     let loadedCount = 0;
     membersWithSwaps.forEach(member => {
       const faceImg = new Image();
+      faceImg.crossOrigin = "anonymous";
       faceImg.src = swappedFaces[member.id];
 
       faceImg.onload = function() {
-        ctx.save(); // Lưu trạng thái canvas để không ảnh hưởng các nét vẽ khác
-        
-        // Tạo đường clip (ellipse) bo tròn theo đúng khuôn gỗ (tóc/tai đè lên trên)
-        if (member.clip) {
-          ctx.beginPath();
-          ctx.ellipse(
-            member.x + member.clip.cx,
-            member.y + member.clip.cy,
-            member.clip.rx,
-            member.clip.ry,
-            0, 0, 2 * Math.PI
+        const sourceType = faceSourceTypes[member.id] || 'ai';
+
+        if (sourceType === 'ai') {
+          // Ghép mặt AI: trích xuất vùng khuôn mặt từ ảnh AI nguyên bản và vẽ đè lên thớt gỗ nền
+          ctx.drawImage(
+            faceImg,
+            member.x, member.y, member.w, member.h, // Vị trí nguồn (AI output)
+            member.x, member.y, member.w, member.h  // Vị trí đích (Base background)
           );
-          ctx.clip();
+        } else {
+          // Tự cắt thủ công: vẽ đè mặt nạ oval và phóng to theo khung hình bầu dục
+          ctx.save();
+          if (member.clip) {
+            ctx.beginPath();
+            ctx.ellipse(
+              member.x + member.clip.cx,
+              member.y + member.clip.cy,
+              member.clip.rx,
+              member.clip.ry,
+              0, 0, 2 * Math.PI
+            );
+            ctx.clip();
+          }
+          ctx.drawImage(
+            faceImg,
+            0, 0, faceImg.width, faceImg.height, // Vị trí nguồn (ảnh crop oval hoàn chỉnh)
+            member.x, member.y, member.w, member.h  // Vị trí đích vẽ lên thớt gỗ mẫu
+          );
+          ctx.restore();
         }
-
-        ctx.drawImage(
-          faceImg,
-          0, 0, faceImg.width, faceImg.height, // Vị trí nguồn (ảnh crop oval hoàn chỉnh)
-          member.x, member.y, member.w, member.h  // Vị trí đích vẽ lên thớt gỗ mẫu
-        );
-
-        ctx.restore(); // Khôi phục trạng thái canvas ban đầu
 
         // Cập nhật ảnh đại diện nhỏ cho vòng tròn preview trong Slot
         const circle = document.getElementById(`preview-circle-${member.id}`);
         if (circle) {
-          circle.innerHTML = `<img src="${swappedFaces[member.id]}" style="width:100%; height:100%; object-fit:cover;" />`;
+          if (sourceType === 'ai') {
+            // Đối với AI, trích xuất avatar nhỏ từ vùng vẽ
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = member.w;
+            tempCanvas.height = member.h;
+            tempCtx.drawImage(
+              faceImg,
+              member.x, member.y, member.w, member.h,
+              0, 0, member.w, member.h
+            );
+            circle.innerHTML = `<img src="${tempCanvas.toDataURL('image/jpeg')}" style="width:100%; height:100%; object-fit:cover;" />`;
+          } else {
+            circle.innerHTML = `<img src="${swappedFaces[member.id]}" style="width:100%; height:100%; object-fit:cover;" />`;
+          }
         }
 
         loadedCount++;
