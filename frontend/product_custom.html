@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="cart.css">
+  <!-- CropperJS for local face cropping -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -693,6 +696,41 @@
   </div>
 </div>
 
+<!-- Cropper Modal Backdrop -->
+<div id="cropper-modal-backdrop" class="modal-backdrop" style="display: none; align-items: center; justify-content: center; z-index: 100000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; transition: all 0.3s ease;">
+  <div class="checkout-modal" style="width: 90%; max-width: 500px; background: #fff; border-radius: 20px; box-shadow: 0 20px 50px rgba(122, 74, 30, 0.15); display: flex; flex-direction: column; overflow: hidden; max-height: 90vh;">
+    <!-- Header -->
+    <div style="padding: 20px 24px; border-bottom: 1px solid #ebdcd0; display: flex; align-items: center; justify-content: space-between;">
+      <h3 style="font-family: var(--serif); font-size: 18px; color: var(--brown); font-weight: 600; margin: 0;">Điều chỉnh khuôn mặt</h3>
+      <span onclick="closeCropperModal()" style="font-size: 20px; cursor: pointer; color: #595959; transition: color 0.2s; display: flex; align-items: center; justify-content: center;"><i class="ti ti-x"></i></span>
+    </div>
+    
+    <!-- Body with cropper -->
+    <div style="flex: 1; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fdfbf9; min-height: 300px;">
+      <p style="font-size: 13px; color: #595959; margin-bottom: 16px; text-align: center; font-weight: 500;">Di chuyển, thu phóng hoặc xoay ảnh sao cho khuôn mặt nằm trọn trong hình bầu dục</p>
+      
+      <!-- Cropper Container -->
+      <div style="width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden; position: relative;">
+        <img id="cropper-target-image" src="" alt="Target Image" style="max-width: 100%; max-height: 100%; display: block;">
+      </div>
+      
+      <!-- Control Buttons (Zoom & Rotate) -->
+      <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%; justify-content: center;">
+        <button onclick="cropper.zoom(0.1)" class="btn-crop-control" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #c9a882; background: #fff; color: #7a4a1e; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Phóng to"><i class="ti ti-zoom-in"></i></button>
+        <button onclick="cropper.zoom(-0.1)" class="btn-crop-control" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #c9a882; background: #fff; color: #7a4a1e; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Thu nhỏ"><i class="ti ti-zoom-out"></i></button>
+        <button onclick="cropper.rotate(-90)" class="btn-crop-control" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #c9a882; background: #fff; color: #7a4a1e; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Xoay trái"><i class="ti ti-rotate-clockwise-2"></i></button>
+        <button onclick="cropper.rotate(90)" class="btn-crop-control" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #c9a882; background: #fff; color: #7a4a1e; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Xoay phải"><i class="ti ti-rotate-clockwise"></i></button>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="padding: 20px 24px; border-top: 1px solid #ebdcd0; display: flex; gap: 12px; background: #fff;">
+      <button onclick="closeCropperModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #e8ddd4; background: #fff; color: #7a4a1e; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Hủy</button>
+      <button id="btn-confirm-crop" onclick="confirmCrop()" style="flex: 1.5; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(122, 74, 30, 0.15);">Cắt & Ghép mặt</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
@@ -706,6 +744,8 @@ let qty = 1;
 let price = 450000;
 let currentTheme = "Sinh nhật gia đình";
 let swappedFaces = {}; // Lưu trữ URL ảnh đã swap cho từng thành viên
+let cropper = null;
+let currentCroppingMemberId = null;
 
 const THEME_CONFIGS = {
   "Sinh nhật gia đình": {
@@ -857,97 +897,158 @@ function renderUploadSlots() {
   });
 }
 
-async function handleMemberUpload(input, memberId) {
+function handleMemberUpload(input, memberId) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
   
-  // Reset input value to allow uploading the same file again if error occurs
+  // Reset input value to allow uploading the same file again
   input.value = "";
 
   const config = THEME_CONFIGS[currentTheme];
   const member = config.members.find(m => m.id === memberId);
   if (!member) return;
 
-  // Cập nhật giao diện của Slot sang trạng thái Loading
-  const statusText = document.getElementById(`status-text-${memberId}`);
-  const btnUpload = document.getElementById(`btn-upload-${memberId}`);
-  const slotCard = document.getElementById(`slot-card-${memberId}`);
+  currentCroppingMemberId = memberId;
 
-  statusText.textContent = "AI đang ghép mặt...";
-  statusText.style.color = "#7a4a1e";
-  btnUpload.disabled = true;
-  btnUpload.style.background = "#b4b2a9";
-  btnUpload.textContent = "Đang xử lý...";
-  slotCard.style.borderColor = "#c9a882";
-  slotCard.style.background = "#fffbf8";
-
-  // Hiển thị loading overlay trên hình sản phẩm chính
+  // Hiển thị loading overlay ngắn trong lúc đọc file
   const loadingOverlay = document.getElementById('loading-overlay');
-  const loadingText = document.getElementById('loading-text');
-  loadingOverlay.style.display = 'flex';
-  loadingText.textContent = `Đang xử lý khuôn mặt cho ${member.name}...`;
+  if (loadingOverlay) {
+    loadingOverlay.style.display = 'flex';
+    document.getElementById('loading-text').textContent = `Đang tải ảnh...`;
+  }
 
-  const mainImgInner = document.getElementById('img-main-inner');
-  if (mainImgInner) mainImgInner.classList.add('shimmer-loading');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    openCropperModal(e.target.result);
+  };
+  reader.onerror = function() {
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    alert("Không đọc được file ảnh!");
+  };
+  reader.readAsDataURL(file);
+}
 
-  // Tạo FormData
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('templateKey', member.key);
-
-  try {
-    const response = await fetch(WORKER_API_URL, {
-      method: 'POST',
-      body: formData
+function openCropperModal(imageSrc) {
+  const backdrop = document.getElementById('cropper-modal-backdrop');
+  const targetImg = document.getElementById('cropper-target-image');
+  if (!backdrop || !targetImg) return;
+  
+  targetImg.src = imageSrc;
+  backdrop.style.display = 'flex';
+  setTimeout(() => backdrop.classList.add('show'), 10);
+  
+  // Clean old cropper instance
+  if (cropper) {
+    cropper.destroy();
+  }
+  
+  const config = THEME_CONFIGS[currentTheme];
+  const member = config.members.find(m => m.id === currentCroppingMemberId);
+  const aspect = member ? (member.w / member.h) : 1;
+  
+  setTimeout(() => {
+    cropper = new Cropper(targetImg, {
+      aspectRatio: aspect,
+      viewMode: 1,
+      dragMode: 'move',
+      autoCropArea: 0.8,
+      restore: false,
+      guides: false,
+      center: false,
+      highlight: false,
+      cropBoxMovable: false,   // Khóa hộp cắt ở trung tâm để trải nghiệm mượt mà hơn
+      cropBoxResizable: false, // Người dùng sẽ zoom và pan hình ảnh phía dưới
+      toggleDragModeOnDblclick: false,
     });
+  }, 50);
+}
 
-    if (!response.ok) {
-      const errData = await response.json();
-      throw new Error(errData.error || 'Lỗi xử lý AI từ server.');
-    }
+function closeCropperModal() {
+  const backdrop = document.getElementById('cropper-modal-backdrop');
+  if (backdrop) {
+    backdrop.classList.remove('show');
+    setTimeout(() => {
+      backdrop.style.display = 'none';
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+    }, 300);
+  }
+}
 
-    const data = await response.json();
-    if (!data || !data.imageUrl) {
-      throw new Error('Không nhận được ảnh kết quả từ server.');
-    }
+function confirmCrop() {
+  if (!cropper || !currentCroppingMemberId) return;
+  
+  const config = THEME_CONFIGS[currentTheme];
+  const member = config.members.find(m => m.id === currentCroppingMemberId);
+  if (!member) return;
 
-    // Lưu kết quả URL ảnh swap
-    swappedFaces[memberId] = data.imageUrl;
+  const btnConfirm = document.getElementById('btn-confirm-crop');
+  btnConfirm.disabled = true;
+  btnConfirm.textContent = "Đang xử lý...";
 
-    // Vẽ lại canvas để cập nhật ảnh sản phẩm chính
-    updateCanvas(memberId);
+  // 1. Lấy canvas chứa ảnh đã cắt (độ phân giải cao để nét đẹp)
+  const croppedCanvas = cropper.getCroppedCanvas({
+    width: 300,
+    height: Math.round(300 / (member.w / member.h)),
+    imageSmoothingEnabled: true,
+    imageSmoothingQuality: 'high'
+  });
 
-    // Cập nhật UI Slot sang trạng thái thành công
-    statusText.textContent = "✓ Đã ghép thành công";
+  // 2. Tạo canvas oval mặt nạ bo tròn trong suốt
+  const ovalCanvas = document.createElement('canvas');
+  const oCtx = ovalCanvas.getContext('2d');
+  ovalCanvas.width = croppedCanvas.width;
+  ovalCanvas.height = croppedCanvas.height;
+
+  oCtx.beginPath();
+  oCtx.ellipse(
+    ovalCanvas.width / 2, ovalCanvas.height / 2,
+    ovalCanvas.width / 2, ovalCanvas.height / 2,
+    0, 0, 2 * Math.PI
+  );
+  oCtx.clip();
+
+  oCtx.drawImage(croppedCanvas, 0, 0);
+  const finalDataUrl = ovalCanvas.toDataURL('image/png');
+
+  // Lưu kết quả dataURL ảnh crop mặt oval vào swappedFaces
+  swappedFaces[currentCroppingMemberId] = finalDataUrl;
+
+  // Vẽ lại canvas tổng hợp để cập nhật ảnh sản phẩm chính
+  updateCanvas(currentCroppingMemberId);
+
+  // Cập nhật trạng thái slot
+  const statusText = document.getElementById(`status-text-${currentCroppingMemberId}`);
+  const btnUpload = document.getElementById(`btn-upload-${currentCroppingMemberId}`);
+  const slotCard = document.getElementById(`slot-card-${currentCroppingMemberId}`);
+
+  if (statusText) {
+    statusText.textContent = "✓ Đã thiết lập";
     statusText.style.color = "#2e7d32";
+  }
+  if (btnUpload) {
     btnUpload.disabled = false;
     btnUpload.style.background = "#2e7d32";
     btnUpload.textContent = "Đổi ảnh";
+  }
+  if (slotCard) {
     slotCard.style.borderColor = "#81c784";
     slotCard.style.background = "#f1f8e9";
-
-  } catch (error) {
-    console.error(error);
-    alert(`Lỗi khi xử lý ảnh ${member.name}: ${error.message}`);
-    statusText.textContent = "⚠️ Xử lý lỗi. Thử lại!";
-    statusText.style.color = "#d32f2f";
-    btnUpload.disabled = false;
-    btnUpload.style.background = "#7a4a1e";
-    btnUpload.textContent = "Thử lại";
-    slotCard.style.borderColor = "#e57373";
-    slotCard.style.background = "#ffebee";
-  } finally {
-    loadingOverlay.style.display = 'none';
-    const mainImgInner = document.getElementById('img-main-inner');
-    if (mainImgInner) mainImgInner.classList.remove('shimmer-loading');
   }
+
+  // Đóng modal
+  btnConfirm.disabled = false;
+  btnConfirm.textContent = "Cắt & Ghép mặt";
+  closeCropperModal();
 }
 
 function updateCanvas(latestMemberId = null) {
   const config = THEME_CONFIGS[currentTheme];
   if (!config) return;
 
-  // Đối tượng canvas cục bộ để vẽ đè ảnh tránh xung đột tranh chấp (race conditions) khi tải lên song song
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -959,7 +1060,7 @@ function updateCanvas(latestMemberId = null) {
     canvas.width = baseImg.naturalWidth;
     canvas.height = baseImg.naturalHeight;
 
-    // 1. Vẽ ảnh nền gốc trước (Đảm bảo background giữ nguyên 100% giống nhau)
+    // 1. Vẽ ảnh nền mẫu gỗ gốc trước
     ctx.drawImage(baseImg, 0, 0);
 
     const membersWithSwaps = config.members.filter(m => swappedFaces[m.id]);
@@ -968,49 +1069,33 @@ function updateCanvas(latestMemberId = null) {
       return;
     }
 
-    // 2. Tải và vẽ đè phần khuôn mặt đã được swap lên vị trí tương ứng
+    // 2. Vẽ đè phần khuôn mặt đã được crop oval dạng PNG lên tọa độ tương ứng
     let loadedCount = 0;
     membersWithSwaps.forEach(member => {
       const faceImg = new Image();
-      faceImg.crossOrigin = "anonymous";
       faceImg.src = swappedFaces[member.id];
 
       faceImg.onload = function() {
-        // Cắt vùng khuôn mặt từ ảnh AI và dán đè lên ảnh nền gốc
         ctx.drawImage(
           faceImg,
-          member.x, member.y, member.w, member.h, // Vị trí nguồn (AI output)
-          member.x, member.y, member.w, member.h  // Vị trí đích (Base background)
+          0, 0, faceImg.width, faceImg.height, // Vị trí nguồn (ảnh crop oval hoàn chỉnh)
+          member.x, member.y, member.w, member.h  // Vị trí đích vẽ lên thớt gỗ mẫu
         );
 
-        // Tạo ảnh avatar nhỏ cho vòng tròn preview trong Slot
-        if (member.id === latestMemberId) {
-          const tempCanvas = document.createElement('canvas');
-          const tempCtx = tempCanvas.getContext('2d');
-          tempCanvas.width = member.w;
-          tempCanvas.height = member.h;
-          
-          tempCtx.drawImage(
-            faceImg,
-            member.x, member.y, member.w, member.h,
-            0, 0, member.w, member.h
-          );
-          
-          const circle = document.getElementById(`preview-circle-${member.id}`);
-          if (circle) {
-            circle.innerHTML = `<img src="${tempCanvas.toDataURL('image/jpeg')}" style="width:100%; height:100%; object-fit:cover;" />`;
-          }
+        // Cập nhật ảnh đại diện nhỏ cho vòng tròn preview trong Slot
+        const circle = document.getElementById(`preview-circle-${member.id}`);
+        if (circle) {
+          circle.innerHTML = `<img src="${swappedFaces[member.id]}" style="width:100%; height:100%; object-fit:cover;" />`;
         }
 
         loadedCount++;
         if (loadedCount === membersWithSwaps.length) {
-          // Hoàn thành vẽ tất cả các mặt, hiển thị ảnh composite cuối cùng
           displayResult(canvas.toDataURL('image/jpeg', 0.95));
         }
       };
 
-        faceImg.onerror = function() {
-        console.error(`Không tải được ảnh swap cho ${member.name}`);
+      faceImg.onerror = function() {
+        console.error(`Không tải được ảnh khuôn mặt cho ${member.name}`);
         loadedCount++;
         if (loadedCount === membersWithSwaps.length) {
           displayResult(canvas.toDataURL('image/jpeg', 0.95));
@@ -1581,6 +1666,31 @@ window.onload = () => {
       color: var(--brown);
       transform: rotate(90deg);
       background: rgba(255,255,255,0.2);
+    }
+
+    /* CropperJS Custom Styling for Oval/Circular Mask */
+    .cropper-view-box,
+    .cropper-face {
+      border-radius: 50%;
+      outline: 2px solid var(--brown);
+      outline-offset: -1px;
+    }
+    .cropper-line,
+    .cropper-point {
+      display: none !important;
+    }
+    .cropper-bg {
+      background-image: none !important;
+      background-color: #111 !important;
+    }
+    .btn-crop-control {
+      transition: all 0.2s ease;
+    }
+    .btn-crop-control:hover {
+      background: var(--brown-ll) !important;
+      border-color: var(--brown) !important;
+      color: var(--brown) !important;
+      transform: scale(1.05);
     }
   </style>
 </body>
