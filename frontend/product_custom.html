@@ -727,22 +727,13 @@ const THEME_CONFIGS = {
 
 const THEME_THUMBS = {
   "Sinh nhật gia đình": [
-    "birthday_base.jpg",
-    "blog_birthday_gift.jpg",
-    "blog_craft_process.jpg",
-    "birthday_coords_test.png"
+    "birthday_base.jpg"
   ],
   "Tốt nghiệp": [
-    "graduation_base.jpg",
-    "blog_graduation.jpg",
-    "blog_craft_process.jpg",
-    "graduation_coords_test.png"
+    "graduation_base.jpg"
   ],
   "Đám cưới": [
-    "wedding_base.jpg",
-    "blog_wedding_gift.jpg",
-    "blog_craft_process.jpg",
-    "wedding_coords_test.png"
+    "wedding_base.jpg"
   ]
 };
 
@@ -802,6 +793,14 @@ function renderThumbnails() {
   if (!thumbsContainer) return;
 
   const images = THEME_THUMBS[currentTheme] || [];
+  
+  // Hide thumbs container if there's only 1 or no images
+  if (images.length <= 1) {
+    thumbsContainer.style.display = "none";
+    return;
+  }
+
+  thumbsContainer.style.display = "flex";
   thumbsContainer.innerHTML = "";
 
   images.forEach((imgSrc, index) => {
