@@ -1187,25 +1187,30 @@ function updateCanvas(latestMemberId = null) {
             member.x, member.y, member.w, member.h  // Vị trí đích (Base background)
           );
         } else {
-          // Tự cắt thủ công: vẽ đè mặt nạ oval và phóng to theo khung hình bầu dục
+          // Tự cắt thủ công: vẽ đè mặt nạ oval phủ toàn bộ đầu và sử dụng blend mode multiply để lộ viền khắc gỗ mẫu đè lên trên
           ctx.save();
-          if (member.clip) {
-            ctx.beginPath();
-            ctx.ellipse(
-              member.x + member.clip.cx,
-              member.y + member.clip.cy,
-              member.clip.rx,
-              member.clip.ry,
-              0, 0, 2 * Math.PI
-            );
-            ctx.clip();
-          }
+          
+          // Cắt theo hình bầu dục bao quanh toàn bộ đầu (giữ được tóc và tai của người dùng)
+          ctx.beginPath();
+          ctx.ellipse(
+            member.x + member.w / 2,
+            member.y + member.w / 2 * (member.h / member.w), // Đảm bảo tâm dọc chuẩn
+            member.w / 2,
+            member.h / 2,
+            0, 0, 2 * Math.PI
+          );
+          ctx.clip();
+
+          // Sử dụng blend mode multiply để hòa trộn vân gỗ và viền đen lên trên ảnh mặt
+          ctx.globalCompositeOperation = 'multiply';
+
           ctx.drawImage(
             faceImg,
             0, 0, faceImg.width, faceImg.height, // Vị trí nguồn (ảnh crop oval hoàn chỉnh)
             member.x, member.y, member.w, member.h  // Vị trí đích vẽ lên thớt gỗ mẫu
           );
-          ctx.restore();
+          
+          ctx.restore(); // Khôi phục trạng thái canvas ban đầu
         }
 
         // Cập nhật ảnh đại diện nhỏ cho vòng tròn preview trong Slot
