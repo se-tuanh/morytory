@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Face Coordinate Debug Tool</title>
+<style>
+body { font-family: monospace; background: #1a1a2e; color: #eee; margin: 0; padding: 20px; }
+h2 { color: #e94560; }
+.container { display: flex; gap: 20px; flex-wrap: wrap; }
+.panel { flex: 1; min-width: 500px; }
+canvas { border: 2px solid #e94560; cursor: crosshair; max-width: 100%; display: block; }
+.info { background: #16213e; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 13px; line-height: 1.8; }
+.config-box { background: #0f3460; padding: 12px; border-radius: 8px; margin-top: 10px; }
+pre { color: #0f9; margin: 0; font-size: 12px; }
+button { background: #e94560; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 4px; font-size: 13px; }
+button:hover { background: #c73652; }
+.mode-btn { background: #0f3460; }
+.mode-btn.active { background: #e94560; }
+select { background: #16213e; color: #eee; border: 1px solid #e94560; padding: 6px 12px; border-radius: 6px; font-size: 14px; }
+label { font-size: 13px; color: #aaa; }
+</style>
+</head>
+<body>
+<h2>🎯 Face Coordinate Debug Tool</h2>
+<p style="color:#aaa; font-size:13px;">Click on image to set corners. Click 2 points to define a rectangle (face area).</p>
+
+<div style="margin-bottom: 16px;">
+  <label>Image: </label>
+  <select id="imgSelect" onchange="loadImage()">
+    <option value="graduation_base.jpg">graduation_base.jpg</option>
+    <option value="birthday_base.jpg">birthday_base.jpg</option>
+    <option value="wedding_base.jpg">wedding_base.jpg</option>
+  </select>
+  &nbsp;
+  <button onclick="clearPoints()">Clear Points</button>
+  <button onclick="undoPoint()">Undo</button>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <canvas id="canvas"></canvas>
+    <div class="info" id="info">
+      Click on the image to mark face corners.<br>
+      First click = top-left of face area<br>
+      Second click = bottom-right of face area
+    </div>
+  </div>
+  <div class="panel">
+    <div class="config-box">
+      <div style="color:#e94560; font-weight:bold; margin-bottom: 8px;">📐 Coordinates</div>
+      <pre id="coords">// Click on image to see coordinates</pre>
+    </div>
+    <div class="config-box" style="margin-top: 12px;">
+      <div style="color:#e94560; font-weight:bold; margin-bottom: 8px;">📋 THEME_CONFIGS snippet</div>
+      <pre id="config-snippet">// Mark 2 points to generate config</pre>
+    </div>
+    <div style="margin-top: 12px;">
+      <button onclick="copyConfig()">📋 Copy Config</button>
+    </div>
+    <div class="info" style="margin-top: 12px; font-size: 12px; color: #aaa;">
+      <b>Tip:</b> The face area should cover only the face/head of the character (not the hat). 
+      Set 2 points: top-left corner and bottom-right corner of the face oval area.
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let img = new Image();
+let points = [];
+let members = [];
+let memberCount = 0;
+let imgW = 0, imgH = 0;
+
+const COLORS = ['#ff4081', '#40c4ff', '#69f0ae', '#ffab40', '#ea80fc'];
+const NAMES = ['member1 (boy/father/groom)', 'member2 (girl/mother/bride)', 'member3 (child)'];
+
+function loadImage() {
+  const src = document.getElementById('imgSelect').value;
+  img = new Image();
+  img.onload = function() {
+    imgW = img.naturalWidth;
+    imgH = img.naturalHeight;
+    // Scale to fit
+    const maxW = 700;
+    const scale = maxW / imgW;
+    canvas.width = imgW * scale;
+    canvas.height = imgH * scale;
+    canvas.dataset.scale = scale;
+    redraw();
+    document.getElementById('info').innerHTML = `Image: ${imgW} x ${imgH}px (displayed at scale ${scale.toFixed(3)})<br>Click to mark face corners (2 clicks = 1 member)`;
+  };
+  img.src = src;
+  clearPoints();
+}
+
+function redraw() {
+  const scale = parseFloat(canvas.dataset.scale || 1);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  
+  // Draw completed members
+  members.forEach((m, i) => {
+    const color = COLORS[i % COLORS.length];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    
+    // Draw rect
+    ctx.strokeRect(m.x * scale, m.y * scale, m.w * scale, m.h * scale);
+    
+    // Draw oval
+    ctx.beginPath();
+    ctx.ellipse(
+      (m.x + m.w/2) * scale, (m.y + m.h/2) * scale,
+      (m.w/2) * scale, (m.h/2) * scale,
+      0, 0, 2 * Math.PI
+    );
+    ctx.stroke();
+    
+    // Label
+    ctx.fillStyle = color;
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText(`M${i+1} (${m.x},${m.y},${m.w},${m.h})`, m.x * scale, m.y * scale - 4);
+  });
+
+  // Draw current points
+  points.forEach((p, i) => {
+    const color = COLORS[members.length % COLORS.length];
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x * scale, p.y * scale, 5, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.fillText(`P${i+1}(${p.x},${p.y})`, p.x * scale + 7, p.y * scale + 4);
+  });
+  
+  // Draw line between 2 points
+  if (points.length === 2) {
+    ctx.strokeStyle = COLORS[members.length % COLORS.length];
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(
+      points[0].x * scale, points[0].y * scale,
+      (points[1].x - points[0].x) * scale,
+      (points[1].y - points[0].y) * scale
+    );
+  }
+}
+
+canvas.addEventListener('click', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  // Map CSS pixel position → image pixel position (accounts for CSS max-width scaling)
+  const x = Math.round((e.clientX - rect.left) / rect.width * imgW);
+  const y = Math.round((e.clientY - rect.top) / rect.height * imgH);
+  
+  points.push({ x, y });
+  
+  document.getElementById('info').innerHTML = `Clicked: <b>(${x}, ${y})</b> — Point ${points.length}/2`;
+  
+  if (points.length === 2) {
+    const x1 = Math.min(points[0].x, points[1].x);
+    const y1 = Math.min(points[0].y, points[1].y);
+    const x2 = Math.max(points[0].x, points[1].x);
+    const y2 = Math.max(points[0].y, points[1].y);
+    const w = x2 - x1;
+    const h = y2 - y1;
+    
+    members.push({ x: x1, y: y1, w, h });
+    points = [];
+    updateCoords();
+  }
+  
+  redraw();
+});
+
+canvas.addEventListener('mousemove', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.round((e.clientX - rect.left) / rect.width * imgW);
+  const y = Math.round((e.clientY - rect.top) / rect.height * imgH);
+  document.getElementById('coords').textContent = `Cursor: x=${x}, y=${y}  (image: ${imgW}x${imgH})`;
+});
+
+function updateCoords() {
+  const img = document.getElementById('imgSelect').value;
+  let memberLines = members.map((m, i) => {
+    const cx = Math.round(m.w / 2);
+    const cy = Math.round(m.h / 2);
+    const rx = Math.round(m.w * 0.35);
+    const ry = Math.round(m.h * 0.45);
+    const name = NAMES[i] || `member${i+1}`;
+    return `  { id: "${name.split(' ')[0]}", name: "...", key: "...", x: ${m.x}, y: ${m.y}, w: ${m.w}, h: ${m.h}, clip: { cx: ${cx}, cy: ${cy}, rx: ${rx}, ry: ${ry} } }`;
+  });
+  
+  document.getElementById('config-snippet').textContent = memberLines.join(',\n') || '// Mark members first';
+  document.getElementById('coords').textContent = members.map((m, i) =>
+    `Member ${i+1}: x=${m.x}, y=${m.y}, w=${m.w}, h=${m.h} (aspect=${(m.w/m.h).toFixed(2)})`
+  ).join('\n');
+}
+
+function clearPoints() {
+  points = [];
+  members = [];
+  redraw();
+  document.getElementById('coords').textContent = '// Click on image to see coordinates';
+  document.getElementById('config-snippet').textContent = '// Mark 2 points to generate config';
+}
+
+function undoPoint() {
+  if (points.length > 0) {
+    points.pop();
+  } else if (members.length > 0) {
+    members.pop();
+    updateCoords();
+  }
+  redraw();
+}
+
+function copyConfig() {
+  const text = document.getElementById('config-snippet').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Copied!'));
+}
+
+// Init
+loadImage();
+</script>
+</body>
+</html>

@@ -748,28 +748,133 @@ let cropper = null;
 let currentCroppingMemberId = null;
 let currentUploadMode = {}; // Lưu chế độ tải lên cho từng thành viên ('ai' hoặc 'manual')
 let faceSourceTypes = {};   // Lưu nguồn gốc của khuôn mặt ('ai' hoặc 'manual')
+let woodEngravingMode = true; // Chế độ khắc gỗ
+const MOCK_AI_MODE = true;    // 🔧 DEBUG: dùng ảnh mẫu gốc thay vì gọi Replicate API (set false khi có credit)
+
+// ===== WOOD ENGRAVING EFFECT ENGINE =====
+// Thuật toán: ảnh màu → grayscale → Color Dodge sketch → wood burn color palette
+
+function boxBlur(data, w, h, radius) {
+  const result = new Float32Array(w * h);
+  const temp  = new Float32Array(w * h);
+  // Horizontal pass
+  for (let y = 0; y < h; y++) {
+    let sum = 0;
+    for (let x = 0; x < 2 * radius + 1; x++) sum += data[y * w + Math.min(w - 1, x)];
+    for (let x = 0; x < w; x++) {
+      temp[y * w + x] = sum / (2 * radius + 1);
+      sum += data[y * w + Math.min(w - 1, x + radius + 1)];
+      sum -= data[y * w + Math.max(0, x - radius)];
+    }
+  }
+  // Vertical pass
+  for (let x = 0; x < w; x++) {
+    let sum = 0;
+    for (let y = 0; y < 2 * radius + 1; y++) sum += temp[Math.min(h - 1, y) * w + x];
+    for (let y = 0; y < h; y++) {
+      result[y * w + x] = sum / (2 * radius + 1);
+      sum += temp[Math.min(h - 1, y + radius + 1) * w + x];
+      sum -= temp[Math.max(0, y - radius) * w + x];
+    }
+  }
+  return result;
+}
+
+function applyWoodEngravingToCanvas(sourceCanvas) {
+  const w = sourceCanvas.width;
+  const h = sourceCanvas.height;
+  const resultCanvas = document.createElement('canvas');
+  resultCanvas.width = w;
+  resultCanvas.height = h;
+  const ctx = resultCanvas.getContext('2d');
+  ctx.drawImage(sourceCanvas, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const pixels = imageData.data;
+
+  // Bước 1: Grayscale
+  const gray = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    gray[i] = 0.299 * pixels[i*4] + 0.587 * pixels[i*4+1] + 0.114 * pixels[i*4+2];
+  }
+
+  // Bước 2: Invert + blur để tạo hiệu ứng Color Dodge
+  const invGray = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) invGray[i] = 255 - gray[i];
+  const blurred = boxBlur(invGray, w, h, 10);
+
+  // Bước 3: Color Dodge → phác thảo bút chì
+  const sketch = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    const b = blurred[i] / 255;
+    sketch[i] = b >= 1 ? 255 : Math.min(255, gray[i] / (1 - b));
+  }
+
+  // Bước 4: Map sang bảng màu khắc gỗ (tối = nét khắc, sáng = vân gỗ)
+  // Tone tối: #2C1503 (gỗ cháy đậm) → Tone sáng: #C89458 (vân gỗ tự nhiên)
+  const output = ctx.createImageData(w, h);
+  for (let i = 0; i < w * h; i++) {
+    const t = Math.pow(Math.max(0, Math.min(1, sketch[i] / 255)), 1.25);
+    output.data[i*4]     = Math.round(0x2C + t * (0xC8 - 0x2C)); // R: 44→200
+    output.data[i*4 + 1] = Math.round(0x15 + t * (0x94 - 0x15)); // G: 21→148
+    output.data[i*4 + 2] = Math.round(0x03 + t * (0x58 - 0x03)); // B: 3ↈ88
+    output.data[i*4 + 3] = pixels[i*4 + 3]; // giữ alpha gốc
+  }
+  ctx.putImageData(output, 0, 0);
+  return resultCanvas;
+}
+
+function applyWoodEngravingToDataUrl(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const result = applyWoodEngravingToCanvas(canvas);
+      resolve(result.toDataURL('image/png'));
+    };
+    img.onerror = () => resolve(dataUrl); // fallback nếu lỗi
+    img.src = dataUrl;
+  });
+}
+
+function toggleWoodEngraving() {
+  woodEngravingMode = !woodEngravingMode;
+  const btn = document.getElementById('btn-wood-toggle');
+  if (btn) {
+    btn.style.background = woodEngravingMode ? '#5c3a1e' : '#fff';
+    btn.style.color = woodEngravingMode ? '#fff' : '#7a4a1e';
+    btn.innerHTML = woodEngravingMode
+      ? '<i class="ti ti-trees" style="font-size:12px;"></i> Phong cách gỗ: Bật'
+      : '<i class="ti ti-photo" style="font-size:12px;"></i> Phong cách gỗ: Tắt';
+  }
+}
+// ========================================
 
 const THEME_CONFIGS = {
   "Sinh nhật gia đình": {
     baseImage: "birthday_base.jpg",
     members: [
-      { id: "father", name: "Bố (Father)", key: "birthday_father", x: 335, y: 190, w: 110, h: 130, clip: { cx: 55, cy: 70, rx: 36, ry: 46 } },
-      { id: "mother", name: "Mẹ (Mother)", key: "birthday_mother", x: 575, y: 210, w: 110, h: 130, clip: { cx: 55, cy: 68, rx: 35, ry: 45 } },
-      { id: "child", name: "Con (Child)", key: "birthday_child", x: 717, y: 355, w: 80, h: 95, clip: { cx: 40, cy: 50, rx: 26, ry: 32 } }
+      { id: "father", name: "Bố (Father)", key: "birthday_father",   x: 354, y: 229, w: 79, h: 67, clip: { cx: 40, cy: 34, rx: 28, ry: 30 } },
+      { id: "mother", name: "Mẹ (Mother)", key: "birthday_mother",   x: 600, y: 253, w: 64, h: 58, clip: { cx: 32, cy: 29, rx: 22, ry: 26 } },
+      { id: "child",  name: "Con (Child)",   key: "birthday_child",    x: 717, y: 355, w: 40, h: 55, clip: { cx: 20, cy: 28, rx: 14, ry: 20 } }
     ]
   },
   "Tốt nghiệp": {
     baseImage: "graduation_base.jpg",
     members: [
-      { id: "boy", name: "Bạn Nam (Boy)", key: "graduation_boy", x: 325, y: 270, w: 100, h: 120, clip: { cx: 50, cy: 60, rx: 32, ry: 40 } },
-      { id: "girl", name: "Bạn Nữ (Girl)", key: "graduation_girl", x: 582, y: 280, w: 100, h: 120, clip: { cx: 50, cy: 60, rx: 32, ry: 40 } }
+      { id: "boy",  name: "Bạn Nam (Boy)", key: "graduation_boy",  x: 331, y: 264, w: 77, h: 81, clip: { cx: 39, cy: 41, rx: 27, ry: 36 } },
+      { id: "girl", name: "Bạn Nữ (Girl)", key: "graduation_girl", x: 604, y: 288, w: 73, h: 68, clip: { cx: 37, cy: 34, rx: 26, ry: 31 } }
     ]
   },
   "Đám cưới": {
     baseImage: "wedding_base.jpg",
     members: [
-      { id: "groom", name: "Chú rể (Groom)", key: "wedding_groom", x: 327, y: 225, w: 100, h: 120, clip: { cx: 50, cy: 62, rx: 32, ry: 40 } },
-      { id: "bride", name: "Cô dâu (Bride)", key: "wedding_bride", x: 567, y: 230, w: 100, h: 120, clip: { cx: 50, cy: 62, rx: 32, ry: 40 } }
+      { id: "groom", name: "Chú rể (Groom)", key: "wedding_groom", x: 347, y: 248, w: 70, h: 69, clip: { cx: 35, cy: 35, rx: 25, ry: 31 } },
+      { id: "bride", name: "Cô dâu (Bride)",   key: "wedding_bride", x: 594, y: 275, w: 69, h: 55, clip: { cx: 35, cy: 28, rx: 24, ry: 25 } }
     ]
   }
 };
@@ -880,7 +985,16 @@ function renderUploadSlots() {
   const container = document.getElementById('upload-slots-container');
   if (!config || !container) return;
 
-  container.innerHTML = "";
+  // Toggle button phong cách khắc gỗ
+  container.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <div style="font-size:12px; color:#888780;">Chọn ảnh cho từng thành viên</div>
+      <button id="btn-wood-toggle" onclick="toggleWoodEngraving()" title="Chuyển sang phong cách tranh khắc gỗ" style="padding:5px 10px; border-radius:20px; border:1px solid #c9a882; background:#5c3a1e; color:#fff; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; transition: all 0.2s;">
+        <i class="ti ti-trees" style="font-size:12px;"></i> Phong cách gỗ: Bật
+      </button>
+    </div>
+  `;
+
   config.members.forEach(member => {
     const html = `
       <div class="upload-slot-card" id="slot-card-${member.id}" style="background:#fff; border: 1.5px solid #e8ddd4; border-radius:12px; padding:12px; margin-bottom:12px; display:flex; align-items:center; gap:16px; transition: all 0.2s;">
@@ -961,6 +1075,20 @@ async function handleAIUpload(file, memberId) {
   formData.append('templateKey', member.key);
 
   try {
+    // ====== MOCK MODE: bỏ qua API, dùng ảnh mẫu gốc =====
+    if (MOCK_AI_MODE) {
+      await new Promise(r => setTimeout(r, 800)); // giả lập delay AI
+      const mockUrl = `./${member.key}.jpg`;       // ví dụ: ./graduation_boy.jpg
+      console.log(`[MOCK AI] Dùng ảnh mẫu: ${mockUrl} cho ${member.name}`);
+      swappedFaces[memberId] = mockUrl;
+      faceSourceTypes[memberId] = 'ai';
+      updateCanvas(memberId);
+      if (statusText) { statusText.textContent = "[MOCK] Đã ghép AI (mẫu)"; statusText.style.color = "#7a4a1e"; }
+      if (slotCard) { slotCard.style.borderColor = "#c9a882"; slotCard.style.background = "#fffbf8"; }
+      return;
+    }
+    // ======================================================
+
     const response = await fetch(WORKER_API_URL, {
       method: 'POST',
       body: formData
@@ -1083,7 +1211,7 @@ function closeCropperModal() {
   }
 }
 
-function confirmCrop() {
+async function confirmCrop() {
   if (!cropper || !currentCroppingMemberId) return;
   
   const config = THEME_CONFIGS[currentTheme];
@@ -1092,9 +1220,9 @@ function confirmCrop() {
 
   const btnConfirm = document.getElementById('btn-confirm-crop');
   btnConfirm.disabled = true;
-  btnConfirm.textContent = "Đang xử lý...";
+  btnConfirm.textContent = woodEngravingMode ? "Đang xử lý + khắc gỗ..." : "Đang xử lý...";
 
-  // 1. Lấy canvas chứa ảnh đã cắt (độ phân giải cao để nét đẹp)
+  // 1. Lấy canvas chứa ảnh đã cắt
   const croppedCanvas = cropper.getCroppedCanvas({
     width: 300,
     height: Math.round(300 / (member.w / member.h)),
@@ -1107,7 +1235,6 @@ function confirmCrop() {
   const oCtx = ovalCanvas.getContext('2d');
   ovalCanvas.width = croppedCanvas.width;
   ovalCanvas.height = croppedCanvas.height;
-
   oCtx.beginPath();
   oCtx.ellipse(
     ovalCanvas.width / 2, ovalCanvas.height / 2,
@@ -1115,23 +1242,27 @@ function confirmCrop() {
     0, 0, 2 * Math.PI
   );
   oCtx.clip();
-
   oCtx.drawImage(croppedCanvas, 0, 0);
-  const finalDataUrl = ovalCanvas.toDataURL('image/png');
 
-  // Lưu kết quả dataURL ảnh crop mặt oval vào swappedFaces
+  // 3. Áp dụng hiệu ứng khắc gỗ nếu được bật
+  let finalCanvas = ovalCanvas;
+  if (woodEngravingMode) {
+    finalCanvas = applyWoodEngravingToCanvas(ovalCanvas);
+  }
+  const finalDataUrl = finalCanvas.toDataURL('image/png');
+
+  // Lưu kết quả
   swappedFaces[currentCroppingMemberId] = finalDataUrl;
   faceSourceTypes[currentCroppingMemberId] = 'manual';
 
-  // Vẽ lại canvas tổng hợp để cập nhật ảnh sản phẩm chính
+  // Vẽ lại canvas tổng hợp
   updateCanvas(currentCroppingMemberId);
 
   // Cập nhật trạng thái slot
   const statusText = document.getElementById(`status-text-${currentCroppingMemberId}`);
   const slotCard = document.getElementById(`slot-card-${currentCroppingMemberId}`);
-
   if (statusText) {
-    statusText.textContent = "✓ Đã tự cắt xong";
+    statusText.textContent = woodEngravingMode ? "✓ Đã tự cắt + khắc gỗ" : "✓ Đã tự cắt xong";
     statusText.style.color = "#2e7d32";
   }
   if (slotCard) {
@@ -1139,7 +1270,6 @@ function confirmCrop() {
     slotCard.style.background = "#f1f8e9";
   }
 
-  // Đóng modal
   btnConfirm.disabled = false;
   btnConfirm.textContent = "Cắt & Ghép mặt";
   closeCropperModal();
@@ -1187,30 +1317,28 @@ function updateCanvas(latestMemberId = null) {
             member.x, member.y, member.w, member.h  // Vị trí đích (Base background)
           );
         } else {
-          // Tự cắt thủ công: vẽ đè mặt nạ oval phủ toàn bộ đầu và sử dụng blend mode multiply để lộ viền khắc gỗ mẫu đè lên trên
+          // Tự cắt thủ công: vẽ ảnh mặt vừa khít trong vùng oval tương ứng trên canvas
           ctx.save();
           
-          // Cắt theo hình bầu dục bao quanh toàn bộ đầu (giữ được tóc và tai của người dùng)
+          // Clip theo hình bầu dục đúng kích thước vùng mặt của nhân vật
           ctx.beginPath();
           ctx.ellipse(
-            member.x + member.w / 2,
-            member.y + member.w / 2 * (member.h / member.w), // Đảm bảo tâm dọc chuẩn
-            member.w / 2,
-            member.h / 2,
+            member.x + member.w / 2,        // tâm X
+            member.y + member.h / 2,        // tâm Y (dùng member.h, không phải tính lại)
+            member.w / 2,                   // bán kính X
+            member.h / 2,                   // bán kính Y
             0, 0, 2 * Math.PI
           );
           ctx.clip();
 
-          // Sử dụng blend mode multiply để hòa trộn vân gỗ và viền đen lên trên ảnh mặt
-          ctx.globalCompositeOperation = 'multiply';
-
+          // Vẽ ảnh mặt đã crop (oval sẵn) vào đúng vùng tọa độ mà không dùng blend mode
           ctx.drawImage(
             faceImg,
-            0, 0, faceImg.width, faceImg.height, // Vị trí nguồn (ảnh crop oval hoàn chỉnh)
-            member.x, member.y, member.w, member.h  // Vị trí đích vẽ lên thớt gỗ mẫu
+            0, 0, faceImg.width, faceImg.height, // toàn bộ ảnh crop
+            member.x, member.y, member.w, member.h  // khớp đúng vùng mặt trên canvas
           );
           
-          ctx.restore(); // Khôi phục trạng thái canvas ban đầu
+          ctx.restore();
         }
 
         // Cập nhật ảnh đại diện nhỏ cho vòng tròn preview trong Slot
