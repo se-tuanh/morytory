@@ -234,7 +234,7 @@
       border: none; background: transparent;
       position: relative; display: flex; flex-direction: column;
     }
-    .theme-thumb-wrap { width: 100%; aspect-ratio: 4/3; overflow: hidden; border-radius: 8px; border: 1px solid var(--gray-l); }
+    .theme-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; border-radius: 6px; border: 1px solid var(--gray-l); }
     .theme-thumb { width: 100%; height: 100%; background-size: cover; background-position: center; transition: transform .35s ease; }
     .theme-card:hover .theme-thumb { transform: scale(1.04); }
     .theme-thumb.birthday { background-image: url('birthday_base.jpg'); }
@@ -242,10 +242,21 @@
     .theme-thumb.wedding  { background-image: url('wedding_base.jpg'); }
     .theme-thumb.friends  { background-image: url('graduation_girl.jpg'); }
     .theme-thumb.baby     { background-image: url('birthday_child.jpg'); }
-    .theme-info { padding: 12px 0 0 0; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
-    .theme-name { font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.3; }
+    .theme-info { padding: 10px 0 0 0; display: flex; flex-direction: column; gap: 3px; flex-grow: 1; }
+    .theme-name { 
+      font-family: var(--sans); 
+      font-size: 13px; 
+      font-weight: 400; 
+      color: var(--text); 
+      line-height: 1.4; 
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 36px;
+    }
     .theme-name:hover { text-decoration: underline; }
-    .theme-sub  { font-size: 12px; color: var(--gray); margin-bottom: 2px; }
+    .theme-sub  { display: none; }
     .btn-theme { display: none; }
  
     /* ─── PREMIUM GRID ─── */
@@ -255,7 +266,7 @@
       border: none; background: transparent;
       position: relative; display: flex; flex-direction: column;
     }
-    .premium-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; border-radius: 8px; border: 1px solid var(--gray-l); }
+    .premium-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; border-radius: 6px; border: 1px solid var(--gray-l); }
     .premium-thumb { width: 100%; height: 100%; transition: transform .35s ease; }
     .premium-card:hover .premium-thumb { transform: scale(1.04); }
     .premium-thumb.p1 { background: url('premium1.jpg') center/cover no-repeat; }
@@ -263,13 +274,71 @@
     .premium-thumb.p3 { background: url('premium3.jpg') center/cover no-repeat; }
     .premium-thumb.p4 { background: url('blog_home_decor.jpg') center/cover no-repeat; }
     .premium-thumb.p5 { background: url('blog_wedding_gift.jpg') center/cover no-repeat; }
-    .premium-label { position: absolute; top: 10px; left: 10px; font-size: 10px; background: rgba(255, 255, 255, 0.95); color: var(--brown); padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05); z-index: 2; }
-    .premium-info { padding: 12px 0 0 0; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
-    .premium-name { font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.3; }
-    .premium-price { font-size: 15px; color: var(--text); font-weight: 700; margin-bottom: 2px; }
+    .premium-label { display: none; } /* Bỏ chữ thừa trên ảnh */
+    .premium-info { padding: 10px 0 0 0; display: flex; flex-direction: column; gap: 3px; flex-grow: 1; }
+    .premium-name { 
+      font-family: var(--sans); 
+      font-size: 13px; 
+      font-weight: 400; 
+      color: var(--text); 
+      line-height: 1.4; 
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 36px;
+    }
+    .premium-price { display: none; }
     .btn-premium { display: none; }
     .theme-card:hover .theme-name { text-decoration: underline; }
     .premium-card:hover .premium-name { text-decoration: underline; }
+
+    /* Etsy Card Styles */
+    .card-rating {
+      font-size: 11px;
+      color: #EF9F27;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 1px;
+    }
+    .card-rating .rating-count {
+      color: var(--gray);
+      font-size: 11px;
+    }
+    .card-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 1px;
+    }
+    .card-price {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .card-old-price {
+      font-family: var(--sans);
+      font-size: 11px;
+      text-decoration: line-through;
+      color: var(--brown-l);
+      font-weight: 400;
+    }
+    .card-discount {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 600;
+      color: #2e7d32;
+    }
+    .card-shipping {
+      font-family: var(--sans);
+      font-size: 11px;
+      color: #2e7d32;
+      font-weight: 600;
+      margin-top: 1px;
+    }
 
     /* ─── CUSTOM BANNER ─── */
     .custom-banner {
@@ -1230,97 +1299,87 @@
       <div class="theme-grid reveal">
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
           <div class="theme-thumb-wrap">
-            <div class="theme-thumb birthday" style="position: relative;">
-              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #d15816; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Bán chạy nhất</span>
-            </div>
+            <div class="theme-thumb birthday"></div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Sinh nhật gia đình</div>
-            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(48)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(48)</span>
             </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
-              450.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">550.000 đ</span>
-              <span style="color: #2e7d32; font-size: 12px; font-weight: 600; margin-left: 6px;">(Giảm 18%)</span>
+            <div class="card-price-row">
+              <span class="card-price">450.000 đ</span>
+              <span class="card-old-price">550.000 đ</span>
+              <span class="card-discount">(Giảm 18%)</span>
             </div>
-            <button class="btn-theme">Chọn chủ đề này</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
           <div class="theme-thumb-wrap">
-            <div class="theme-thumb graduate" style="position: relative;">
-              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #2e7d32; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Giao nhanh 24h</span>
-            </div>
+            <div class="theme-thumb graduate"></div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Tốt nghiệp</div>
-            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(32)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(32)</span>
             </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
-              420.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">500.000 đ</span>
-              <span style="color: #2e7d32; font-size: 12px; font-weight: 600; margin-left: 6px;">(Giảm 16%)</span>
+            <div class="card-price-row">
+              <span class="card-price">420.000 đ</span>
+              <span class="card-old-price">500.000 đ</span>
+              <span class="card-discount">(Giảm 16%)</span>
             </div>
-            <button class="btn-theme">Chọn chủ đề này</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
           <div class="theme-thumb-wrap">
-            <div class="theme-thumb wedding" style="position: relative;">
-              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #7b1fa2; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Chế tác tỉ mỉ</span>
-            </div>
+            <div class="theme-thumb wedding"></div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Đám cưới</div>
-            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(56)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(56)</span>
             </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
-              480.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">580.000 đ</span>
-              <span style="color: #2e7d32; font-size: 12px; font-weight: 600; margin-left: 6px;">(Giảm 17%)</span>
+            <div class="card-price-row">
+              <span class="card-price">480.000 đ</span>
+              <span class="card-old-price">580.000 đ</span>
+              <span class="card-discount">(Giảm 17%)</span>
             </div>
-            <button class="btn-theme">Chọn chủ đề này</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Bạn Thân','430.000','510.000','Kỷ niệm bạn thân')">
           <div class="theme-thumb-wrap">
-            <div class="theme-thumb friends" style="position: relative;">
-              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #7b1fa2; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Chủ đề hot</span>
-            </div>
+            <div class="theme-thumb friends"></div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Kỷ niệm bạn thân</div>
-            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(21)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(21)</span>
             </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
-              430.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">510.000 đ</span>
-              <span style="color: #2e7d32; font-size: 12px; font-weight: 600; margin-left: 6px;">(Giảm 16%)</span>
+            <div class="card-price-row">
+              <span class="card-price">430.000 đ</span>
+              <span class="card-old-price">510.000 đ</span>
+              <span class="card-discount">(Giảm 16%)</span>
             </div>
-            <button class="btn-theme">Chọn chủ đề này</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Bé Yêu','460.000','560.000','Sinh nhật bé yêu')">
           <div class="theme-thumb-wrap">
-            <div class="theme-thumb baby" style="position: relative;">
-              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #0288d1; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Dễ thương</span>
-            </div>
+            <div class="theme-thumb baby"></div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Sinh nhật bé yêu</div>
-            <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(14)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(14)</span>
             </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
-              460.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">560.000 đ</span>
-              <span style="color: #2e7d32; font-size: 12px; font-weight: 600; margin-left: 6px;">(Giảm 18%)</span>
+            <div class="card-price-row">
+              <span class="card-price">460.000 đ</span>
+              <span class="card-old-price">560.000 đ</span>
+              <span class="card-discount">(Giảm 18%)</span>
             </div>
-            <button class="btn-theme">Chọn chủ đề này</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
       </div>
@@ -1335,92 +1394,87 @@
       <div class="premium-grid reveal" id="premium-section">
         <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
           <div class="premium-thumb-wrap">
-            <div class="premium-thumb p1">
-              <span class="premium-label">Làm sẵn</span>
-            </div>
+            <div class="premium-thumb p1"></div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Góc cà phê</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(24)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(24)</span>
             </div>
-            <div class="premium-price">
-              380.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">450.000 đ</span>
-              <span style="color: #2e7d32; font-size: 11px; font-weight: 600; margin-left: 6px;">(Giảm 16%)</span>
+            <div class="card-price-row">
+              <span class="card-price">380.000 đ</span>
+              <span class="card-old-price">450.000 đ</span>
+              <span class="card-discount">(Giảm 16%)</span>
             </div>
-            <button class="btn-premium">Mua ngay</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')">
           <div class="premium-thumb-wrap">
-            <div class="premium-thumb p2">
-              <span class="premium-label">Làm sẵn</span>
-            </div>
+            <div class="premium-thumb p2"></div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Mộc hoa viên</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(18)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(18)</span>
             </div>
-            <div class="premium-price">
-              320.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">400.000 đ</span>
-              <span style="color: #2e7d32; font-size: 11px; font-weight: 600; margin-left: 6px;">(Giảm 20%)</span>
+            <div class="card-price-row">
+              <span class="card-price">320.000 đ</span>
+              <span class="card-old-price">400.000 đ</span>
+              <span class="card-discount">(Giảm 20%)</span>
             </div>
-            <button class="btn-premium">Mua ngay</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')">
           <div class="premium-thumb-wrap">
-            <div class="premium-thumb p3">
-              <span class="premium-label">Làm sẵn</span>
-            </div>
+            <div class="premium-thumb p3"></div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Quán burger</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(15)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(15)</span>
             </div>
-            <div class="premium-price">
-              290.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">350.000 đ</span>
-              <span style="color: #2e7d32; font-size: 11px; font-weight: 600; margin-left: 6px;">(Giảm 17%)</span>
+            <div class="card-price-row">
+              <span class="card-price">290.000 đ</span>
+              <span class="card-old-price">350.000 đ</span>
+              <span class="card-discount">(Giảm 17%)</span>
             </div>
-            <button class="btn-premium">Mua ngay</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Nhà gỗ búp bê','350.000','blog_home_decor.jpg','')">
           <div class="premium-thumb-wrap">
-            <div class="premium-thumb p4">
-              <span class="premium-label">Làm sẵn</span>
-            </div>
+            <div class="premium-thumb p4"></div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Nhà gỗ búp bê</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(12)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(12)</span>
             </div>
-            <div class="premium-price">
-              350.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">420.000 đ</span>
-              <span style="color: #2e7d32; font-size: 11px; font-weight: 600; margin-left: 6px;">(Giảm 17%)</span>
+            <div class="card-price-row">
+              <span class="card-price">350.000 đ</span>
+              <span class="card-old-price">420.000 đ</span>
+              <span class="card-discount">(Giảm 17%)</span>
             </div>
-            <button class="btn-premium">Mua ngay</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Tiệm bánh ngọt','310.000','blog_wedding_gift.jpg','')">
           <div class="premium-thumb-wrap">
-            <div class="premium-thumb p5">
-              <span class="premium-label">Làm sẵn</span>
-            </div>
+            <div class="premium-thumb p5"></div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Tiệm bánh ngọt</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(8)</span>
+            <div class="card-rating">
+              <span>★★★★★</span> <span class="rating-count">(8)</span>
             </div>
-            <div class="premium-price">
-              310.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">390.000 đ</span>
-              <span style="color: #2e7d32; font-size: 11px; font-weight: 600; margin-left: 6px;">(Giảm 21%)</span>
+            <div class="card-price-row">
+              <span class="card-price">310.000 đ</span>
+              <span class="card-old-price">390.000 đ</span>
+              <span class="card-discount">(Giảm 21%)</span>
             </div>
-            <button class="btn-premium">Mua ngay</button>
+            <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
       </div>
