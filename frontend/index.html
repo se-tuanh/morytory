@@ -228,11 +228,24 @@
     }
 
     /* ─── THEME GRID ─── */
-    .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+    .theme-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: calc((100% - 4 * 20px) / 5);
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      scroll-behavior: smooth;
+    }
+    .theme-grid::-webkit-scrollbar { display: none; }
     .theme-card {
       overflow: hidden; cursor: pointer;
       border: none; background: transparent;
       position: relative; display: flex; flex-direction: column;
+      scroll-snap-align: start;
+      width: 100%;
     }
     .theme-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; border-radius: 6px; border: 1px solid var(--gray-l); }
     .theme-thumb { width: 100%; height: 100%; background-size: cover; background-position: center; transition: transform .35s ease; }
@@ -260,15 +273,73 @@
     .btn-theme { display: none; }
  
     /* ─── PREMIUM GRID ─── */
-    .premium-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+    .premium-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: calc((100% - 4 * 20px) / 5);
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      scroll-behavior: smooth;
+    }
+    .premium-grid::-webkit-scrollbar { display: none; }
     .premium-card {
       overflow: hidden; cursor: pointer;
       border: none; background: transparent;
       position: relative; display: flex; flex-direction: column;
+      scroll-snap-align: start;
+      width: 100%;
     }
     .premium-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; border-radius: 6px; border: 1px solid var(--gray-l); }
     .premium-thumb { width: 100%; height: 100%; transition: transform .35s ease; }
     .premium-card:hover .premium-thumb { transform: scale(1.04); }
+    
+    /* ─── CAROUSEL WRAPPER & ARROWS ─── */
+    .etsy-carousel-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1.5px solid var(--gray-l);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      color: var(--text);
+    }
+    .carousel-arrow:hover {
+      background: #f4f4f4;
+      border-color: var(--brown-l);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+      transform: translateY(-50%) scale(1.08);
+    }
+    .carousel-arrow i {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .carousel-arrow.prev {
+      left: -19px;
+    }
+    .carousel-arrow.next {
+      right: -19px;
+    }
+    @media (max-width: 768px) {
+      .carousel-arrow {
+        display: none !important;
+      }
+    }
     .premium-thumb.p1 { background: url('premium1.jpg') center/cover no-repeat; }
     .premium-thumb.p2 { background: url('premium2.jpg') center/cover no-repeat; }
     .premium-thumb.p3 { background: url('premium3.jpg') center/cover no-repeat; }
@@ -814,7 +885,11 @@
       .hero-img { width: 100%; height: 220px; }
       .hero-text h1 { font-size: 32px; }
       .section { padding: 0 20px; }
-      .theme-grid, .premium-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .theme-grid, .premium-grid {
+        grid-auto-flow: column;
+        grid-auto-columns: calc((100% - 1 * 16px) / 2.2);
+        gap: 16px;
+      }
       .custom-banner { flex-direction: column; padding: 30px 20px; text-align: center; gap: 20px; }
       .custom-banner p { margin-bottom: 20px; }
       .product-layout { grid-template-columns: 1fr; padding: 0 20px; gap: 24px; }
@@ -1213,6 +1288,148 @@
       background: rgba(255, 255, 255, 0.08) !important;
       color: var(--brown) !important;
     }
+
+    /* ─── LOGIN MODAL (Etsy Style) ─── */
+    #login-modal-backdrop {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      backdrop-filter: blur(2px);
+    }
+    #login-modal-backdrop.show { opacity: 1; }
+    .login-modal {
+      background: #fff; border-radius: 16px;
+      width: 100%; max-width: 500px;
+      max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .login-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 22px;
+      color: #222; cursor: pointer; width: 36px; height: 36px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .login-modal-close:hover { background: #f4f4f4; }
+    .login-modal-header {
+      display: flex; align-items: center; gap: 0;
+      padding: 28px 32px 0;
+    }
+    .login-tab {
+      font-family: var(--serif); font-size: 24px; font-weight: 600;
+      color: #b0b0b0; cursor: pointer; padding-bottom: 10px;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      margin-right: 24px;
+    }
+    .login-tab.active {
+      color: #222; border-bottom-color: #222;
+    }
+    .login-tab:hover:not(.active) { color: #666; }
+    .login-modal-body {
+      padding: 24px 32px 32px;
+    }
+    .login-field-label {
+      font-size: 13px; font-weight: 500; color: #222;
+      margin-bottom: 6px; display: block;
+    }
+    .login-input {
+      width: 100%; padding: 12px 14px;
+      border: 2px solid #e1e1e1; border-radius: 8px;
+      font-size: 14px; font-family: var(--sans);
+      color: #222; background: #fff;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+    .login-input:focus {
+      outline: none; border-color: #222;
+    }
+    .login-input::placeholder { color: #b0b0b0; }
+    .login-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .login-checkbox-wrap {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .login-checkbox-wrap input[type="checkbox"] {
+      width: 18px; height: 18px; accent-color: #222;
+      cursor: pointer;
+    }
+    .login-checkbox-wrap span {
+      font-size: 13px; color: #222; font-weight: 400;
+    }
+    .login-forgot {
+      font-size: 13px; color: #222; text-decoration: none;
+      font-weight: 400;
+    }
+    .login-forgot:hover { text-decoration: underline; }
+    .login-btn-primary {
+      width: 100%; padding: 13px 24px;
+      background: #222; color: #fff;
+      border: none; border-radius: 24px;
+      font-size: 14px; font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
+    }
+    .login-btn-primary:hover { background: #000; }
+    .login-btn-primary:active { transform: scale(0.98); }
+    .login-trouble {
+      text-align: center; margin: 16px 0 0;
+      font-size: 13px; color: #222;
+    }
+    .login-trouble a {
+      color: #222; text-decoration: underline;
+      font-weight: 400;
+    }
+    .login-divider {
+      display: flex; align-items: center;
+      margin: 20px 0; gap: 16px;
+    }
+    .login-divider::before, .login-divider::after {
+      content: ''; flex: 1; height: 1px; background: #e1e1e1;
+    }
+    .login-divider span {
+      font-size: 12px; color: #767676; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .login-social-btn {
+      width: 100%; padding: 12px 24px;
+      background: #fff; border: 1.5px solid #222;
+      border-radius: 24px; font-size: 14px; font-weight: 500;
+      font-family: var(--sans); color: #222;
+      cursor: pointer; display: flex;
+      align-items: center; justify-content: center; gap: 10px;
+      transition: background 0.15s, border-color 0.15s;
+      margin-bottom: 10px;
+    }
+    .login-social-btn:hover {
+      background: #f8f8f8;
+    }
+    .login-social-btn svg, .login-social-btn img {
+      width: 18px; height: 18px;
+    }
+    .login-terms {
+      font-size: 12px; color: #767676;
+      line-height: 1.5; margin-top: 20px;
+    }
+    .login-terms a {
+      color: #222; text-decoration: underline;
+    }
+    .login-register-body .login-input { margin-bottom: 14px; }
+    @media (max-width: 768px) {
+      .login-modal {
+        max-width: 100%; border-radius: 16px 16px 0 0;
+        max-height: 95vh;
+      }
+      .login-modal-header { padding: 24px 20px 0; }
+      .login-modal-body { padding: 20px 20px 28px; }
+    }
   </style>
 </head>
 <body>
@@ -1263,7 +1480,7 @@
       
       <div class="etsy-nav-actions">
         <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối" style="margin-right: 4px;">🌙</button>
-        <span class="etsy-nav-icon-link" onclick="openLookupModal()" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập / Tra cứu đơn">
+        <span class="etsy-nav-icon-link" onclick="openLoginModal()" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập">
           Đăng nhập
         </span>
         <span class="etsy-nav-icon-link" title="Yêu thích" style="font-size: 20px; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" onclick="showToast('Tính năng Yêu thích sẽ sớm ra mắt!', 'info')">
@@ -1352,59 +1569,62 @@
         <div class="section-title">Chọn chủ đề thiết kế</div>
         <a class="etsy-view-all-btn" href="#theme-section">Xem tất cả</a>
       </div>
-      <div class="theme-grid reveal">
-        <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
-          <div class="theme-thumb-wrap">
-            <div class="theme-thumb birthday"></div>
+      <div class="etsy-carousel-wrapper reveal">
+        <button class="carousel-arrow prev" onclick="scrollGrid('theme-grid', 'prev')" title="Trước" style="display: none;"><i class="ti ti-chevron-left"></i></button>
+        <div class="theme-grid" id="theme-grid">
+          <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
+            <div class="theme-thumb-wrap">
+              <div class="theme-thumb birthday"></div>
+            </div>
+            <div class="theme-info">
+              <div class="theme-name">Sinh nhật gia đình</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(48)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">450.000 đ</span>
+                <span class="card-old-price">550.000 đ</span>
+                <span class="card-discount">(Giảm 18%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
+            </div>
           </div>
-          <div class="theme-info">
-            <div class="theme-name">Sinh nhật gia đình</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(48)</span>
+          <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
+            <div class="theme-thumb-wrap">
+              <div class="theme-thumb graduate"></div>
             </div>
-            <div class="card-price-row">
-              <span class="card-price">450.000 đ</span>
-              <span class="card-old-price">550.000 đ</span>
-              <span class="card-discount">(Giảm 18%)</span>
+            <div class="theme-info">
+              <div class="theme-name">Tốt nghiệp</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(32)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">420.000 đ</span>
+                <span class="card-old-price">500.000 đ</span>
+                <span class="card-discount">(Giảm 16%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
             </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
+          </div>
+          <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
+            <div class="theme-thumb-wrap">
+              <div class="theme-thumb wedding"></div>
+            </div>
+            <div class="theme-info">
+              <div class="theme-name">Đám cưới</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(56)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">480.000 đ</span>
+                <span class="card-old-price">580.000 đ</span>
+                <span class="card-discount">(Giảm 17%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
+            </div>
           </div>
         </div>
-        <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
-          <div class="theme-thumb-wrap">
-            <div class="theme-thumb graduate"></div>
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">Tốt nghiệp</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(32)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">420.000 đ</span>
-              <span class="card-old-price">500.000 đ</span>
-              <span class="card-discount">(Giảm 16%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
-          <div class="theme-thumb-wrap">
-            <div class="theme-thumb wedding"></div>
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">Đám cưới</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(56)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">480.000 đ</span>
-              <span class="card-old-price">580.000 đ</span>
-              <span class="card-discount">(Giảm 17%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-
+        <button class="carousel-arrow next" onclick="scrollGrid('theme-grid', 'next')" title="Sau" style="display: none;"><i class="ti ti-chevron-right"></i></button>
       </div>
     </div>
 
@@ -1414,93 +1634,97 @@
         <div class="section-title">Bộ sưu tập Premium</div>
         <a class="etsy-view-all-btn" href="#premium-section">Xem tất cả</a>
       </div>
-      <div class="premium-grid reveal">
-        <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
-          <div class="premium-thumb-wrap">
-            <div class="premium-thumb p1"></div>
+      <div class="etsy-carousel-wrapper reveal">
+        <button class="carousel-arrow prev" onclick="scrollGrid('premium-grid', 'prev')" title="Trước" style="display: none;"><i class="ti ti-chevron-left"></i></button>
+        <div class="premium-grid" id="premium-grid">
+          <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
+            <div class="premium-thumb-wrap">
+              <div class="premium-thumb p1"></div>
+            </div>
+            <div class="premium-info">
+              <div class="premium-name">Góc cà phê</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(24)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">380.000 đ</span>
+                <span class="card-old-price">450.000 đ</span>
+                <span class="card-discount">(Giảm 16%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
+            </div>
           </div>
-          <div class="premium-info">
-            <div class="premium-name">Góc cà phê</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(24)</span>
+          <div class="premium-card" onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')">
+            <div class="premium-thumb-wrap">
+              <div class="premium-thumb p2"></div>
             </div>
-            <div class="card-price-row">
-              <span class="card-price">380.000 đ</span>
-              <span class="card-old-price">450.000 đ</span>
-              <span class="card-discount">(Giảm 16%)</span>
+            <div class="premium-info">
+              <div class="premium-name">Mộc hoa viên</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(18)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">320.000 đ</span>
+                <span class="card-old-price">400.000 đ</span>
+                <span class="card-discount">(Giảm 20%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
             </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
+          </div>
+          <div class="premium-card" onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')">
+            <div class="premium-thumb-wrap">
+              <div class="premium-thumb p3"></div>
+            </div>
+            <div class="premium-info">
+              <div class="premium-name">Quán burger</div>
+              <div class="card-rating">
+                <span>★★★★★</span> <span class="rating-count">(15)</span>
+              </div>
+              <div class="card-price-row">
+                <span class="card-price">290.000 đ</span>
+                <span class="card-old-price">350.000 đ</span>
+                <span class="card-discount">(Giảm 17%)</span>
+              </div>
+              <div class="card-shipping">Miễn phí vận chuyển</div>
+            </div>
+          </div>
+          <div class="premium-card coming-soon-card">
+            <div class="premium-thumb-wrap">
+              <span class="coming-soon-badge">Coming Soon</span>
+              <div class="premium-thumb hp"></div>
+            </div>
+            <div class="premium-info">
+              <div class="premium-name">Harry Potter Mini Room</div>
+              <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
+            </div>
+          </div>
+          <div class="premium-card coming-soon-card">
+            <div class="premium-thumb-wrap">
+              <span class="coming-soon-badge">Coming Soon</span>
+              <div class="premium-thumb jp"></div>
+            </div>
+            <div class="premium-info">
+              <div class="premium-name">Japanese Café</div>
+              <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
+            </div>
+          </div>
+          <div class="premium-card coming-soon-card">
+            <div class="premium-thumb-wrap">
+              <span class="coming-soon-badge">Coming Soon</span>
+              <div class="premium-thumb cb"></div>
+            </div>
+            <div class="premium-info">
+              <div class="premium-name">Cyberpunk Workshop</div>
+              <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
+            </div>
           </div>
         </div>
-        <div class="premium-card" onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')">
-          <div class="premium-thumb-wrap">
-            <div class="premium-thumb p2"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Mộc hoa viên</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(18)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">320.000 đ</span>
-              <span class="card-old-price">400.000 đ</span>
-              <span class="card-discount">(Giảm 20%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="premium-card" onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')">
-          <div class="premium-thumb-wrap">
-            <div class="premium-thumb p3"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Quán burger</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(15)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">290.000 đ</span>
-              <span class="card-old-price">350.000 đ</span>
-              <span class="card-discount">(Giảm 17%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="premium-card coming-soon-card">
-          <div class="premium-thumb-wrap">
-            <span class="coming-soon-badge">Coming Soon</span>
-            <div class="premium-thumb hp"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Harry Potter Mini Room</div>
-            <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
-          </div>
-        </div>
-        <div class="premium-card coming-soon-card">
-          <div class="premium-thumb-wrap">
-            <span class="coming-soon-badge">Coming Soon</span>
-            <div class="premium-thumb jp"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Japanese Café</div>
-            <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
-          </div>
-        </div>
-        <div class="premium-card coming-soon-card">
-          <div class="premium-thumb-wrap">
-            <span class="coming-soon-badge">Coming Soon</span>
-            <div class="premium-thumb cb"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Cyberpunk Workshop</div>
-            <div style="font-size: 12px; color: var(--brown); font-weight: 600; margin-top: 4px;">Sắp ra mắt</div>
-          </div>
-        </div>
+        <button class="carousel-arrow next" onclick="scrollGrid('premium-grid', 'next')" title="Sau" style="display: none;"><i class="ti ti-chevron-right"></i></button>
       </div>
     </div>
 
     <!-- Banner custom -->
-    <div style="padding:0 40px;">
+    <div style="padding:0 40px; margin-top: 60px;">
       <div class="custom-banner">
         <div>
           <h2>Có ý tưởng riêng?</h2>
@@ -1509,8 +1733,6 @@
         <button class="btn-white" onclick="window.open('https://zalo.me/0378820905', '_blank')">Liên hệ tư vấn</button>
       </div>
     </div>
-
-
 
     <!-- Về chúng tôi -->
     <div class="section" id="about-section" style="scroll-margin-top: 80px; margin-top: 60px;">
@@ -2353,6 +2575,98 @@
     </div>
   </div>
 
+  <!-- ═══ LOGIN MODAL (Etsy Style) ═══ -->
+  <div id="login-modal-backdrop" onclick="if(event.target===this) closeLoginModal()">
+    <div class="login-modal">
+      <button class="login-modal-close" onclick="closeLoginModal()" title="Đóng"><i class="ti ti-x"></i></button>
+      
+      <!-- Tabs: Sign in / Register -->
+      <div class="login-modal-header">
+        <div class="login-tab active" id="tab-signin" onclick="switchLoginTab('signin')">Đăng nhập</div>
+        <div class="login-tab" id="tab-register" onclick="switchLoginTab('register')">Đăng ký</div>
+      </div>
+
+      <!-- SIGN IN BODY -->
+      <div class="login-modal-body" id="login-body-signin">
+        <label class="login-field-label">Địa chỉ email</label>
+        <input type="email" class="login-input" id="login-email" placeholder="you@example.com">
+
+        <label class="login-field-label">Mật khẩu</label>
+        <input type="password" class="login-input" id="login-password" placeholder="Nhập mật khẩu">
+
+        <div class="login-row">
+          <label class="login-checkbox-wrap">
+            <input type="checkbox" checked>
+            <span>Duy trì đăng nhập</span>
+          </label>
+          <a href="#" class="login-forgot" onclick="event.preventDefault(); showToast('Tính năng đặt lại mật khẩu sẽ sớm ra mắt!', 'info')">Quên mật khẩu?</a>
+        </div>
+
+        <button class="login-btn-primary" onclick="handleLogin()">Đăng nhập</button>
+
+        <div class="login-trouble"><a href="#" onclick="event.preventDefault(); openLookupModal(); closeLoginModal()">Tra cứu đơn hàng?</a></div>
+
+        <div class="login-divider"><span>Hoặc</span></div>
+
+        <button class="login-social-btn" onclick="showToast('Đăng nhập Google sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Tiếp tục với Google
+        </button>
+
+        <button class="login-social-btn" onclick="showToast('Đăng nhập Facebook sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Tiếp tục với Facebook
+        </button>
+
+        <button class="login-social-btn" onclick="showToast('Đăng nhập Apple sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#000" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Tiếp tục với Apple
+        </button>
+
+        <div class="login-terms">
+          Khi nhấn Đăng nhập, Tiếp tục với Google, Facebook hoặc Apple, bạn đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của MoryTory.
+        </div>
+      </div>
+
+      <!-- REGISTER BODY -->
+      <div class="login-modal-body login-register-body" id="login-body-register" style="display: none;">
+        <label class="login-field-label">Địa chỉ email</label>
+        <input type="email" class="login-input" id="register-email" placeholder="you@example.com">
+
+        <label class="login-field-label">Họ và tên</label>
+        <input type="text" class="login-input" id="register-name" placeholder="Nguyễn Văn A">
+
+        <label class="login-field-label">Mật khẩu</label>
+        <input type="password" class="login-input" id="register-password" placeholder="Tối thiểu 6 ký tự">
+
+        <button class="login-btn-primary" onclick="handleRegister()">Đăng ký</button>
+
+        <div class="login-divider"><span>Hoặc</span></div>
+
+        <button class="login-social-btn" onclick="showToast('Đăng ký Google sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Tiếp tục với Google
+        </button>
+
+        <button class="login-social-btn" onclick="showToast('Đăng ký Facebook sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Tiếp tục với Facebook
+        </button>
+
+        <button class="login-social-btn" onclick="showToast('Đăng ký Apple sẽ sớm ra mắt!', 'info')">
+          <svg viewBox="0 0 24 24"><path fill="#000" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Tiếp tục với Apple
+        </button>
+
+        <div class="login-terms">
+          Khi nhấn Đăng ký, bạn đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của MoryTory.
+          <br><br>
+          MoryTory có thể gửi thông tin liên lạc cho bạn; bạn có thể thay đổi tuỳ chọn trong cài đặt tài khoản.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentPaymentMethod = 'COD';
     const BANK_ID = "VietinBank";
@@ -2419,6 +2733,58 @@
         menu.style.display = 'none';
       }
     });
+
+    // ─── LOGIN MODAL ───
+    function openLoginModal(tab) {
+      const backdrop = document.getElementById('login-modal-backdrop');
+      backdrop.style.display = 'flex';
+      setTimeout(() => backdrop.classList.add('show'), 10);
+      switchLoginTab(tab || 'signin');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLoginModal() {
+      const backdrop = document.getElementById('login-modal-backdrop');
+      backdrop.classList.remove('show');
+      setTimeout(() => {
+        backdrop.style.display = 'none';
+        document.body.style.overflow = '';
+      }, 250);
+    }
+    function switchLoginTab(tab) {
+      const signinTab = document.getElementById('tab-signin');
+      const registerTab = document.getElementById('tab-register');
+      const signinBody = document.getElementById('login-body-signin');
+      const registerBody = document.getElementById('login-body-register');
+      if (tab === 'register') {
+        signinTab.classList.remove('active');
+        registerTab.classList.add('active');
+        signinBody.style.display = 'none';
+        registerBody.style.display = 'block';
+      } else {
+        signinTab.classList.add('active');
+        registerTab.classList.remove('active');
+        signinBody.style.display = 'block';
+        registerBody.style.display = 'none';
+      }
+    }
+    function handleLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const pw = document.getElementById('login-password').value;
+      if (!email) { showToast('Vui lòng nhập email', 'error'); return; }
+      if (!pw) { showToast('Vui lòng nhập mật khẩu', 'error'); return; }
+      showToast('Đăng nhập thành công! Chào mừng bạn 🎉', 'success');
+      closeLoginModal();
+    }
+    function handleRegister() {
+      const email = document.getElementById('register-email').value.trim();
+      const name = document.getElementById('register-name').value.trim();
+      const pw = document.getElementById('register-password').value;
+      if (!email) { showToast('Vui lòng nhập email', 'error'); return; }
+      if (!name) { showToast('Vui lòng nhập họ tên', 'error'); return; }
+      if (!pw || pw.length < 6) { showToast('Mật khẩu tối thiểu 6 ký tự', 'error'); return; }
+      showToast('Đăng ký thành công! Chào mừng ' + name + ' 🎉', 'success');
+      closeLoginModal();
+    }
 
     function openLookupModal() {
       const backdrop = document.getElementById('lookup-modal-backdrop');
@@ -2829,6 +3195,58 @@
       showPage('home');
     }
 
+    // Carousel scroll navigation
+    function scrollGrid(gridId, direction) {
+      const grid = document.getElementById(gridId);
+      if (!grid) return;
+      
+      const firstCard = grid.querySelector('.theme-card, .premium-card');
+      if (!firstCard) return;
+      
+      const cardWidth = firstCard.offsetWidth;
+      const gap = 20; // grid gap
+      const scrollAmount = (cardWidth + gap) * 2; // scroll 2 items at a time
+      
+      grid.scrollBy({
+        left: direction === 'next' ? scrollAmount : -scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+
+    function initCarousels() {
+      const grids = ['theme-grid', 'premium-grid'];
+      grids.forEach(id => {
+        const grid = document.getElementById(id);
+        if (!grid) return;
+        
+        const wrapper = grid.closest('.etsy-carousel-wrapper');
+        if (!wrapper) return;
+        
+        const prevBtn = wrapper.querySelector('.carousel-arrow.prev');
+        const nextBtn = wrapper.querySelector('.carousel-arrow.next');
+        
+        const updateArrows = () => {
+          const isOverflowing = grid.scrollWidth > grid.clientWidth;
+          if (isOverflowing && window.innerWidth > 768) {
+            if (prevBtn) prevBtn.style.display = grid.scrollLeft > 5 ? 'flex' : 'none';
+            if (nextBtn) nextBtn.style.display = (grid.scrollLeft + grid.clientWidth < grid.scrollWidth - 5) ? 'flex' : 'none';
+          } else {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+          }
+        };
+        
+        updateArrows();
+        grid.addEventListener('scroll', updateArrows);
+        window.addEventListener('resize', updateArrows);
+        
+        if (window.ResizeObserver) {
+          const ro = new ResizeObserver(updateArrows);
+          ro.observe(grid);
+        }
+      });
+    }
+
     // Vertical word rotator with slide-up and blur effect
     function initWordRotator() {
       const wrapper = document.getElementById('rotator-text-wrapper');
@@ -3005,6 +3423,7 @@
       initScrollReveal();
       initRippleEffect();
       initScrollProgress();
+      initCarousels();
       
       const params = new URLSearchParams(window.location.search);
       const phone = params.get('phone');
