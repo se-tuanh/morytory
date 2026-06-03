@@ -17,6 +17,6 @@ TEMPLATE_WEDDING = "https://pub-your-id.r2.dev/wedding_template.jpg"
 R2_PUBLIC_URL = ""
 
 # Liên kết với R2 Bucket (Bỏ comment sau khi bạn tạo bucket trên Cloudflare)
-[[r2_buckets]]
-binding = "MY_BUCKET"
-bucket_name = "morytory-images"
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "morytory-images"
