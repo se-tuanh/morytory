@@ -41,18 +41,23 @@
   button, input, select, textarea {
     font-family: inherit;
   }
-  .navbar {
-    background: rgba(255, 255, 255, 0.96);
+  /* ─── ETSY NAVBAR ─── */
+  .etsy-navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--gray-l);
-    padding: 0 40px; height: 68px;
+    border-bottom: 1px solid var(--gray-l);
+    display: flex; flex-direction: column;
+    padding: 0; height: auto;
+  }
+  .etsy-nav-top {
     display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
+    padding: 10px 40px; gap: 24px; width: 100%;
   }
   .logo {
     font-family: var(--serif);
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 600;
     color: var(--brown);
     cursor: pointer;
@@ -60,20 +65,37 @@
     transition: opacity 0.2s;
   }
   .logo:hover { opacity: 0.85; }
-  .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; color: var(--gray); }
-  .nav-links span { cursor: pointer; position: relative; transition: color .2s; }
-  .nav-links span::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: var(--brown);
-    transition: width 0.2s ease;
+  .etsy-search-container {
+    flex-grow: 1; max-width: 600px; display: flex; align-items: center;
+    background: #f4efeb; border: 2px solid #222; border-radius: 96px;
+    padding: 2px; overflow: hidden; transition: box-shadow 0.2s;
   }
-  .nav-links span:hover { color: var(--text); }
-  .nav-links span:hover::after { width: 100%; }
+  .etsy-search-container:focus-within {
+    box-shadow: 0 0 0 4px rgba(209, 88, 22, 0.15);
+    background: #fff;
+  }
+  #etsy-search-input {
+    flex-grow: 1; border: none; background: transparent; outline: none;
+    padding: 8px 18px; font-size: 14px; color: var(--text);
+  }
+  .etsy-search-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: var(--brown); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; transition: background 0.15s; margin-right: 2px;
+  }
+  .etsy-search-btn:hover { background: var(--brown-d); }
+  .etsy-nav-actions {
+    display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+  }
+  .etsy-nav-icon-link {
+    display: flex; align-items: center; gap: 6px; font-size: 13px;
+    font-weight: 600; color: var(--gray); cursor: pointer; transition: color 0.15s;
+  }
+  .etsy-nav-icon-link i { font-size: 18px; color: var(--text); }
+  .etsy-nav-icon-link:hover { color: var(--brown); }
+  .etsy-nav-icon-link:hover i { color: var(--brown); }
+  
   .cart-btn {
     display: flex; align-items: center; gap: 8px;
     font-size: 13px; font-weight: 600; color: var(--brown); cursor: pointer;
@@ -87,10 +109,45 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(209, 88, 22, 0.15);
   }
+  
+  .etsy-nav-bottom {
+    border-top: 1px solid rgba(122, 74, 30, 0.05);
+    padding: 8px 40px; display: flex; justify-content: center; width: 100%;
+  }
+  .etsy-categories-nav {
+    display: flex; gap: 28px; font-size: 13px; font-weight: 500; color: var(--gray);
+  }
+  .etsy-categories-nav a {
+    text-decoration: none; color: inherit; transition: color 0.15s; cursor: pointer;
+    position: relative; padding-bottom: 2px;
+  }
+  .etsy-categories-nav a:hover { color: var(--brown); }
+  .etsy-categories-nav a::after {
+    content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+    background-color: var(--brown); transition: width 0.15s ease;
+  }
+  .etsy-categories-nav a:hover::after { width: 100%; }
+
+  body.dark-mode .etsy-navbar {
+    background: rgba(26, 26, 46, 0.97);
+  }
+  body.dark-mode .etsy-search-container {
+    border-color: var(--gray-l); background: var(--card-bg);
+  }
+  body.dark-mode #etsy-search-input { color: #fff; }
+  body.dark-mode .etsy-nav-icon-link i { color: #fff; }
+  body.dark-mode .etsy-categories-nav a:hover { color: var(--brown-d); }
   .breadcrumb { padding: 20px 40px; font-size: 13px; color: var(--gray); display: flex; align-items: center; gap: 6px; }
   .breadcrumb span { color: var(--brown); cursor: pointer; font-weight: 500; }
   .breadcrumb span:hover { text-decoration: underline; }
-  .main { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; padding: 0 40px 60px; max-width: 1200px; margin: 0 auto; }
+  .main { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; padding: 0 40px 60px; max-width: 1200px; margin: 0 auto; }
+  .info-section {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+  }
   .img-section { display: flex; flex-direction: column; gap: 14px; }
   .img-main { background: var(--blush); border-radius: 20px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 1px solid var(--gray-l); box-shadow: 0 8px 24px rgba(122, 74, 30, 0.04); }
   .img-main-inner { text-align: center; }
@@ -196,6 +253,19 @@
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 860px;
+    width: 90vw;
+  }
+  .checkout-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 24px;
+    padding: 24px;
+  }
+  .checkout-left-col, .checkout-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
   @keyframes modalSlideUp {
     from { transform: translateY(30px); opacity: 0; }
@@ -229,12 +299,22 @@
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
     .nav-links { display: none; }
-    .product-layout { grid-template-columns: 1fr; padding: 0 20px; gap: 24px; }
+    .main { grid-template-columns: 1fr; padding: 0 20px; gap: 24px; }
     .member-grid { grid-template-columns: repeat(2, 1fr); }
     .info-grid { grid-template-columns: 1fr; }
     .process-steps { grid-template-columns: 1fr 1fr; gap: 20px; }
     .process-bar { padding: 32px 20px; }
-    .checkout-modal, .checkout-success-view { margin: 15px; max-height: 95vh; }
+    .checkout-modal {
+      max-width: 500px;
+      width: 100%;
+      margin: 15px;
+      max-height: 95vh;
+    }
+    .checkout-grid {
+      grid-template-columns: 1fr;
+      padding: 16px;
+      gap: 16px;
+    }
     #lookup-modal-backdrop > div { margin: 15px; }
     .editor-preview { min-height: 300px; }
     .cta-actions-wrapper {
@@ -428,22 +508,42 @@
 </div>
 
 <div class="page">
-  <div class="navbar">
+  <nav class="etsy-navbar">
     <!-- Scroll Progress Bar -->
     <div id="scroll-progress-bar" style="position: absolute; bottom: 0; left: 0; height: 2.5px; width: 0%; background: var(--brown); z-index: 101; transition: width 0.05s ease;"></div>
-    <div class="logo" onclick="window.location.href='index.html'" style="display: flex; align-items: center; gap: 8px;">
-      <img src="logo.png?v=3" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 6px;" onerror="this.style.display='none'">
-      <span>MoryTory</span>
+    
+    <!-- Hàng trên: Logo, Tìm kiếm, Tiện ích -->
+    <div class="etsy-nav-top">
+      <div class="logo" onclick="window.location.href='index.html'" style="display: flex; align-items: center; gap: 8px;">
+        <img src="logo.png?v=3" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 6px;" onerror="this.style.display='none'">
+        <span>MoryTory</span>
+      </div>
+      
+      <div class="etsy-search-container">
+        <input type="text" id="etsy-search-input" placeholder="Tìm kiếm mô hình quà tặng thủ công..." onkeydown="if(event.key==='Enter') window.location.href='index.html?search=' + encodeURIComponent(this.value)">
+        <button class="etsy-search-btn" title="Tìm kiếm" onclick="window.location.href='index.html?search=' + encodeURIComponent(document.getElementById('etsy-search-input').value)"><i class="ti ti-search"></i></button>
+      </div>
+      
+      <div class="etsy-nav-actions">
+        <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối">🌙</button>
+        <span class="etsy-nav-icon-link" onclick="window.location.href='index.html?lookup=true'" title="Tra cứu đơn hàng">
+          <i class="ti ti-receipt"></i><span class="etsy-icon-label">Tra cứu đơn</span>
+        </span>
+        <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
+      </div>
     </div>
-    <div class="nav-links">
-      <span onclick="window.location.href='index.html'">Trang chủ</span>
-      <span onclick="window.location.href='index.html#about-section'">Về chúng tôi</span>
-      <span onclick="window.location.href='index.html#blog-section'">Blog</span>
-      <span onclick="window.location.href='index.html?lookup=true'" style="font-weight: 500; color: var(--brown);">Tra cứu đơn hàng</span>
+    
+    <!-- Hàng dưới: Danh mục -->
+    <div class="etsy-nav-bottom">
+      <div class="etsy-categories-nav">
+        <a onclick="window.location.href='index.html'">Trang chủ</a>
+        <a onclick="window.location.href='index.html#theme-section'">Mô hình thiết kế riêng</a>
+        <a onclick="window.location.href='index.html#theme-section'">Bộ sưu tập Premium</a>
+        <a onclick="window.location.href='index.html#about-section'">Về chúng tôi</a>
+        <a onclick="window.location.href='index.html#blog-section'">Blog chia sẻ</a>
+      </div>
     </div>
-    <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối">🌙</button>
-    <div class="nav-cart-btn cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
-  </div>
+  </nav>
 
   <div class="breadcrumb">
     <span onclick="window.location.href='index.html'">Trang chủ</span> / <span id="breadcrumb-category" onclick="window.location.href='index.html#theme-section'">Mô hình gia đình</span> / <span id="breadcrumb-title">Mô hình Gia Đình Kỷ Niệm</span>
@@ -472,7 +572,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="info-section">
       <div class="badge-row">
         <span class="badge badge-new">Mới</span>
         <span class="badge badge-custom">Cá nhân hoá</span>
@@ -592,76 +692,82 @@
 
 <!-- Checkout Modal -->
 <div class="modal-backdrop" id="checkout-modal-backdrop">
-  <div class="checkout-modal" style="background: #fff; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
+  <div class="checkout-modal" style="max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
     <!-- Modal Header -->
-    <div style="padding: 20px 24px; border-bottom: 0.5px solid #e8ddd4; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 18px; color: #3a2010; font-weight: 600;">Thông tin đặt hàng</h3>
-      <button onclick="closeCheckoutModal()" style="background: none; border: none; font-size: 20px; color: #b4b2a9; cursor: pointer;"><i class="ti ti-x"></i></button>
+    <div style="padding: 20px 24px; border-bottom: 0.5px solid var(--gray-l); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 18px; color: #3a2010; font-weight: 600; font-family: var(--serif);">Thông tin đặt hàng</h3>
+      <button onclick="closeCheckoutModal()" style="background: none; border: none; font-size: 20px; color: var(--gray); cursor: pointer;"><i class="ti ti-x"></i></button>
     </div>
     
     <!-- Modal Body -->
-    <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
-      <!-- Summary Box -->
-      <div style="background: #fdf8f4; border: 0.5px solid #e8ddd4; border-radius: 12px; padding: 16px;">
-        <div style="font-size: 11px; font-weight: 600; color: #888780; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
-        <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; padding-right: 4px;">
-          <!-- Danh sách sản phẩm thanh toán render động -->
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed #e8ddd4; padding-top: 8px; margin-top: 8px;">
-          <span>Tổng cộng</span>
-          <span id="modal-summary-total">450.000 đ</span>
-        </div>
-      </div>
-
-      <!-- Shipping Form -->
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Họ và tên khách hàng</label>
-          <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px;" required />
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Số điện thoại</label>
-          <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px;" required />
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Địa chỉ giao hàng</label>
-          <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e8ddd4; font-size: 13px; font-family: inherit; resize: none;" required></textarea>
-        </div>
-      </div>
-
-      <!-- Payment Method -->
-      <div>
-        <label style="font-size: 12px; font-weight: 500; color: #7a4a1e; display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
-            <i class="ti ti-truck" style="font-size: 20px; color: #7a4a1e;"></i>
-            <span style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Thanh toán COD</span>
+    <div class="checkout-grid">
+      <!-- Left Column: Form & Payment -->
+      <div class="checkout-left-col">
+        <!-- Shipping Form -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Họ và tên khách hàng</label>
+            <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
           </div>
-          <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
-            <i class="ti ti-qrcode" style="font-size: 20px; color: #c9a882;"></i>
-            <span style="font-size: 12px; font-weight: 500; color: #7a4a1e;">Chuyển khoản (VietQR)</span>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Số điện thoại</label>
+            <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Địa chỉ giao hàng</label>
+            <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px; font-family: inherit; resize: none;" required></textarea>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: var(--brown); display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
+              <i class="ti ti-truck" style="font-size: 20px; color: var(--brown);"></i>
+              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Thanh toán COD</span>
+            </div>
+            <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
+              <i class="ti ti-qrcode" style="font-size: 20px; color: var(--brown-l);"></i>
+              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Chuyển khoản (VietQR)</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- VietQR Container (Hidden by default) -->
-      <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid #e8ddd4; border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
-        <div style="font-size: 12px; font-weight: 500; color: #7a4a1e;" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
-        <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid #e8ddd4; border-radius: 8px; background: #fff; padding: 8px;" />
-        <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: #7a4a1e; font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
-          Xem mã QR gốc của Shop
-        </button>
-        <div style="font-size: 11px; color: #888780; line-height: 1.4;">
-          Nội dung CK: <strong id="qr-transfer-info" style="color: #7a4a1e;">MORYTORY 0378820905</strong><br>
-          Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
-          Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+      <!-- Right Column: Summary & VietQR -->
+      <div class="checkout-right-col">
+        <!-- Summary Box -->
+        <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
+          <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; padding-right: 4px;">
+            <!-- Danh sách sản phẩm thanh toán render động -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed var(--gray-l); padding-top: 8px; margin-top: 8px;">
+            <span>Tổng cộng</span>
+            <span id="modal-summary-total">450.000 đ</span>
+          </div>
+        </div>
+
+        <!-- VietQR Container (Hidden by default) -->
+        <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="font-size: 12px; font-weight: 500; color: var(--brown);" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
+          <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid var(--gray-l); border-radius: 8px; background: #fff; padding: 8px;" />
+          <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: var(--brown); font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
+            Xem mã QR gốc của Shop
+          </button>
+          <div style="font-size: 11px; color: var(--gray); line-height: 1.4;">
+            Nội dung CK: <strong id="qr-transfer-info" style="color: var(--brown);">MORYTORY 0378820905</strong><br>
+            Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
+            Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Modal Footer -->
-    <div style="padding: 16px 24px; border-top: 0.5px solid #e8ddd4; background: #fffbf8; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; gap: 12px;">
-      <button onclick="closeCheckoutModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid #e8ddd4; background: #fff; color: #888780; font-size: 14px; font-weight: 500; cursor: pointer;">Hủy bỏ</button>
+    <div style="padding: 16px 24px; border-top: 0.5px solid var(--gray-l); background: #fffbf8; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; gap: 12px;">
+      <button onclick="closeCheckoutModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 0.5px solid var(--gray-l); background: #fff; color: var(--gray); font-size: 14px; font-weight: 500; cursor: pointer;">Hủy bỏ</button>
       <button id="btn-submit-order" onclick="submitOrder()" style="flex: 1.5; padding: 12px; border-radius: 10px; border: none; background: #7a4a1e; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer;">Xác nhận đặt hàng</button>
     </div>
   </div>

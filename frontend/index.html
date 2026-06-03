@@ -42,19 +42,23 @@
       font-family: inherit;
     }
 
-    /* ─── NAV ─── */
-    nav {
+    /* ─── ETSY NAVBAR ─── */
+    .etsy-navbar {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.97);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 0.5px solid var(--gray-l);
+      border-bottom: 1px solid var(--gray-l);
+      display: flex; flex-direction: column;
+      padding: 0; height: auto;
+    }
+    .etsy-nav-top {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 40px; height: 68px;
+      padding: 10px 40px; gap: 24px; width: 100%;
     }
     .logo {
       font-family: var(--serif);
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 600;
       color: var(--brown);
       cursor: pointer;
@@ -62,20 +66,37 @@
       transition: opacity 0.2s;
     }
     .logo:hover { opacity: 0.85; }
-    .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; color: var(--gray); }
-    .nav-links a { text-decoration: none; color: inherit; transition: color .2s; cursor: pointer; position: relative; }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -4px;
-      left: 0;
-      background-color: var(--brown);
-      transition: width 0.2s ease;
+    .etsy-search-container {
+      flex-grow: 1; max-width: 600px; display: flex; align-items: center;
+      background: #f4efeb; border: 2px solid #222; border-radius: 96px;
+      padding: 2px; overflow: hidden; transition: box-shadow 0.2s;
     }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after { width: 100%; }
+    .etsy-search-container:focus-within {
+      box-shadow: 0 0 0 4px rgba(209, 88, 22, 0.15);
+      background: #fff;
+    }
+    #etsy-search-input {
+      flex-grow: 1; border: none; background: transparent; outline: none;
+      padding: 8px 18px; font-size: 14px; color: var(--text);
+    }
+    .etsy-search-btn {
+      width: 34px; height: 34px; border-radius: 50%; border: none;
+      background: var(--brown); color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; transition: background 0.15s; margin-right: 2px;
+    }
+    .etsy-search-btn:hover { background: var(--brown-d); }
+    .etsy-nav-actions {
+      display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+    }
+    .etsy-nav-icon-link {
+      display: flex; align-items: center; gap: 6px; font-size: 13px;
+      font-weight: 600; color: var(--gray); cursor: pointer; transition: color 0.15s;
+    }
+    .etsy-nav-icon-link i { font-size: 18px; color: var(--text); }
+    .etsy-nav-icon-link:hover { color: var(--brown); }
+    .etsy-nav-icon-link:hover i { color: var(--brown); }
+    
     .cart-btn {
       display: flex; align-items: center; gap: 8px;
       font-size: 13px; font-weight: 600; color: var(--brown); cursor: pointer;
@@ -89,6 +110,34 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(209, 88, 22, 0.15);
     }
+    
+    .etsy-nav-bottom {
+      border-top: 1px solid rgba(122, 74, 30, 0.05);
+      padding: 8px 40px; display: flex; justify-content: center; width: 100%;
+    }
+    .etsy-categories-nav {
+      display: flex; gap: 28px; font-size: 13px; font-weight: 500; color: var(--gray);
+    }
+    .etsy-categories-nav a {
+      text-decoration: none; color: inherit; transition: color 0.15s; cursor: pointer;
+      position: relative; padding-bottom: 2px;
+    }
+    .etsy-categories-nav a:hover { color: var(--brown); }
+    .etsy-categories-nav a::after {
+      content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+      background-color: var(--brown); transition: width 0.15s ease;
+    }
+    .etsy-categories-nav a:hover::after { width: 100%; }
+
+    body.dark-mode .etsy-navbar {
+      background: rgba(26, 26, 46, 0.97);
+    }
+    body.dark-mode .etsy-search-container {
+      border-color: var(--gray-l); background: var(--card-bg);
+    }
+    body.dark-mode #etsy-search-input { color: #fff; }
+    body.dark-mode .etsy-nav-icon-link i { color: #fff; }
+    body.dark-mode .etsy-categories-nav a:hover { color: var(--brown-d); }
 
     /* ─── PAGE SWITCH ─── */
     .page { display: none; animation: fadeIn .3s ease; }
@@ -163,53 +212,55 @@
     /* ─── THEME GRID ─── */
     .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .theme-card {
-      border-radius: 16px; overflow: hidden; cursor: pointer;
-      border: 1px solid var(--gray-l); background: var(--card-bg, #fff);
+      border-radius: 12px; overflow: hidden; cursor: pointer;
+      border: 1px solid var(--gray-l); background: #fff;
       transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
+      position: relative; display: flex; flex-direction: column;
     }
-    .theme-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(209, 88, 22, 0.08); border-color: var(--brown-l); }
-    .theme-thumb { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform .3s ease; }
-    .theme-card:hover .theme-thumb { transform: scale(1.03); }
+    .theme-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(122, 74, 30, 0.08); border-color: var(--brown-l); }
+    .theme-thumb-wrap { width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+    .theme-thumb { width: 100%; height: 100%; background-size: cover; background-position: center; transition: transform .35s ease; }
+    .theme-card:hover .theme-thumb { transform: scale(1.05); }
     .theme-thumb.birthday { background-image: url('birthday_base.jpg'); }
     .theme-thumb.graduate { background-image: url('graduation_base.jpg'); }
     .theme-thumb.wedding  { background-image: url('wedding_base.jpg'); }
-    .theme-info { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
-    .theme-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text); letter-spacing: -0.010em; }
-    .theme-sub  { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
+    .theme-info { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .theme-name { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .theme-sub  { font-size: 12px; color: var(--gray); margin-bottom: 2px; }
     .btn-theme {
-      width: 100%; padding: 11px; border-radius: 20px;
-      background: var(--brown); color: #fff;
-      border: none; font-size: 13px; font-weight: 600; cursor: pointer;
-      transition: all .2s;
-      box-shadow: 0 2px 6px rgba(209, 88, 22, 0.1);
+      width: 100%; padding: 8px 16px; border-radius: 20px;
+      background: transparent; color: var(--brown);
+      border: 1px solid var(--brown); font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; margin-top: auto;
     }
-    .btn-theme:hover { background: var(--brown-d); box-shadow: 0 4px 12px rgba(209, 88, 22, 0.2); }
+    .btn-theme:hover { background: var(--brown-ll); }
 
     /* ─── PREMIUM GRID ─── */
     .premium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .premium-card {
-      border-radius: 16px; overflow: hidden; cursor: pointer;
-      border: 1px solid var(--gray-l); background: var(--card-bg, #fff);
+      border-radius: 12px; overflow: hidden; cursor: pointer;
+      border: 1px solid var(--gray-l); background: #fff;
       transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
+      position: relative; display: flex; flex-direction: column;
     }
-    .premium-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(209, 88, 22, 0.08); border-color: var(--brown-l); }
-    .premium-thumb { width: 100%; aspect-ratio: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 16px; transition: transform .3s ease; }
-    .premium-card:hover .premium-thumb { transform: scale(1.03); }
+    .premium-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(122, 74, 30, 0.08); border-color: var(--brown-l); }
+    .premium-thumb-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; }
+    .premium-thumb { width: 100%; height: 100%; transition: transform .35s ease; }
+    .premium-card:hover .premium-thumb { transform: scale(1.05); }
     .premium-thumb.p1 { background: url('premium1.jpg') center/cover no-repeat; }
     .premium-thumb.p2 { background: url('premium2.jpg') center/cover no-repeat; }
     .premium-thumb.p3 { background: url('premium3.jpg') center/cover no-repeat; }
-    .premium-label { font-size: 11px; background: rgba(255, 255, 255, 0.95); color: var(--brown); padding: 5px 12px; border-radius: 20px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .premium-info { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
-    .premium-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text); letter-spacing: -0.010em; }
-    .premium-price { font-size: 15px; color: var(--brown); font-weight: 600; margin-bottom: 8px; }
+    .premium-label { position: absolute; top: 12px; left: 12px; font-size: 10px; background: rgba(255, 255, 255, 0.95); color: var(--brown); padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05); z-index: 2; }
+    .premium-info { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .premium-name { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .premium-price { font-size: 15px; color: var(--brown); font-weight: 600; margin-bottom: 2px; }
     .btn-premium {
-      width: 100%; padding: 11px; border-radius: 20px;
+      width: 100%; padding: 8px 16px; border-radius: 20px;
       background: transparent; color: var(--brown);
-      border: 1.5px solid var(--brown); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+      border: 1px solid var(--brown); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+      margin-top: auto;
     }
-    .btn-premium:hover { background: var(--brown); color: #fff; box-shadow: 0 4px 12px rgba(209, 88, 22, 0.15); }
+    .btn-premium:hover { background: var(--brown-ll); }
 
     /* ─── CUSTOM BANNER ─── */
     .custom-banner {
@@ -332,6 +383,45 @@
     .total-label { font-size: 13px; color: var(--gray); }
     .total-val { font-size: 20px; font-weight: 500; color: var(--brown); }
 
+    /* ─── ETSY CATEGORY CAROUSEL ─── */
+    .etsy-cat-carousel-container {
+      max-width: 1100px; margin: 30px auto 10px; padding: 0 40px;
+    }
+    .etsy-cat-carousel {
+      display: flex; justify-content: center; gap: 40px; overflow-x: auto;
+      padding: 10px 0; scrollbar-width: none;
+    }
+    .etsy-cat-carousel::-webkit-scrollbar { display: none; }
+    .etsy-cat-item {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      cursor: pointer; text-align: center; width: 110px; flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .etsy-cat-item:hover {
+      transform: translateY(-4px);
+    }
+    .etsy-cat-circle {
+      width: 86px; height: 86px; border-radius: 50%;
+      background-position: center; background-size: cover; background-repeat: no-repeat;
+      border: 1px solid var(--gray-l);
+      box-shadow: 0 4px 10px rgba(122, 74, 30, 0.05);
+      transition: box-shadow 0.2s;
+    }
+    .etsy-cat-item:hover .etsy-cat-circle {
+      box-shadow: 0 8px 18px rgba(122, 74, 30, 0.12);
+    }
+    .etsy-cat-label {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      line-height: 1.3;
+    }
+    @media (max-width: 768px) {
+      .etsy-cat-carousel-container { padding: 0 20px; }
+      .etsy-cat-carousel { justify-content: flex-start; gap: 20px; }
+      .etsy-cat-circle { width: 72px; height: 72px; }
+      .etsy-cat-item { width: 90px; }
+      .etsy-cat-label { font-size: 11px; }
+    }
+
     .btn-order {
       width: 100%; padding: 14px; border-radius: 12px;
       border: none; background: var(--brown); color: #fff;
@@ -401,6 +491,30 @@
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 860px;
+      width: 90vw;
+    }
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      padding: 24px;
+    }
+    .checkout-left-col, .checkout-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .checkout-modal {
+        max-width: 500px;
+        width: 100%;
+      }
+      .checkout-grid {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 16px;
+      }
     }
     @keyframes modalSlideUp {
       from { transform: translateY(30px); opacity: 0; }
@@ -924,21 +1038,41 @@
 </div>
 
   <!-- NAV -->
-  <nav>
+  <nav class="etsy-navbar">
     <!-- Scroll Progress Bar -->
     <div id="scroll-progress-bar" style="position: absolute; bottom: 0; left: 0; height: 2.5px; width: 0%; background: var(--brown); z-index: 101; transition: width 0.05s ease;"></div>
-    <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 8px;">
-      <img src="logo.png?v=3" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 6px;" onerror="this.style.display='none'">
-      <span>MoryTory</span>
+    
+    <!-- Hàng trên: Logo, Tìm kiếm, Tiện ích -->
+    <div class="etsy-nav-top">
+      <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 8px;">
+        <img src="logo.png?v=3" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 6px;" onerror="this.style.display='none'">
+        <span>MoryTory</span>
+      </div>
+      
+      <div class="etsy-search-container">
+        <input type="text" id="etsy-search-input" placeholder="Tìm kiếm mô hình quà tặng thủ công..." oninput="handleSearch(this.value)">
+        <button class="etsy-search-btn" title="Tìm kiếm"><i class="ti ti-search"></i></button>
+      </div>
+      
+      <div class="etsy-nav-actions">
+        <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối">🌙</button>
+        <span class="etsy-nav-icon-link" onclick="openLookupModal()" title="Tra cứu đơn hàng">
+          <i class="ti ti-receipt"></i><span class="etsy-icon-label">Tra cứu đơn</span>
+        </span>
+        <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
+      </div>
     </div>
-    <div class="nav-links">
-      <a onclick="showPage('home')">Trang chủ</a>
-      <a onclick="scrollToSection('about')">Về chúng tôi</a>
-      <a onclick="showPage('blog')">Blog</a>
-      <a onclick="openLookupModal()" style="font-weight: 500; color: var(--brown); cursor: pointer;">Tra cứu đơn hàng</a>
+    
+    <!-- Hàng dưới: Danh mục -->
+    <div class="etsy-nav-bottom">
+      <div class="etsy-categories-nav">
+        <a onclick="showPage('home')">Trang chủ</a>
+        <a onclick="scrollToSection('theme-section')">Mô hình thiết kế riêng</a>
+        <a onclick="scrollToSection('theme-section')">Bộ sưu tập Premium</a>
+        <a onclick="scrollToSection('about-section')">Về chúng tôi</a>
+        <a onclick="showPage('blog')">Blog chia sẻ</a>
+      </div>
     </div>
-    <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối">🌙</button>
-    <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
   </nav>
 
   <!-- ═══ HOME PAGE ═══ -->
@@ -968,6 +1102,34 @@
         </div>
       </div>
     </div>
+    
+    <!-- Etsy Categories Circular Carousel -->
+    <div class="etsy-cat-carousel-container reveal">
+      <div class="etsy-cat-carousel">
+        <div class="etsy-cat-item" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
+          <div class="etsy-cat-circle" style="background-image: url('birthday_base.jpg');"></div>
+          <div class="etsy-cat-label">Sinh nhật gia đình</div>
+        </div>
+        <div class="etsy-cat-item" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
+          <div class="etsy-cat-circle" style="background-image: url('graduation_base.jpg');"></div>
+          <div class="etsy-cat-label">Lễ tốt nghiệp</div>
+        </div>
+        <div class="etsy-cat-item" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
+          <div class="etsy-cat-circle" style="background-image: url('wedding_base.jpg');"></div>
+          <div class="etsy-cat-label">Ngày đám cưới</div>
+        </div>
+        <div class="etsy-cat-item" onclick="scrollToSection('premium')">
+          <div class="etsy-cat-circle" style="background-image: url('premium1.jpg');"></div>
+          <div class="etsy-cat-label">Mô hình làm sẵn</div>
+        </div>
+        <div class="etsy-cat-item" onclick="window.open('https://zalo.me/0378820905', '_blank')">
+          <div class="etsy-cat-circle" style="background-color: var(--blush); display:flex; align-items:center; justify-content:center; background-image:none;">
+            <span style="font-size:32px;">🪵</span>
+          </div>
+          <div class="etsy-cat-label">Đặt theo yêu cầu</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Chọn chủ đề -->
     <div class="section" id="theme-section">
@@ -977,40 +1139,55 @@
       </div>
       <div class="theme-grid reveal">
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')">
-          <div class="theme-thumb birthday" style="position: relative;">
-            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #d15816; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Bán chạy nhất</span>
+          <div class="theme-thumb-wrap">
+            <div class="theme-thumb birthday" style="position: relative;">
+              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #d15816; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Bán chạy nhất</span>
+            </div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Sinh nhật gia đình</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(48 đánh giá)</span>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(48)</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 6px;">
+              450.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">550.000 đ</span>
             </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')">
-          <div class="theme-thumb graduate" style="position: relative;">
-            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #2e7d32; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Giao nhanh 24h</span>
+          <div class="theme-thumb-wrap">
+            <div class="theme-thumb graduate" style="position: relative;">
+              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #2e7d32; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Giao nhanh 24h</span>
+            </div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Tốt nghiệp</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(32 đánh giá)</span>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(32)</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 6px;">
+              420.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">500.000 đ</span>
             </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
         </div>
         <div class="theme-card" onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')">
-          <div class="theme-thumb wedding" style="position: relative;">
-            <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #7b1fa2; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Chế tác tỉ mỉ</span>
+          <div class="theme-thumb-wrap">
+            <div class="theme-thumb wedding" style="position: relative;">
+              <span class="premium-label" style="position: absolute; top: 12px; left: 12px; background: rgba(255, 255, 255, 0.95); color: #7b1fa2; font-size: 10px; padding: 4px 10px; border-radius: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">Chế tác tỉ mỉ</span>
+            </div>
           </div>
           <div class="theme-info">
             <div class="theme-name">Đám cưới</div>
             <div class="theme-sub">Cá nhân hoá từ ảnh của bạn</div>
-            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
-              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(56 đánh giá)</span>
+            <div style="font-size: 12px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>★★★★★</span> <span style="color: var(--gray); font-size: 11px;">(56)</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 6px;">
+              480.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">580.000 đ</span>
             </div>
             <button class="btn-theme">Chọn chủ đề này</button>
           </div>
@@ -1024,43 +1201,55 @@
         <div class="section-title">Bộ sưu tập Premium</div>
         <div class="section-link">Xem tất cả</div>
       </div>
-      <div class="premium-grid reveal">
+      <div class="premium-grid reveal" id="premium-section">
         <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
-          <div class="premium-thumb p1">
-            <span class="premium-label">Làm sẵn</span>
+          <div class="premium-thumb-wrap">
+            <div class="premium-thumb p1">
+              <span class="premium-label">Làm sẵn</span>
+            </div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Góc cà phê</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(24)</span>
             </div>
-            <div class="premium-price">380.000 đ</div>
+            <div class="premium-price">
+              380.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">450.000 đ</span>
+            </div>
             <button class="btn-premium">Mua ngay</button>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')">
-          <div class="premium-thumb p2">
-            <span class="premium-label">Làm sẵn</span>
+          <div class="premium-thumb-wrap">
+            <div class="premium-thumb p2">
+              <span class="premium-label">Làm sẵn</span>
+            </div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Mộc hoa viên</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(18)</span>
             </div>
-            <div class="premium-price">320.000 đ</div>
+            <div class="premium-price">
+              320.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">400.000 đ</span>
+            </div>
             <button class="btn-premium">Mua ngay</button>
           </div>
         </div>
         <div class="premium-card" onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')">
-          <div class="premium-thumb p3">
-            <span class="premium-label">Làm sẵn</span>
+          <div class="premium-thumb-wrap">
+            <div class="premium-thumb p3">
+              <span class="premium-label">Làm sẵn</span>
+            </div>
           </div>
           <div class="premium-info">
             <div class="premium-name">Quán burger</div>
-            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+            <div style="font-size: 11px; color: #EF9F27; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
               <span>★★★★★</span> <span style="color: var(--gray); font-size: 10px;">(15)</span>
             </div>
-            <div class="premium-price">290.000 đ</div>
+            <div class="premium-price">
+              290.000 đ <span style="font-size:11px; text-decoration:line-through; color:var(--brown-l); font-weight:400; margin-left:6px;">350.000 đ</span>
+            </div>
             <button class="btn-premium">Mua ngay</button>
           </div>
         </div>
@@ -1782,7 +1971,7 @@
 
   <!-- Checkout Modal Backdrop -->
   <div class="modal-backdrop" id="checkout-modal-backdrop">
-    <div class="checkout-modal" style="background: #fff; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
+    <div class="checkout-modal" style="max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
       <!-- Modal Header -->
       <div style="padding: 20px 24px; border-bottom: 0.5px solid var(--gray-l); display: flex; justify-content: space-between; align-items: center;">
         <h3 style="font-size: 18px; color: #3a2010; font-weight: 600; font-family: var(--serif);">Thông tin đặt hàng</h3>
@@ -1790,61 +1979,67 @@
       </div>
       
       <!-- Modal Body -->
-      <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
-        <!-- Summary Box -->
-        <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px;">
-          <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
-          <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; padding-right: 4px;">
-            <!-- Danh sách sản phẩm thanh toán render động -->
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed var(--gray-l); padding-top: 8px; margin-top: 8px;">
-            <span>Tổng cộng</span>
-            <span id="modal-summary-total">380.000 đ</span>
-          </div>
-        </div>
-
-        <!-- Shipping Form -->
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; flex-direction: column; gap: 6px;">
-            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Họ và tên khách hàng</label>
-            <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px;">
-            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Số điện thoại</label>
-            <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px;">
-            <label style="font-size: 12px; font-weight: 500; color: var(--brown);">Địa chỉ giao hàng</label>
-            <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px; font-family: inherit; resize: none;" required></textarea>
-          </div>
-        </div>
-
-        <!-- Payment Method -->
-        <div>
-          <label style="font-size: 12px; font-weight: 500; color: var(--brown); display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
-              <i class="ti ti-truck" style="font-size: 20px; color: var(--brown);"></i>
-              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Thanh toán COD</span>
+      <div class="checkout-grid">
+        <!-- Left Column: Form & Payment -->
+        <div class="checkout-left-col">
+          <!-- Shipping Form -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Họ và tên khách hàng</label>
+              <input type="text" id="checkout-name" placeholder="Ví dụ: Nguyễn Văn A" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
             </div>
-            <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
-              <i class="ti ti-qrcode" style="font-size: 20px; color: var(--brown-l);"></i>
-              <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Chuyển khoản (VietQR)</span>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Số điện thoại</label>
+              <input type="tel" id="checkout-phone" placeholder="Ví dụ: 0912345678" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px;" required />
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 12px; font-weight: 600; color: var(--brown);">Địa chỉ giao hàng</label>
+              <textarea id="checkout-address" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP)" rows="2" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--gray-l); font-size: 13px; font-family: inherit; resize: none;" required></textarea>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div>
+            <label style="font-size: 12px; font-weight: 600; color: var(--brown); display: block; margin-bottom: 8px;">Phương thức thanh toán</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="payment-opt selected" id="pay-opt-cod" onclick="selectPaymentMethod('COD')">
+                <i class="ti ti-truck" style="font-size: 20px; color: var(--brown);"></i>
+                <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Thanh toán COD</span>
+              </div>
+              <div class="payment-opt" id="pay-opt-bank" onclick="selectPaymentMethod('BANK')">
+                <i class="ti ti-qrcode" style="font-size: 20px; color: var(--brown-l);"></i>
+                <span style="font-size: 12px; font-weight: 500; color: var(--brown);">Chuyển khoản (VietQR)</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- VietQR Container (Hidden by default) -->
-        <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
-          <div style="font-size: 12px; font-weight: 500; color: var(--brown);" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
-          <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid var(--gray-l); border-radius: 8px; background: #fff; padding: 8px;" />
-          <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: var(--brown); font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
-            Xem mã QR gốc của Shop
-          </button>
-          <div style="font-size: 11px; color: var(--gray); line-height: 1.4;">
-            Nội dung CK: <strong id="qr-transfer-info" style="color: var(--brown);">MORYTORY 0378820905</strong><br>
-            Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
-            Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+        <!-- Right Column: Summary & VietQR -->
+        <div class="checkout-right-col">
+          <!-- Summary Box -->
+          <div style="background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tóm tắt đơn hàng</div>
+            <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; padding-right: 4px;">
+              <!-- Danh sách sản phẩm thanh toán render động -->
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: #3a2010; border-top: 0.5px dashed var(--gray-l); padding-top: 8px; margin-top: 8px;">
+              <span>Tổng cộng</span>
+              <span id="modal-summary-total">380.000 đ</span>
+            </div>
+          </div>
+
+          <!-- VietQR Container (Hidden by default) -->
+          <div id="qr-container" style="display: none; background: #fdf8f4; border: 0.5px solid var(--gray-l); border-radius: 12px; padding: 16px; text-align: center; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="font-size: 12px; font-weight: 500; color: var(--brown);" id="qr-title-text">Quét mã VietQR để chuyển khoản nhanh</div>
+            <img id="qr-code-img" src="" alt="VietQR Code" style="max-width: 180px; width: 100%; border: 1px solid var(--gray-l); border-radius: 8px; background: #fff; padding: 8px;" />
+            <button type="button" id="toggle-qr-btn" onclick="toggleQRSource()" style="background: none; border: none; color: var(--brown); font-size: 12px; text-decoration: underline; cursor: pointer; font-weight: 500; outline: none; margin-top: 4px;">
+              Xem mã QR gốc của Shop
+            </button>
+            <div style="font-size: 11px; color: var(--gray); line-height: 1.4;">
+              Nội dung CK: <strong id="qr-transfer-info" style="color: var(--brown);">MORYTORY 0378820905</strong><br>
+              Chủ TK: <strong>NGUYEN TUAN ANH</strong><br>
+              Ngân hàng: <strong>VietinBank (Công Thương)</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -1920,6 +2115,34 @@
     const BANK_ID = "VietinBank";
     const BANK_ACCOUNT_NO = "102875779490";
     const BANK_ACCOUNT_NAME = "NGUYEN TUAN ANH";
+
+    // Tìm kiếm và lọc sản phẩm kiểu Etsy
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      
+      // Lọc các chủ đề thiết kế
+      const themeCards = document.querySelectorAll('.theme-card');
+      themeCards.forEach(card => {
+        const name = card.querySelector('.theme-name').textContent.toLowerCase();
+        const sub = card.querySelector('.theme-sub').textContent.toLowerCase();
+        if (name.includes(q) || sub.includes(q)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Lọc bộ sưu tập Premium
+      const premiumCards = document.querySelectorAll('.premium-card');
+      premiumCards.forEach(card => {
+        const name = card.querySelector('.premium-name').textContent.toLowerCase();
+        if (name.includes(q)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
 
     function scrollToSection(secId) {
       showPage('home');
@@ -2525,6 +2748,21 @@
         searchCustomerOrders();
       } else if (params.get('lookup') === 'true') {
         openLookupModal();
+      }
+      
+      const searchQuery = params.get('search');
+      if (searchQuery) {
+        const searchInput = document.getElementById('etsy-search-input');
+        if (searchInput) {
+          searchInput.value = searchQuery;
+        }
+        handleSearch(searchQuery);
+        setTimeout(() => {
+          const themeSection = document.getElementById('theme-section');
+          if (themeSection) {
+            themeSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
       }
       // Back to Top button visibility
       window.addEventListener('scroll', () => {
