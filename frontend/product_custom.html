@@ -66,12 +66,12 @@
   }
   .logo:hover { opacity: 0.85; }
   .etsy-search-container {
-    flex-grow: 1; max-width: 600px; display: flex; align-items: center;
-    background: #f4efeb; border: 2px solid #222; border-radius: 96px;
+    flex-grow: 1; max-width: 650px; display: flex; align-items: center;
+    background: #fff; border: 1.5px solid #222; border-radius: 96px;
     padding: 2px; overflow: hidden; transition: box-shadow 0.2s;
   }
   .etsy-search-container:focus-within {
-    box-shadow: 0 0 0 4px rgba(209, 88, 22, 0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     background: #fff;
   }
   #etsy-search-input {
@@ -79,12 +79,12 @@
     padding: 8px 18px; font-size: 14px; color: var(--text);
   }
   .etsy-search-btn {
-    width: 34px; height: 34px; border-radius: 50%; border: none;
-    background: var(--brown); color: #fff; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 50%; border: none;
+    background: #222; color: #fff; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px; transition: background 0.15s; margin-right: 2px;
+    font-size: 16px; transition: background 0.15s; margin-right: 2px;
   }
-  .etsy-search-btn:hover { background: var(--brown-d); }
+  .etsy-search-btn:hover { background: #444; }
   .etsy-nav-actions {
     display: flex; align-items: center; gap: 20px; flex-shrink: 0;
   }
@@ -162,8 +162,8 @@
   .badge-new { background: #faeeda; color: #633806; }
   .badge-custom { background: var(--brown-ll); color: var(--brown); }
   .prod-title { font-family: var(--serif); font-size: 32px; font-weight: 500; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.015em; }
-  .prod-price { font-size: 26px; font-weight: 600; color: var(--brown); margin-bottom: 4px; }
-  .prod-old-price { font-size: 15px; color: var(--brown-l); text-decoration: line-through; margin-left: 8px; font-weight: 400; }
+  .prod-price { font-size: 26px; font-weight: 700; color: var(--text); }
+  .prod-old-price { font-size: 16px; color: var(--gray); text-decoration: line-through; margin-left: 8px; font-weight: 400; }
   .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 13px; color: var(--gray); }
   .stars { color: #EF9F27; font-size: 14px; letter-spacing: 1px; }
   .divider { border: none; border-top: 1px solid rgba(122, 74, 30, 0.09); margin: 20px 0; }
@@ -188,10 +188,14 @@
   .total-label { font-size: 13px; color: var(--gray); }
   .total-val { font-size: 20px; font-weight: 600; color: var(--brown); }
   .cta-actions-wrapper { margin-bottom: 10px; }
-  .btn-order { width: 100%; padding: 14px; border-radius: 24px; border: none; background: var(--brown); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; box-shadow: 0 4px 14px rgba(209, 88, 22, 0.2); }
-  .btn-order:hover { background: var(--brown-d); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(209, 88, 22, 0.25); }
-  .btn-zalo { width: 100%; padding: 12px; border-radius: 24px; border: 1.5px solid #0068ff; background: #fff; color: #0068ff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s; }
-  .btn-zalo:hover { background: #f0f5ff; }
+  .btn-order { width: 100%; padding: 14px; border-radius: 99px; border: none; background: #222; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); }
+  .btn-order:hover { background: #444; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
+  .btn-zalo { width: 100%; padding: 12px; border-radius: 99px; border: 1.5px solid #222; background: #fff; color: #222; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+  .btn-zalo:hover { background: #f4f4f4; }
+  body.dark-mode .btn-order { background: #fff; color: #222; }
+  body.dark-mode .btn-order:hover { background: #eaeaea; }
+  body.dark-mode .btn-zalo { border-color: #fff; background: transparent; color: #fff; }
+  body.dark-mode .btn-zalo:hover { background: rgba(255, 255, 255, 0.08); }
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
   .info-card { background: var(--cream); border: 1px solid var(--gray-l); border-radius: 10px; padding: 12px; display: flex; align-items: flex-start; gap: 10px; }
   .info-icon { font-size: 18px; color: var(--brown-l); flex-shrink: 0; margin-top: 1px; }
@@ -584,9 +588,10 @@
         <span style="color:#c9a882;">|</span>
         <span>126 đã bán</span>
       </div>
-      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:12px;">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;">
         <span class="prod-price" id="prod-price">450.000 đ</span>
         <span class="prod-old-price" id="prod-old-price">550.000 đ</span>
+        <span id="prod-discount-percent" style="color: #2e7d32; font-size: 14px; font-weight: 600; display: none;"></span>
       </div>
 
       <hr class="divider">
@@ -1014,9 +1019,20 @@ function initPage() {
     document.getElementById('prod-price').textContent = price.toLocaleString('vi-VN') + ' đ';
   }
   if (oldPriceVal) {
-    document.getElementById('prod-old-price').textContent = parseInt(oldPriceVal).toLocaleString('vi-VN') + ' đ';
+    const oldP = parseInt(oldPriceVal);
+    document.getElementById('prod-old-price').textContent = oldP.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('prod-old-price').style.display = 'inline';
+    if (price && oldP > price) {
+      const discountPercent = Math.round(((oldP - price) / oldP) * 100);
+      const discountSpan = document.getElementById('prod-discount-percent');
+      discountSpan.textContent = `(Giảm ${discountPercent}%)`;
+      discountSpan.style.display = 'inline';
+    } else {
+      document.getElementById('prod-discount-percent').style.display = 'none';
+    }
   } else {
     document.getElementById('prod-old-price').style.display = 'none';
+    document.getElementById('prod-discount-percent').style.display = 'none';
   }
   if (theme) {
     currentTheme = theme;
