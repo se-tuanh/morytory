@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="cart.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- CropperJS for local face cropping -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -624,9 +625,16 @@
       
       <div class="etsy-nav-actions">
         <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối" style="margin-right: 4px;">🌙</button>
-        <span class="etsy-nav-icon-link" onclick="window.location.href='index.html?lookup=true'" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập / Tra cứu đơn">
+        <span id="nav-login-btn" class="etsy-nav-icon-link" onclick="window.location.href='index.html?login=true'" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập">
           Đăng nhập
         </span>
+        <div id="user-profile-menu" style="display: none; align-items: center; gap: 8px; position: relative;">
+          <img id="user-avatar" src="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gray-l); cursor: pointer;" onclick="toggleUserDropdown(event)" />
+          <div id="user-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid var(--gray-l); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 180px; z-index: 200; padding: 8px 0; margin-top: 4px;">
+            <div id="user-email-display" style="font-size: 12px; color: var(--gray); padding: 6px 16px; border-bottom: 1px solid var(--gray-l); word-break: break-all; font-family: var(--sans);"></div>
+            <a onclick="handleSignOut()" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--brown); font-weight: 600; cursor: pointer; transition: background 0.15s; text-decoration: none;">Đăng xuất</a>
+          </div>
+        </div>
         <span class="etsy-nav-icon-link" title="Yêu thích" style="font-size: 20px; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" onclick="showToast('Tính năng Yêu thích sẽ sớm ra mắt!', 'info')">
           <i class="ti ti-heart"></i>
         </span>
@@ -2004,7 +2012,73 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// ─── SUPABASE AUTH ───
+const supabaseUrl = 'https://gmqzqtrtqbppejchjqir.supabase.co';
+const supabaseKey = 'sb_publishable_Q7lpevxHlYpO0k3o889T5A_O88r6-BM';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function checkUserSession() {
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    updateAuthUI(session?.user || null);
+    
+    // Listen for auth state changes
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      updateAuthUI(session?.user || null);
+    });
+  } catch (err) {
+    console.error('Supabase session check error:', err);
+  }
+}
+
+function updateAuthUI(user) {
+  const loginBtn = document.getElementById('nav-login-btn');
+  const profileMenu = document.getElementById('user-profile-menu');
+  const avatar = document.getElementById('user-avatar');
+  const emailDisplay = document.getElementById('user-email-display');
+  
+  if (user) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (profileMenu) profileMenu.style.display = 'flex';
+    if (avatar) {
+      avatar.src = user.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/default?d=mp';
+    }
+    if (emailDisplay) emailDisplay.textContent = user.email;
+  } else {
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (profileMenu) profileMenu.style.display = 'none';
+  }
+}
+
+function toggleUserDropdown(event) {
+  if (event) event.stopPropagation();
+  const dropdown = document.getElementById('user-dropdown');
+  if (dropdown) {
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+async function handleSignOut() {
+  try {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) throw error;
+    showToast('Đăng xuất thành công!', 'success');
+  } catch (error) {
+    showToast('Đăng xuất thất bại: ' + error.message, 'error');
+  }
+}
+
+// Auto close user dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('user-dropdown');
+  const avatar = document.getElementById('user-avatar');
+  if (dropdown && avatar && !avatar.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.style.display = 'none';
+  }
+});
+
 window.onload = () => {
+  checkUserSession();
   initPage();
   initRippleEffect();
   initScrollProgress();

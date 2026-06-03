@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="cart.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1480,9 +1481,16 @@
       
       <div class="etsy-nav-actions">
         <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối" style="margin-right: 4px;">🌙</button>
-        <span class="etsy-nav-icon-link" onclick="openLoginModal()" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập">
+        <span id="nav-login-btn" class="etsy-nav-icon-link" onclick="openLoginModal()" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập">
           Đăng nhập
         </span>
+        <div id="user-profile-menu" style="display: none; align-items: center; gap: 8px; position: relative;">
+          <img id="user-avatar" src="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gray-l); cursor: pointer;" onclick="toggleUserDropdown(event)" />
+          <div id="user-dropdown" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid var(--gray-l); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 180px; z-index: 200; padding: 8px 0; margin-top: 4px;">
+            <div id="user-email-display" style="font-size: 12px; color: var(--gray); padding: 6px 16px; border-bottom: 1px solid var(--gray-l); word-break: break-all; font-family: var(--sans);"></div>
+            <a onclick="handleSignOut()" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--brown); font-weight: 600; cursor: pointer; transition: background 0.15s; text-decoration: none;">Đăng xuất</a>
+          </div>
+        </div>
         <span class="etsy-nav-icon-link" title="Yêu thích" style="font-size: 20px; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" onclick="showToast('Tính năng Yêu thích sẽ sớm ra mắt!', 'info')">
           <i class="ti ti-heart"></i>
         </span>
@@ -2608,7 +2616,7 @@
 
         <div class="login-divider"><span>Hoặc</span></div>
 
-        <button class="login-social-btn" onclick="showToast('Đăng nhập Google sẽ sớm ra mắt!', 'info')">
+        <button class="login-social-btn" onclick="loginWithGoogle()">
           <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Tiếp tục với Google
         </button>
@@ -2643,7 +2651,7 @@
 
         <div class="login-divider"><span>Hoặc</span></div>
 
-        <button class="login-social-btn" onclick="showToast('Đăng ký Google sẽ sớm ra mắt!', 'info')">
+        <button class="login-social-btn" onclick="loginWithGoogle()">
           <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Tiếp tục với Google
         </button>
@@ -2731,6 +2739,85 @@
       const container = document.getElementById('categories-dropdown-container');
       if (menu && container && !container.contains(e.target)) {
         menu.style.display = 'none';
+      }
+    });
+
+    // ─── SUPABASE AUTH ───
+    const supabaseUrl = 'https://gmqzqtrtqbppejchjqir.supabase.co';
+    const supabaseKey = 'sb_publishable_Q7lpevxHlYpO0k3o889T5A_O88r6-BM';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function checkUserSession() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        updateAuthUI(session?.user || null);
+        
+        // Listen for auth state changes
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+          updateAuthUI(session?.user || null);
+        });
+      } catch (err) {
+        console.error('Supabase session check error:', err);
+      }
+    }
+
+    function updateAuthUI(user) {
+      const loginBtn = document.getElementById('nav-login-btn');
+      const profileMenu = document.getElementById('user-profile-menu');
+      const avatar = document.getElementById('user-avatar');
+      const emailDisplay = document.getElementById('user-email-display');
+      
+      if (user) {
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (profileMenu) profileMenu.style.display = 'flex';
+        if (avatar) {
+          avatar.src = user.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/default?d=mp';
+        }
+        if (emailDisplay) emailDisplay.textContent = user.email;
+      } else {
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (profileMenu) profileMenu.style.display = 'none';
+      }
+    }
+
+    function toggleUserDropdown(event) {
+      if (event) event.stopPropagation();
+      const dropdown = document.getElementById('user-dropdown');
+      if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    async function loginWithGoogle() {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + window.location.pathname
+          }
+        });
+        if (error) throw error;
+      } catch (error) {
+        showToast('Đăng nhập Google thất bại: ' + error.message, 'error');
+      }
+    }
+
+    async function handleSignOut() {
+      try {
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) throw error;
+        showToast('Đăng xuất thành công!', 'success');
+      } catch (error) {
+        showToast('Đăng xuất thất bại: ' + error.message, 'error');
+      }
+    }
+
+    // Auto close user dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('user-dropdown');
+      const avatar = document.getElementById('user-avatar');
+      if (dropdown && avatar && !avatar.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
       }
     });
 
@@ -3419,6 +3506,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
+      checkUserSession();
       initWordRotator();
       initScrollReveal();
       initRippleEffect();
@@ -3435,6 +3523,8 @@
         searchCustomerOrders();
       } else if (params.get('lookup') === 'true') {
         openLookupModal();
+      } else if (params.get('login') === 'true') {
+        openLoginModal();
       }
       
       const searchQuery = params.get('search');
