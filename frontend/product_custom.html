@@ -556,6 +556,23 @@
   body.dark-mode .cart-badge-orange {
     border-color: #1a1a2e;
   }
+
+  /* ─── CATEGORIES DROPDOWN ─── */
+  .etsy-categories-dropdown a:hover {
+    background: var(--brown-ll) !important;
+    color: var(--brown) !important;
+  }
+  body.dark-mode .etsy-categories-dropdown {
+    background: var(--card-bg) !important;
+    border-color: var(--gray-l) !important;
+  }
+  body.dark-mode .etsy-categories-dropdown a {
+    color: var(--text) !important;
+  }
+  body.dark-mode .etsy-categories-dropdown a:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--brown) !important;
+  }
   </style>
 
 </head>
@@ -579,9 +596,25 @@
         <div class="logo" onclick="window.location.href='index.html'" style="display: flex; align-items: center; gap: 6px; font-family: var(--serif); font-weight: 700; color: #f1641e; font-size: 30px;">
           <span>MoryTory</span>
         </div>
-        <button class="etsy-categories-btn" style="background: none; border: none; font-size: 14px; font-weight: 500; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 24px;" onclick="window.location.href='index.html#theme-section'">
-          <i class="ti ti-menu-2" style="font-size: 18px;"></i> Danh mục
-        </button>
+        <div style="position: relative;" id="categories-dropdown-container">
+          <button class="etsy-categories-btn" style="background: none; border: none; font-size: 14px; font-weight: 500; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 24px;" onclick="toggleCategoriesDropdown(event)">
+            <i class="ti ti-menu-2" style="font-size: 18px;"></i> Danh mục
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="etsy-dropdown-menu" class="etsy-categories-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid var(--gray-l); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 220px; z-index: 200; padding: 8px 0; margin-top: 4px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px 4px;">Thiết kế riêng</div>
+            <a onclick="window.location.href='product_custom.html?title=Mô hình Gia Đình Kỷ Niệm&price=450000&oldPrice=550000&theme=Sinh nhật gia đình'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">👪 Sinh nhật gia đình</a>
+            <a onclick="window.location.href='product_custom.html?title=Mô hình Tốt Nghiệp&price=420000&oldPrice=500000&theme=Tốt nghiệp'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🎓 Lễ tốt nghiệp</a>
+            <a onclick="window.location.href='product_custom.html?title=Mô hình Đám Cưới&price=480000&oldPrice=580000&theme=Đám cưới'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">👰 Ngày đám cưới</a>
+            <div style="border-top: 1px solid var(--gray-l); margin: 6px 0;"></div>
+            <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px 4px;">Bộ sưu tập Premium</div>
+            <a onclick="window.location.href='index.html#premium-section'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">☕ Góc cà phê</a>
+            <a onclick="window.location.href='index.html#premium-section'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🌸 Mộc hoa viên</a>
+            <a onclick="window.location.href='index.html#premium-section'" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🍔 Quán burger</a>
+            <div style="border-top: 1px solid var(--gray-l); margin: 6px 0;"></div>
+            <a onclick="window.open('https://zalo.me/0378820905', '_blank')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--brown); font-weight: 600; cursor: pointer; transition: background 0.15s; text-decoration: none;">💬 Đặt theo yêu cầu</a>
+          </div>
+        </div>
       </div>
       
       <div class="etsy-search-container">
@@ -611,7 +644,7 @@
       <div class="etsy-categories-nav">
         <a onclick="window.location.href='index.html'">Trang chủ</a>
         <a onclick="window.location.href='index.html#theme-section'">Mô hình thiết kế riêng</a>
-        <a onclick="window.location.href='index.html#theme-section'">Bộ sưu tập Premium</a>
+        <a onclick="window.location.href='index.html#premium-section'">Bộ sưu tập Premium</a>
         <a onclick="window.location.href='index.html#about-section'">Về chúng tôi</a>
         <a onclick="window.location.href='index.html#blog-section'">Blog chia sẻ</a>
       </div>
@@ -1954,6 +1987,24 @@ function closeLightbox() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeLightbox();
+  }
+});
+
+function toggleCategoriesDropdown(event) {
+  event.stopPropagation();
+  const menu = document.getElementById('etsy-dropdown-menu');
+  if (menu) {
+    const isHidden = menu.style.display === 'none';
+    menu.style.display = isHidden ? 'block' : 'none';
+  }
+}
+
+// Close dropdown on click outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('etsy-dropdown-menu');
+  const container = document.getElementById('categories-dropdown-container');
+  if (menu && container && !container.contains(e.target)) {
+    menu.style.display = 'none';
   }
 });
 

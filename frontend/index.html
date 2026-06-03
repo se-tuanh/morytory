@@ -1173,6 +1173,23 @@
     body.dark-mode .cart-badge-orange {
       border-color: #1a1a2e;
     }
+    
+    /* ─── CATEGORIES DROPDOWN ─── */
+    .etsy-categories-dropdown a:hover {
+      background: var(--brown-ll) !important;
+      color: var(--brown) !important;
+    }
+    body.dark-mode .etsy-categories-dropdown {
+      background: var(--card-bg) !important;
+      border-color: var(--gray-l) !important;
+    }
+    body.dark-mode .etsy-categories-dropdown a {
+      color: var(--text) !important;
+    }
+    body.dark-mode .etsy-categories-dropdown a:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--brown) !important;
+    }
   </style>
 </head>
 <body>
@@ -1195,9 +1212,25 @@
         <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 6px; font-family: var(--serif); font-weight: 700; color: #f1641e; font-size: 30px;">
           <span>MoryTory</span>
         </div>
-        <button class="etsy-categories-btn" style="background: none; border: none; font-size: 14px; font-weight: 500; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 24px;" onclick="scrollToSection('theme-section')">
-          <i class="ti ti-menu-2" style="font-size: 18px;"></i> Danh mục
-        </button>
+        <div style="position: relative;" id="categories-dropdown-container">
+          <button class="etsy-categories-btn" style="background: none; border: none; font-size: 14px; font-weight: 500; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 24px;" onclick="toggleCategoriesDropdown(event)">
+            <i class="ti ti-menu-2" style="font-size: 18px;"></i> Danh mục
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="etsy-dropdown-menu" class="etsy-categories-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid var(--gray-l); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 220px; z-index: 200; padding: 8px 0; margin-top: 4px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px 4px;">Thiết kế riêng</div>
+            <a onclick="showProductPage('custom','Mô hình Gia Đình Kỷ Niệm','450.000','550.000','Sinh nhật gia đình')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">👪 Sinh nhật gia đình</a>
+            <a onclick="showProductPage('custom','Mô hình Tốt Nghiệp','420.000','500.000','Tốt nghiệp')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🎓 Lễ tốt nghiệp</a>
+            <a onclick="showProductPage('custom','Mô hình Đám Cưới','480.000','580.000','Đám cưới')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">👰 Ngày đám cưới</a>
+            <div style="border-top: 1px solid var(--gray-l); margin: 6px 0;"></div>
+            <div style="font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px 4px;">Bộ sưu tập Premium</div>
+            <a onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">☕ Góc cà phê</a>
+            <a onclick="showProductPage('premium','Mộc hoa viên','320.000','premium2.jpg','')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🌸 Mộc hoa viên</a>
+            <a onclick="showProductPage('premium','Quán burger','290.000','premium3.jpg','')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; transition: background 0.15s; text-decoration: none;">🍔 Quán burger</a>
+            <div style="border-top: 1px solid var(--gray-l); margin: 6px 0;"></div>
+            <a onclick="window.open('https://zalo.me/0378820905', '_blank')" style="display: flex; align-items: center; padding: 8px 16px; font-size: 13px; color: var(--brown); font-weight: 600; cursor: pointer; transition: background 0.15s; text-decoration: none;">💬 Đặt theo yêu cầu</a>
+          </div>
+        </div>
       </div>
       
       <div class="etsy-search-container">
@@ -1226,9 +1259,9 @@
     <div class="etsy-nav-bottom">
       <div class="etsy-categories-nav">
         <a onclick="showPage('home')">Trang chủ</a>
-        <a onclick="scrollToSection('theme-section')">Mô hình thiết kế riêng</a>
-        <a onclick="scrollToSection('theme-section')">Bộ sưu tập Premium</a>
-        <a onclick="scrollToSection('about-section')">Về chúng tôi</a>
+        <a onclick="scrollToSection('theme')">Mô hình thiết kế riêng</a>
+        <a onclick="scrollToSection('premium')">Bộ sưu tập Premium</a>
+        <a onclick="scrollToSection('about')">Về chúng tôi</a>
         <a onclick="showPage('blog')">Blog chia sẻ</a>
       </div>
     </div>
@@ -1348,50 +1381,17 @@
             <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
         </div>
-        <div class="theme-card" onclick="showProductPage('custom','Mô hình Bạn Thân','430.000','510.000','Kỷ niệm bạn thân')">
-          <div class="theme-thumb-wrap">
-            <div class="theme-thumb friends"></div>
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">Kỷ niệm bạn thân</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(21)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">430.000 đ</span>
-              <span class="card-old-price">510.000 đ</span>
-              <span class="card-discount">(Giảm 16%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="theme-card" onclick="showProductPage('custom','Mô hình Bé Yêu','460.000','560.000','Sinh nhật bé yêu')">
-          <div class="theme-thumb-wrap">
-            <div class="theme-thumb baby"></div>
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">Sinh nhật bé yêu</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(14)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">460.000 đ</span>
-              <span class="card-old-price">560.000 đ</span>
-              <span class="card-discount">(Giảm 18%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
+
       </div>
     </div>
 
     <!-- Bộ sưu tập Premium -->
-    <div class="section">
+    <div class="section" id="premium-section">
       <div class="section-head">
         <div class="section-title">Bộ sưu tập Premium</div>
         <a class="etsy-view-all-btn" href="#premium-section">Xem tất cả</a>
       </div>
-      <div class="premium-grid reveal" id="premium-section">
+      <div class="premium-grid reveal">
         <div class="premium-card" onclick="showProductPage('premium','Góc cà phê','380.000','premium1.jpg','')">
           <div class="premium-thumb-wrap">
             <div class="premium-thumb p1"></div>
@@ -1439,40 +1439,6 @@
               <span class="card-price">290.000 đ</span>
               <span class="card-old-price">350.000 đ</span>
               <span class="card-discount">(Giảm 17%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="premium-card" onclick="showProductPage('premium','Nhà gỗ búp bê','350.000','blog_home_decor.jpg','')">
-          <div class="premium-thumb-wrap">
-            <div class="premium-thumb p4"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Nhà gỗ búp bê</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(12)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">350.000 đ</span>
-              <span class="card-old-price">420.000 đ</span>
-              <span class="card-discount">(Giảm 17%)</span>
-            </div>
-            <div class="card-shipping">Miễn phí vận chuyển</div>
-          </div>
-        </div>
-        <div class="premium-card" onclick="showProductPage('premium','Tiệm bánh ngọt','310.000','blog_wedding_gift.jpg','')">
-          <div class="premium-thumb-wrap">
-            <div class="premium-thumb p5"></div>
-          </div>
-          <div class="premium-info">
-            <div class="premium-name">Tiệm bánh ngọt</div>
-            <div class="card-rating">
-              <span>★★★★★</span> <span class="rating-count">(8)</span>
-            </div>
-            <div class="card-price-row">
-              <span class="card-price">310.000 đ</span>
-              <span class="card-old-price">390.000 đ</span>
-              <span class="card-discount">(Giảm 21%)</span>
             </div>
             <div class="card-shipping">Miễn phí vận chuyển</div>
           </div>
@@ -2370,11 +2336,36 @@
 
     function scrollToSection(secId) {
       showPage('home');
-      const el = document.getElementById(secId + '-section');
+      let targetId = secId;
+      if (!secId.endsWith('-section')) {
+        targetId = secId + '-section';
+      }
+      const el = document.getElementById(targetId) || document.getElementById(secId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }
+      // Close categories dropdown menu if open
+      const menu = document.getElementById('etsy-dropdown-menu');
+      if (menu) menu.style.display = 'none';
     }
+
+    function toggleCategoriesDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('etsy-dropdown-menu');
+      if (menu) {
+        const isHidden = menu.style.display === 'none';
+        menu.style.display = isHidden ? 'block' : 'none';
+      }
+    }
+
+    // Close dropdown on click outside
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('etsy-dropdown-menu');
+      const container = document.getElementById('categories-dropdown-container');
+      if (menu && container && !container.contains(e.target)) {
+        menu.style.display = 'none';
+      }
+    });
 
     function openLookupModal() {
       const backdrop = document.getElementById('lookup-modal-backdrop');
