@@ -1021,6 +1021,63 @@
       transform: rotate(90deg);
       background: rgba(255,255,255,0.2);
     }
+    /* ─── NEW ETSY CLONE ELEMENTS ─── */
+    .etsy-categories-btn {
+      transition: background 0.15s;
+    }
+    .etsy-categories-btn:hover {
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+    body.dark-mode .etsy-categories-btn {
+      color: #fff !important;
+    }
+    body.dark-mode .etsy-categories-btn:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+    .etsy-nav-icon-link {
+      transition: background 0.15s;
+    }
+    .etsy-nav-icon-link:hover {
+      background: rgba(0, 0, 0, 0.05) !important;
+      color: #000 !important;
+    }
+    body.dark-mode .etsy-nav-icon-link {
+      color: #fff !important;
+    }
+    body.dark-mode .etsy-nav-icon-link:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #fff !important;
+    }
+    .cart-btn-etsy {
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .cart-btn-etsy:hover {
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+    body.dark-mode .cart-btn-etsy:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+    .cart-badge-orange {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #f1641e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      border: 1.5px solid var(--cream);
+    }
+    body.dark-mode .cart-badge-orange {
+      border-color: #1a1a2e;
+    }
   </style>
 </head>
 <body>
@@ -1039,22 +1096,34 @@
     
     <!-- Hàng trên: Logo, Tìm kiếm, Tiện ích -->
     <div class="etsy-nav-top">
-      <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 8px;">
-        <img src="logo.png?v=3" alt="MoryTory Logo" style="height: 36px; width: auto; border-radius: 6px;" onerror="this.style.display='none'">
-        <span>MoryTory</span>
+      <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
+        <div class="logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 6px; font-family: var(--serif); font-weight: 700; color: #f1641e; font-size: 30px;">
+          <span>MoryTory</span>
+        </div>
+        <button class="etsy-categories-btn" style="background: none; border: none; font-size: 14px; font-weight: 500; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-radius: 24px;" onclick="scrollToSection('theme-section')">
+          <i class="ti ti-menu-2" style="font-size: 18px;"></i> Danh mục
+        </button>
       </div>
       
       <div class="etsy-search-container">
         <input type="text" id="etsy-search-input" placeholder="Tìm kiếm mô hình quà tặng thủ công..." oninput="handleSearch(this.value)">
-        <button class="etsy-search-btn" title="Tìm kiếm"><i class="ti ti-search"></i></button>
+        <button class="etsy-search-btn" title="Tìm kiếm" style="background: #f1641e; color: #fff;"><i class="ti ti-search"></i></button>
       </div>
       
       <div class="etsy-nav-actions">
-        <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối">🌙</button>
-        <span class="etsy-nav-icon-link" onclick="openLookupModal()" title="Tra cứu đơn hàng">
-          <i class="ti ti-receipt"></i><span class="etsy-icon-label">Tra cứu đơn</span>
+        <button id="dark-mode-toggle" class="dark-toggle" onclick="toggleDarkMode()" title="Chuyển chế độ sáng/tối" style="margin-right: 4px;">🌙</button>
+        <span class="etsy-nav-icon-link" onclick="openLookupModal()" style="font-size: 14px; font-weight: 500; color: #222; text-decoration: none; padding: 8px 12px; border-radius: 20px; cursor: pointer;" title="Đăng nhập / Tra cứu đơn">
+          Đăng nhập
         </span>
-        <div class="cart-btn">🛒 Giỏ hàng <span id="cart-count">(0)</span></div>
+        <span class="etsy-nav-icon-link" title="Yêu thích" style="font-size: 20px; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" onclick="showToast('Tính năng Yêu thích sẽ sớm ra mắt!', 'info')">
+          <i class="ti ti-heart"></i>
+        </span>
+        <div class="cart-btn-etsy cart-btn" style="border:none; padding:6px; background:transparent; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; position: relative;">
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <i class="ti ti-shopping-cart" style="font-size: 22px; color: var(--text);"></i>
+            <span id="cart-count" class="cart-badge cart-badge-orange">0</span>
+          </div>
+        </div>
       </div>
     </div>
     
